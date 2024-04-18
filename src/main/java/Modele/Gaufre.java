@@ -180,9 +180,8 @@ public class Gaufre{
         return false;
     }
 
-    public boolean estFinit() {
-        //TODO
-        return false;
+    public boolean estFinie() {
+        return !(plateau[1][0] || plateau[0][1]);
     }
 
     public boolean estDejouable(){
