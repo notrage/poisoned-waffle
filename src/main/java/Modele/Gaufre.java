@@ -115,15 +115,14 @@ public class Gaufre{
             }
             return positionMangees;
         }
-        return null;
+        return new ArrayList<Point>();
     }
 
     public boolean jouerSansHistorique(Coup coup) {
         
-        ArrayList<Point> positionMangees;
-        positionMangees = peutJouer(coup);
+        ArrayList<Point> positionMangees = peutJouer(coup);
 
-        if (positionMangees != null) {
+        if (positionMangees.isEmpty()) {
             
             coup.setJoueur(joueurCourant);
             coup.setPositionMangees(positionMangees);
