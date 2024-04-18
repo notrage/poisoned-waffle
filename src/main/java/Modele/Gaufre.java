@@ -11,8 +11,10 @@ public class Gaufre{
     private boolean[][] plateau;
     private Historique historique;
 
-    public Gaufre(Joueur[] joueurs, int nbL, int nbC) {
-        this.joueurs = joueurs;
+    public Gaufre(int nbL, int nbC) {
+        Joueur j1 = new Joueur(1);
+        Joueur j2 = new Joueur(2);
+        this.joueurs = new Joueur[]{j1, j2};
         Random rand = new Random();
         this.joueurCourant = joueurs[rand.nextInt(2)];
         this.plateau = new boolean[nbL][nbC];
