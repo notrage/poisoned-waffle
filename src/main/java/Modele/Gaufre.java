@@ -180,8 +180,14 @@ public class Gaufre{
         return false;
     }
 
-    public boolean estFinie() {
-        return !(plateau[1][0] || plateau[0][1]);
+    public Joueur estFinie() {
+        if (plateau[0][0] == false) {
+            return getJoueurCourant();
+        }
+        else if (plateau[0][1] == false && plateau[1][0] == false) {
+            return joueurs[(joueurCourant + 1) % 2];
+        }
+        return null;
     }
 
     public boolean estDejouable(){
