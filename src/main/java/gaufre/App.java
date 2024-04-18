@@ -1,4 +1,4 @@
-package waffle;
+package gaufre;
 
 /**
  * Hello world!

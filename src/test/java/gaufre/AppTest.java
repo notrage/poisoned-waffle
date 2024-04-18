@@ -1,4 +1,4 @@
-package waffle;
+package gaufre;
 
 import static org.junit.Assert.assertTrue;
 
