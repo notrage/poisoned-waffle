@@ -18,6 +18,8 @@ on:
 jobs:
   build:
 
+    name: Test app with maven
+
     runs-on: ubuntu-latest
 
     steps:
