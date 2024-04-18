@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class Gaufre{
 
     private Joueur[] joueurs;
-    private Joueur joueurCourant;
+    private int joueurCourant;
     private boolean[][] plateau;
     private Historique historique;
 
@@ -16,8 +16,13 @@ public class Gaufre{
         Joueur j2 = new Joueur(2);
         this.joueurs = new Joueur[]{j1, j2};
         Random rand = new Random();
-        this.joueurCourant = joueurs[rand.nextInt(2)];
+        this.joueurCourant = rand.nextInt(2);
         this.plateau = new boolean[nbL][nbC];
+        for (int i = 0; i < nbL; i++) {
+            for (int j = 0; j < nbC; j++) {
+                setCase(i, j, true);
+            }
+        }
         this.historique = new Historique();
     }
 
@@ -27,7 +32,7 @@ public class Gaufre{
     }
 
     public Joueur getJoueurCourant() {
-        return this.joueurCourant;
+        return this.joueurs[this.joueurCourant];
     }
 
     public boolean[][] getPlateau() {
@@ -60,7 +65,7 @@ public class Gaufre{
     }
 
     public void setJoueurCourant(Joueur joueurCourant) {
-        this.joueurCourant = joueurCourant;
+        this.joueurCourant = joueurCourant.getNum()-1;
     }
 
     public void setPlateau(boolean[][] plateau) {
@@ -79,6 +84,8 @@ public class Gaufre{
         setCase(p.y,p.x,b);
     }
 
+    //Autres methodes
+    @Override
     public String toString() {
         String s = "Gaufre{\n joueurs= ";
         for (Joueur j : this.joueurs) {
@@ -97,7 +104,7 @@ public class Gaufre{
     }
 
     void changerJoueur() {
-        joueurCourant = joueurs[(joueurCourant.getNum() + 1) % 2];
+        this.joueurCourant =(this.joueurCourant+ 1) % 2;
     }
 
     // renvoie la liste des Point manges si le coup est possible, null sinon
@@ -125,7 +132,7 @@ public class Gaufre{
 
         if (positionMangees != null) {
             
-            coup.setJoueur(joueurCourant);
+            coup.setJoueur(getJoueurCourant());
             coup.setPositionMangees(positionMangees);
 
             for (Point p : positionMangees) {
@@ -150,7 +157,6 @@ public class Gaufre{
     public void dejouer() {
         //TODO
         // annuler le dernier coup (update historique)
-        return;
     }
 
     public void rejouer() {
@@ -159,9 +165,14 @@ public class Gaufre{
         return;
     }
 
-    public boolean estFinit() {
-        //TODO
-        return false;
+    public boolean estFinie() {
+        for (int i = 0; i < plateau.length; i++) {
+            for (int j = 0; j < plateau[0].length; j++) {
+                if(i==0 && j==0) continue; // on ne regarde pas la case en haut à gauche (case de départ
+                if (plateau[i][j]) return false;
+            }
+        }
+        return true;
     }
 
     public void sauvegarder() {
@@ -175,7 +186,14 @@ public class Gaufre{
     }
 
     public void reinitialiser() {
-        //TODO
+        historique.raz();
+        for (int i = 0; i < plateau.length; i++) {
+            for (int j = 0; j < plateau[0].length; j++) {
+                setCase(i, j, true);
+            }
+        }
+        Random rand = new Random();
+        this.joueurCourant = rand.nextInt(2);
         return;
     }
 }
