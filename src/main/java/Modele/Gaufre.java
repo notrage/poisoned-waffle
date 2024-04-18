@@ -18,6 +18,11 @@ public class Gaufre{
         Random rand = new Random();
         this.joueurCourant = rand.nextInt(2);
         this.plateau = new boolean[nbL][nbC];
+        for (int i = 0; i < nbL; i++){
+            for (int j = 0; j < nbC; j++){
+                this.plateau[i][j] = true;
+            }
+        }
         for (int i = 0; i < nbL; i++) {
             for (int j = 0; j < nbC; j++) {
                 setCase(i, j, true);
@@ -113,7 +118,7 @@ public class Gaufre{
         int x = coup.getPosition().x;
         int y = coup.getPosition().y;
         
-        if (x > 0 && x <= plateau.length && y > 0 && y <= plateau[0].length) {
+        if (x >= 0 && x < plateau.length && y >= 0 && y < plateau[0].length) {
             ArrayList<Point> positionMangees = new ArrayList<Point>();
             for (int i = x; i < plateau.length; i++) {
                 for (int j = y; j < plateau[0].length; j++) {
@@ -129,7 +134,7 @@ public class Gaufre{
         
         ArrayList<Point> positionMangees = peutJouer(coup);
 
-        if (positionMangees.isEmpty()) {
+        if (!positionMangees.isEmpty()) {
             
             coup.setJoueur(getJoueurCourant());
             coup.setPositionMangees(positionMangees);
@@ -147,31 +152,45 @@ public class Gaufre{
     public boolean jouer(Coup coup) {
             
         if (jouerSansHistorique(coup)) {
-            historique.fait(coup);
+            getHistorique().fait(coup);
             return true;
         }
         return false;
     }
 
-    public void dejouer() {
-        //TODO
-        // annuler le dernier coup (update historique)
-    }
-
-    public void rejouer() {
-        //TODO
-        // refaire le dernier coup annulé (update historique)
-        return;
-    }
-
-    public boolean estFinie() {
-        for (int i = 0; i < plateau.length; i++) {
-            for (int j = 0; j < plateau[0].length; j++) {
-                if(i==0 && j==0) continue; // on ne regarde pas la case en haut à gauche (case de départ
-                if (plateau[i][j]) return false;
+    public boolean dejouer() {
+        if (estDejouable()){
+            Coup c = getHistorique().defait();
+            if (c == null){
+                return false;
             }
+            for (Point p : c.getPositionMangees()){
+                setCase(p, true);
+            }
+            return true;
         }
-        return true;
+        return false;
+    }
+
+    public boolean rejouer() {
+        if (estRejouable()){
+            return jouerSansHistorique(getHistorique().refait());
+        }
+        // refaire le dernier coup annulé (update historique)
+        return false;
+    }
+
+    public boolean estFinit() {
+        //TODO
+        return false;
+    }
+
+    public boolean estDejouable(){
+        return getHistorique().peutDefaire();
+    }
+
+    public boolean estRejouable(){
+        return getHistorique().peutRefaire();
     }
 
     public void sauvegarder() {
