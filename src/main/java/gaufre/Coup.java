@@ -15,6 +15,12 @@ class Coup {
         this.joueur = null;
     }
 
+    public Coup(int l, int c){
+        this.position = new Point(l, c);
+        this.positionMangees = null;
+        this.joueur = null;
+    }
+
     public Point getPosition() {
         return this.position;
     }

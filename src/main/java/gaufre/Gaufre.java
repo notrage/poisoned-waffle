@@ -1,22 +1,32 @@
 package gaufre;
 
 import java.awt.Point;
+import java.util.Random;
 import java.util.ArrayList;
 
 class Gaufre{
 
-    private Joueur joueur;
+    private Joueur[] joueurs;
+    private Joueur joueurCourant;
     private boolean[][] plateau;
     private Historique historique;
 
-    public Gaufre(Joueur joueur, int nbL, int nbC) {
-        this.joueur = joueur;
+    public Gaufre(Joueur[] joueurs, int nbL, int nbC) {
+        this.joueurs = joueurs;
+        Random rand = new Random();
+        this.joueurCourant = joueurs[rand.nextInt(2)];
         this.plateau = new boolean[nbL][nbC];
         this.historique = new Historique();
     }
 
-    public Joueur getJoueur() {
-        return this.joueur;
+
+    //Getters
+    public Joueur[] getJoueur() {
+        return this.joueurs;
+    }
+
+    public Joueur getJoueurCourant() {
+        return this.joueurCourant;
     }
 
     public boolean[][] getPlateau() {
@@ -27,8 +37,29 @@ class Gaufre{
         return this.historique;
     }
 
-    public void setJoueur(Joueur joueur) {
-        this.joueur = joueur;
+    public int getLignes(){
+        return plateau.length;
+    }
+
+    public int getColonnes(){
+        return plateau[0].length;
+    }
+
+    public boolean getCase(int l, int c){
+        return plateau[l][c];
+    }
+
+    public boolean getCase(Point p){
+        return getCase(p.y,p.x);
+    }
+
+    //Setters
+    public void setJoueur(Joueur[] joueur) {
+        this.joueurs = joueur;
+    }
+
+    public void setJoueurCourant(Joueur joueurCourant) {
+        this.joueurCourant = joueurCourant;
     }
 
     public void setPlateau(boolean[][] plateau) {
@@ -39,30 +70,69 @@ class Gaufre{
         this.historique = historique;
     }
 
-    public String toString() {
-        return "Gaufre : " + this.plateau + " joueur : " + this.joueur + " historique : " + 
-            this.historique;
+    public void setCase(int l, int c, boolean b){
+        this.plateau[l][c] = b;
+    }
+    
+    public void setCase(Point p, boolean b){
+        setCase(p.y,p.x,b);
     }
 
-    public boolean jouer(Coup coup) {
-        
+    public String toString() {
+        String s = "Gaufre{\n joueurs= ";
+        for (Joueur j : this.joueurs) {
+            s += j.toString() + "\n";
+        }
+        s += "joueurCourant= " + this.joueurCourant + "\n";
+        s += "plateau= ";
+        for (int i = 0; i < plateau.length; i++) {
+            for (int j = 0; j < plateau[0].length; j++) {
+                s += plateau[i][j] + " ";
+            }
+            s += "\n";
+        }
+        s += "historique= " + this.historique + "\n";
+        return s;
+    }
+
+    void changerJoueur() {
+        joueurCourant = joueurs[(joueurCourant.getNum() + 1) % 2];
+    }
+
+    // renvoie la liste des Point manges si le coup est possible, null sinon
+    public ArrayList<Point> peutJouer(Coup coup) {
+
         int x = coup.getPosition().x;
         int y = coup.getPosition().y;
         
         if (x > 0 && x <= plateau.length && y > 0 && y <= plateau[0].length) {
-            coup.setJoueur(joueur);
             ArrayList<Point> positionMangees = new ArrayList<Point>();
             for (int i = x; i < plateau.length; i++) {
                 for (int j = y; j < plateau[0].length; j++) {
                     if (plateau[i][j]) positionMangees.add(new Point(i, j));
                 }
             }
-            coup.setPositionMangees(positionMangees);
+            return positionMangees;
+        }
+        return null;
+    }
+
+    public boolean jouer(Coup coup) {
+        
+        ArrayList<Point> positionMangees;
+        positionMangees = peutJouer(coup);
+
+        if (positionMangees != null) {
             
+            coup.setJoueur(joueurCourant);
+            coup.setPositionMangees(positionMangees);
+
             for (Point p : positionMangees) {
-                plateau[p.x][p.y] = false;
+                setCase(p, false);
             }
+
             historique.fait(coup);
+            changerJoueur();
             return true;
         }
         return false;
@@ -95,7 +165,7 @@ class Gaufre{
         return;
     }
 
-    public void renitialiser() {
+    public void reinitialiser() {
         //TODO
         return;
     }
