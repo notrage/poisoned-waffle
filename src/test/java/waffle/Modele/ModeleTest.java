@@ -8,9 +8,20 @@ import org.junit.Test;
 import Modele.*;
 
 public class ModeleTest {
-    /**
-     * Rigorous Test :-)
-     */
+    @Test 
+    public void testFindePartie(){
+        Gaufre g = new Gaufre(3, 3);
+        assertTrue(g.estFinie() == null);
+        g.jouer(new Coup(0, 1));
+
+        assertTrue(g.estFinie() == true);
+        assertTrue(g.estFinie() == true);
+        assertTrue(g.estFinie() == true);
+        assertTrue(g.estFinie() == true);
+        assertTrue(g.estFinie() == true);
+
+    }
+
     @Test
     public void coupTest() {
         Gaufre g = new Gaufre(3, 3);
@@ -30,6 +41,8 @@ public class ModeleTest {
         // Un autre coup invalide
         coupInvalide = new Coup(-1, 0);
         assertFalse(g.jouer(coupInvalide));
+
+
     }
 
     @Test
@@ -43,9 +56,13 @@ public class ModeleTest {
         joueDejoue(g, new Coup(1, 0));
         joueDejoue(g, new Coup(0, 0));
         assertTrue(g.dejouer());
-        afficher(g.getPlateau());
         assertTrue(g.jouer(new Coup(0, 1)));
         dejoueRejoue(g);
+        assertTrue(g.dejouer());
+        assertFalse(g.dejouer());
+        assertTrue(g.estRejouable());
+        g.jouer(new Coup(0, 1));
+        assertFalse(g.estRejouable());
     }
 
     private void joueDejoue(Gaufre g, Coup c) {
@@ -55,7 +72,7 @@ public class ModeleTest {
                 copie[i][j] = g.getCase(i, j);
             }
         }
-        // Si le coup est valid eon le déjoue
+        // Si le coup est valide on le déjoue
         if (g.jouer(c)) {
             g.dejouer();
         }
@@ -77,12 +94,6 @@ public class ModeleTest {
     }
 
     public void equivalent(boolean[][] m1, boolean[][] m2) {
-        afficher(m1);
-        System.out.println();
-        afficher(m2);
-        System.out.println();
-        System.out.println();
-
         for (int i = 0; i < m1.length; i++) {
             for (int j = 0; j < m1[0].length; j++) {
                 assertTrue(m1[i][j] == m2[i][j]);
