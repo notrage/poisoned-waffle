@@ -5,18 +5,18 @@ import java.util.ArrayList;
 
 class Coup {
 
-    private Point case;
+    private Point position;
     private ArrayList<Point> positionMangees;
     private Joueur joueur;
 
-    public Coup(Point case, ArrayList<Point> positionMangees, Joueur joueur) {
-        this.case = case;
-        this.positionMangees = new ArrayList<Point>(positionMangees);
-        this.joueur = joueur;
+    public Coup(Point position) {
+        this.position = position;
+        this.positionMangees = null;
+        this.joueur = null;
     }
 
-    public Point getCase() {
-        return this.case;
+    public Point getPosition() {
+        return this.position;
     }
 
     public ArrayList<Point> getPositionMangees() {
@@ -27,17 +27,15 @@ class Coup {
         return this.joueur;
     }
 
+    public void setPositionMangees(ArrayList<Point> positionMangees) {
+        this.positionMangees = positionMangees;
+    }
+
+    public void setJoueur(Joueur joueur) {
+        this.joueur = joueur;
+    }
+
     public String toString() {
-        return "Coup : " + this.case + " mangees : " + this.positionMangees + " joueur : " + this.joueur;
+        return "Coup : position :" + this.position + " mangees : " + this.positionMangees + " joueur : " + this.joueur;
     }
-
-    public void jouer(Gaufre gaufre) {
-        //TODO
-        return;
-    }
-
-    public void annuler(Gaufre gaufre) {
-        //TODO
-        return;
-    }    
 }

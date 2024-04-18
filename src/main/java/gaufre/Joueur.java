@@ -20,5 +20,9 @@ public class Joueur {
     public void setScore(int score) {
         this.score = score;
     }
+
+    public String toString() {
+        return "Joueur " + this.num + " score : " + this.score;
+    }
     
 }
