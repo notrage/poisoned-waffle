@@ -160,6 +160,7 @@ public class Gaufre{
             for (Point p : c.getPositionMangees()){
                 setCase(p, true);
             }
+            changerJoueur();
             return true;
         }
         return false;
