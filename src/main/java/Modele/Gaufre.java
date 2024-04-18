@@ -1,10 +1,10 @@
-package gaufre;
+package Modele;
 
 import java.awt.Point;
 import java.util.Random;
 import java.util.ArrayList;
 
-class Gaufre{
+public class Gaufre{
 
     private Joueur[] joueurs;
     private Joueur joueurCourant;
@@ -18,7 +18,6 @@ class Gaufre{
         this.plateau = new boolean[nbL][nbC];
         this.historique = new Historique();
     }
-
 
     //Getters
     public Joueur[] getJoueur() {
@@ -117,7 +116,7 @@ class Gaufre{
         return null;
     }
 
-    public boolean jouer(Coup coup) {
+    public boolean jouerSansHistorique(Coup coup) {
         
         ArrayList<Point> positionMangees;
         positionMangees = peutJouer(coup);
@@ -131,8 +130,16 @@ class Gaufre{
                 setCase(p, false);
             }
 
-            historique.fait(coup);
             changerJoueur();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean jouer(Coup coup) {
+            
+        if (jouerSansHistorique(coup)) {
+            historique.fait(coup);
             return true;
         }
         return false;

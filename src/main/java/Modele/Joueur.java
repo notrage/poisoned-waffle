@@ -1,6 +1,6 @@
-package gaufre;
+package Modele;
 
-public class Joueur {
+class Joueur {
     private int num;
     private int score;
 

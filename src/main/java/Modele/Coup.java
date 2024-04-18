@@ -1,9 +1,9 @@
-package gaufre;
+package Modele;
 
 import java.awt.Point;
 import java.util.ArrayList;
 
-class Coup {
+public class Coup {
 
     private Point position;
     private ArrayList<Point> positionMangees;
