@@ -4,72 +4,85 @@ import java.awt.Point;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.ArrayList;
 
-public class Gaufre{
+public class Gaufre {
 
-    private Joueur[] joueurs;
-    private int joueurCourant;
+    private Joueur joueur1, joueur2, joueurCourant;
     private int[] plateau;
     private Historique historique;
     private int nbLignes;
     private int nbColonnes;
 
+    //Constructeurs
     public Gaufre(int nbL, int nbC) {
-        Joueur j1 = new Joueur(1);
-        Joueur j2 = new Joueur(2);
-        setnbLignes(nbL);
-        setnbColonnes(nbC);
-        this.joueurs = new Joueur[]{j1, j2};
+        joueur1 = new Joueur(1);
+        joueur2 = new Joueur(2);
+        setNbLignes(nbL);
+        setNbColonnes(nbC);
         Random rand = new Random();
-        this.joueurCourant = rand.nextInt(2);
-        this.plateau = new int[nbL];
-        for (int i = 0; i < nbL; i++){
-            this.plateau[i] = nbC;;
+        int r = rand.nextInt() % 2;
+        if (r == 0){
+            joueurCourant = joueur1;
+        } else {
+            joueurCourant = joueur2; 
         }
-        this.historique = new Historique();
+        plateau = new int[nbL];
+        for (int i = 0; i < nbL; i++){
+            plateau[i] = nbC;
+        }
+        historique = new Historique();
     }
 
     //Getters
-    public Joueur[] getJoueur() {
-        return this.joueurs;
+    public Joueur getJoueur1() {
+        return joueur1;
+    }
+
+    public Joueur getJoueur2() {
+        return joueur2;
     }
 
     public Joueur getJoueurCourant() {
-        return this.joueurs[this.joueurCourant];
+        return joueurCourant;
     }
 
     public int[] getPlateau() {
-        return this.plateau;
+        return plateau;
     }
 
     public Historique getHistorique() {
-        return this.historique;
+        return historique;
     }
 
-    public int getLignes(){
+    public int getNbLignes(){
         return nbLignes;
     }
 
-    public int getColonnes(){
+    public int getNbColonnes(){
         return nbColonnes;
     }
 
     public boolean getCase(int l, int c){
-        return plateau[l] > c;
+        return l >= 0 && l < getNbLignes() && c >= 0 && c < getNbColonnes() && plateau[l] > c;
     }
 
     public boolean getCase(Point p){
-        return getCase(p.y,p.x);
+        return getCase(p.x,p.y);
     }
 
     //Setters
-    public void setJoueur(Joueur[] joueur) {
-        this.joueurs = joueur;
+    public void setJoueur1(Joueur joueur1) {
+        this.joueur1 = joueur1;
+    }
+
+    public void setJoueur2(Joueur joueur2) {
+        this.joueur2 = joueur2;
     }
 
     public void setJoueurCourant(Joueur joueurCourant) {
-        this.joueurCourant = joueurCourant.getNum()-1;
+        this.joueurCourant = joueurCourant;
     }
 
     public void setPlateau(int [] plateau) {
@@ -93,71 +106,75 @@ public class Gaufre{
         setCase(p.y,p.x,b);
     }
 
-    public void setnbLignes(int nbL){
-        this.nbLignes = nbL;
+    public void setNbLignes(int nbL){
+        nbLignes = nbL;
     }
 
-    public void setnbColonnes(int nbC){
-        this.nbColonnes = nbC;
+    public void setNbColonnes(int nbC){
+        nbColonnes = nbC;
     }
 
     //Autres methodes
-    @Override
     public String toString() {
-        String s = "Gaufre{\n joueurs= ";
-        for (Joueur j : this.joueurs) {
-            s += j.toString() + "\n";
-        }
-        s += "joueurCourant= " + this.joueurCourant + "\n";
+        String s = "Gaufre{\n joueurs= \n";
+        s += joueur1.toString() + " \n" + joueur2.toString() + "\n";
+        s += "joueurCourant= " + joueurCourant + "\n";
         s += "plateau= \n";
         s += nbColonnes + " " + nbLignes + "\n";
         for (int i = 0; i < plateau.length; i++) {
                 s += plateau[i] + " ";
             }
         s += "\n";
-        s += "historique= " + this.historique + "\n";
+        s += "historique= " + historique.toString() + "\n";
         return s;
     }
 
     void changerJoueur() {
-        this.joueurCourant =(this.joueurCourant+ 1) % 2;
+        if (getJoueurCourant() == getJoueur1())
+            setJoueurCourant(getJoueur2());
+        else
+            setJoueurCourant(getJoueur1());
     }
 
-    // renvoie la liste des Point manges si le coup est possible, null sinon
-    public ArrayList<Point> peutJouer(Coup coup) {
+    public boolean estJouable(Coup coup) {
+        return getCase(coup.getPosition());
+    }
 
-        int l = coup.getPosition().x;
-        int c = coup.getPosition().y;
-        
-        if (l >= 0 && l < getLignes() && c >= 0 && c < getColonnes() && getCase(l, c)) {
-            ArrayList<Point> positionMangees = new ArrayList<Point>();
-            for (int i = l; i < getLignes(); i++) {
-                for (int j = c; j < getColonnes(); j++) {
-                    if (!getCase(i, j)) {
-                        return positionMangees;
-                    }
-                    positionMangees.add(new Point(i, j));
-                }
-            }
-            return positionMangees;
+    public int[] clonePlateau() {
+        int taille = getPlateau().length;
+        int[] clonePlateau = new int[taille];
+        for (int i = 0; i < taille; i++) {
+            clonePlateau[i] = getPlateau()[i];
         }
-        return new ArrayList<Point>();
+        return clonePlateau;
     }
 
-    public boolean jouerSansHistorique(Coup coup) {
-        
-        ArrayList<Point> positionMangees = peutJouer(coup);
+    public Gaufre clone() {
+        Gaufre copieGaufre = new Gaufre(1, 1);
+        copieGaufre.setNbLignes(getNbLignes());
+        copieGaufre.setNbColonnes(getNbColonnes());
+        Joueur copieJoueur1 = getJoueur1().clone();
+        Joueur copieJoueur2 = getJoueur2().clone();
+        copieGaufre.setJoueur1(copieJoueur1);
+        copieGaufre.setJoueur2(copieJoueur2);
 
-        if (!positionMangees.isEmpty()) {
+        if (getJoueurCourant() == getJoueur1())
+            copieGaufre.setJoueurCourant(copieJoueur1);
+        else
+            copieGaufre.setJoueurCourant(copieJoueur2);
             
+        copieGaufre.setPlateau(clonePlateau());
+        return copieGaufre;
+    }
+
+    private boolean jouerSansHistorique(Coup coup) {
+        
+        if (estJouable(coup)) {
+            coup.setAncienPlateau(clonePlateau());
             coup.setJoueur(getJoueurCourant());
-            coup.setPositionMangees(positionMangees);
-
-            for (Point p : positionMangees) {
-                setCase(p, false);
+            for (int i = coup.getPosition().x; i < getNbLignes(); i++) {
+                plateau[i] = Math.min(coup.getPosition().y, plateau[i]);
             }
-
-            changerJoueur();
             return true;
         }
         return false;
@@ -167,6 +184,7 @@ public class Gaufre{
             
         if (jouerSansHistorique(coup)) {
             getHistorique().fait(coup);
+            changerJoueur();
             return true;
         }
         return false;
@@ -178,9 +196,8 @@ public class Gaufre{
             if (c == null){
                 return false;
             }
-            for (Point p : c.getPositionMangees()){
-                setCase(p, true);
-            }
+            setPlateau(c.getAncienPlateau());
+            changerJoueur();
             return true;
         }
         return false;
@@ -188,6 +205,7 @@ public class Gaufre{
 
     public boolean rejouer() {
         if (estRejouable()){
+            changerJoueur();
             return jouerSansHistorique(getHistorique().refait());
         }
         // refaire le dernier coup annulé (update historique)
@@ -195,11 +213,18 @@ public class Gaufre{
     }
 
     public Joueur estFinie() {
-        if (plateau[0] == 0) {
+        if (!getCase(0,0)) {
+            getJoueurCourant().incrementScore();
             return getJoueurCourant();
         }
-        else if (plateau[1] == 0 && plateau[0] == 1) {
-            return joueurs[(joueurCourant + 1) % 2];
+        else if (!getCase(0,1) && !getCase(1,0)) {
+            if (getJoueurCourant() == getJoueur1()){
+                getJoueur2().incrementScore();
+                return getJoueur2();
+            } else {
+                getJoueur1().incrementScore();
+                return getJoueur1();
+            }
         }
         return null;
     }
@@ -211,11 +236,14 @@ public class Gaufre{
     public boolean estRejouable(){
         return getHistorique().peutRefaire();
     }
-/* 
+    /* 
     public void sauvegarder(String nomFichier) {
+
         PrintStream p = new PrintStream(new OutputStream(nomFichier));
-        p.println(getLignes() + " " + getColonnes());
-        for (int i = 0; i < getLignes();i++){
+        p.println(getNbLignes() + " " + getNbColonnes());
+        print(Joueurs.)
+
+        for (int i = 0; i < getNbLignes();i++){
             p.print(plateau[i] + " ");
         }
         p.println();
@@ -226,24 +254,42 @@ public class Gaufre{
     }
 
     public void restaurer(String nomFichier) {
+
+
         Scanner sc = new Scanner(new File(nomFichier));
-        setnbLignes(sc.nextInt());
-        setnbColonnes(sc.nextInt());
-        for (int i = 0; i < getLignes(); i++){
+        setNbLignes(sc.nextInt());
+        setNbColonnes(sc.nextInt());
+        for (int i = 0; i < getNbLignes(); i++){
             plateau[i] = sc.nextInt();
         }
         joueurCourant = sc.nextInt();
-        
+        historique = new Historique();
+        //fait
+        sc.nextLine();
+        while (!sc.equals('}')){ 
+            historique.fait(new Coup(sc.nextLine()));
+        }
+        //defait
+        sc.nextLine();
+        while (!sc.equals('}')){ 
+            historique.defait(new Coup(sc.nextLine()));
+        }
+        sc.close();
         return;
     }
-*/
+    */
     public void reinitialiser() {
         historique.raz();
-        for (int i = 0; i < getLignes(); i++) {
-            plateau[i] = getColonnes();
+        for (int i = 0; i < getNbLignes(); i++) {
+            plateau[i] = getNbColonnes();
         }
         Random rand = new Random();
-        this.joueurCourant = rand.nextInt(2);
+        int r = rand.nextInt() % 2;
+        if (r == 0){
+            joueurCourant = joueur1;
+        } else {
+            joueurCourant = joueur2; 
+        }
         return;
     }
 }

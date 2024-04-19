@@ -23,6 +23,6 @@ public class EcouteurSouris extends MouseAdapter {
     }
 
     public void mouseEntered(MouseEvent e){
-        // Repeindre 
+        // Repeindre le jeu en ajoutant un masque vert ou rouge si le coup est valide 
     }
 }
