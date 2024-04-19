@@ -3,36 +3,39 @@ package waffle.Modele;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+
 import org.junit.Test;
 
 import Gaufre.Modele.*;
 
 public class ModeleTest {
+/*    
+    @Test
+    public void sauvegardeRestaureGaufreTest() throws Exception {
+        // Avec une gaufre simplement initialisée
+        Gaufre g = new Gaufre(3,3);
+        g.sauvegarder("test.txt");
+        Gaufre restoree = new Gaufre("test.txt");
+        estGaufreEquivalente(g, restoree);
+    }
+*/
     @Test 
     public void copieGaufreTest() {
         // Copie de base
         Gaufre g = new Gaufre(3, 3);
-        g.jouer(new Coup(0, 1));
         Gaufre copie = g.clone();
-        assertTrue(g.getNbColonnes() == copie.getNbColonnes());
-        assertTrue(g.getNbLignes() == copie.getNbLignes());
-        assertTrue(g.getJoueur1().getNum() == copie.getJoueur1().getNum());
-        assertTrue(g.getJoueurCourant().getNum() == copie.getJoueurCourant().getNum());
-        if (g.getJoueurCourant() == g.getJoueur1())
-            assertTrue(copie.getJoueurCourant() == copie.getJoueur1());
-        else
-            assertTrue(copie.getJoueurCourant() == copie.getJoueur2());
-        for (int i = 0; i < g.getNbLignes(); i++){
-            for (int j = 0; j < g.getNbColonnes(); j++){
-                assertTrue(g.getCase(i, j) == copie.getCase(i, j));
+        estGaufreEquivalente(g, copie);
+        // Et maintenant si on fait jouer des coups sur le plateau
+        for (int i = 2; i > 0; i--) {
+            for (int j = 2; j > 0; j--) {
+                if (i != 0 || j != 0) {
+                    g.jouer(new Coup(i, j));
+                    copie.jouer(new Coup(i, j));
+                    estGaufreEquivalente(g, copie);
+                }
             }
         }
-
-        // Copie plus un coup joue
-        // g.reinitialiser();
-        // copie = g.clone();
-        // assertTrue(g.getNbColonnes() == copie.getNbColonnes());
-        // assertTrue(g.getNbLignes() == copie.getNbLignes());
     }
 
     @Test
@@ -123,7 +126,7 @@ public class ModeleTest {
         if (g.jouer(c)) {
             g.dejouer();
         }
-        equivalent(copie, g.getPlateau());
+        estPlateauEquivalent(copie, g.getPlateau());
     }
 
     private void dejoueRejoue(Gaufre g) {
@@ -133,14 +136,29 @@ public class ModeleTest {
         g.dejouer();
         assertTrue(g.estRejouable());
         g.rejouer();
-        equivalent(copie, g.getPlateau());
+        estPlateauEquivalent(copie, g.getPlateau());
     }
 
-    public void equivalent(int[] g1, int[] g2) {
+    public void estPlateauEquivalent(int[] g1, int[] g2) {
         assertTrue(g1.length == g2.length);
         for (int i = 0; i < g1.length; i++) {
             assertTrue(g1[i] == g2[i]);
         }
     }
 
+    public void estGaufreEquivalente(Gaufre g, Gaufre copie) {
+        assertTrue(g.getNbColonnes() == copie.getNbColonnes());
+        assertTrue(g.getNbLignes() == copie.getNbLignes());
+        assertTrue(g.getJoueur1().getNum() == copie.getJoueur1().getNum());
+        assertTrue(g.getJoueurCourant().getNum() == copie.getJoueurCourant().getNum());
+        if (g.getJoueurCourant() == g.getJoueur1())
+            assertTrue(copie.getJoueurCourant() == copie.getJoueur1());
+        else
+            assertTrue(copie.getJoueurCourant() == copie.getJoueur2());
+        for (int i = 0; i < g.getNbLignes(); i++){
+            for (int j = 0; j < g.getNbColonnes(); j++){
+                assertTrue(g.getCase(i, j) == copie.getCase(i, j));
+            }
+        }
+    }
 }

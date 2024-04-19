@@ -12,6 +12,9 @@ public class Historique {
     }
 
     //Autres méthodes
+    public void empileDefait(Coup c) {
+        this.defaits.add(c);
+    }
 
     public boolean peutDefaire() {
         return this.faits.size() > 0;
@@ -29,7 +32,7 @@ public class Historique {
     public Coup defait() {
         if (peutDefaire()) {
             Coup c = faits.remove(faits.size() - 1);
-            this.defaits.add(c);
+            empileDefait(c);
             return c;
         }
         return null;
@@ -47,6 +50,23 @@ public class Historique {
     public void raz() {
         this.faits.clear();
         this.defaits.clear();
+    }
+
+    public String pourSauvegarde() {
+        String s = "{";
+        for (Coup c: faits) {
+            s += c.pourSauvegarde();
+            s += "\n";
+        }
+        s = s.substring(0, s.length()-1);
+        s += "}\n\n{";
+        for (Coup c: defaits) {
+            s += c.pourSauvegarde();
+            s += "\n";
+        }
+        s = s.substring(0, s.length()-1);
+        s += "}";
+        return s;
     }
 
     @Override
