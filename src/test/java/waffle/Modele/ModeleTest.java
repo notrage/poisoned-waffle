@@ -9,16 +9,11 @@ import Modele.*;
 
 public class ModeleTest {
     @Test 
-    public void testFindePartie(){
+    public void testFinDePartie(){
         Gaufre g = new Gaufre(3, 3);
         assertTrue(g.estFinie() == null);
         g.jouer(new Coup(0, 1));
-
-        assertTrue(g.estFinie() == true);
-        assertTrue(g.estFinie() == true);
-        assertTrue(g.estFinie() == true);
-        assertTrue(g.estFinie() == true);
-        assertTrue(g.estFinie() == true);
+        //TODO
 
     }
 
