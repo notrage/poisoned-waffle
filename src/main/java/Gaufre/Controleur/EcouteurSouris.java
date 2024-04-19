@@ -4,7 +4,6 @@ import java.awt.event.MouseAdapter;
 
 import org.w3c.dom.events.MouseEvent;
 
-import Gaufre.Modele.Coup;
 import Gaufre.Modele.Gaufre;
 
 public class EcouteurSouris extends MouseAdapter {
@@ -22,7 +21,7 @@ public class EcouteurSouris extends MouseAdapter {
         // inter.repaint()
     }
 
-    public void mouseEntered(MouseEvent e){
-        // Repeindre le jeu en ajoutant un masque vert ou rouge si le coup est valide 
+    public void mouseEntered(MouseEvent e) {
+        // Repeindre le jeu en ajoutant un masque vert ou rouge si le coup est valide
     }
 }
