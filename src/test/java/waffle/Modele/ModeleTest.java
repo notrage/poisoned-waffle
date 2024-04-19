@@ -8,14 +8,6 @@ import org.junit.Test;
 import Modele.*;
 
 public class ModeleTest {
-    @Test 
-    public void testFinDePartie(){
-        Gaufre g = new Gaufre(3, 3);
-        assertTrue(g.estFinie() == null);
-        g.jouer(new Coup(0, 1));
-        //TODO
-
-    }
 
     @Test
     public void coupTest() {
@@ -60,6 +52,38 @@ public class ModeleTest {
         assertFalse(g.estRejouable());
     }
 
+    @Test 
+    public void testFinDePartie() {
+        // Un test de base
+        Gaufre g = new Gaufre(3, 3);
+        assertTrue(g.estFinie() == null);
+        g.jouer(new Coup(0,1));
+        assertTrue(g.estFinie() == null);
+        g.jouer(new Coup(2,0));
+        assertTrue(g.estFinie() == null);
+        g.jouer(new Coup(1,0));
+        assertTrue(g.estFinie() != null);
+        
+        // Cas où l'on joue un coup sur la case empoisonée
+        g.reinitialiser();
+        assertTrue(g.estFinie() == null);
+        g.jouer(new Coup(0, 0));
+        assertTrue(g.estFinie() != null);
+
+        // Cas où l'on joue toutes les cases du plateau
+        g.reinitialiser();
+        for (int i = 2; i > 0; i--) {
+            for (int j = 2; j > 0; j--) {
+                g.jouer(new Coup(i, j));
+                if (i != 0 || j != 0)
+                    assertTrue(g.estFinie() == null);
+                else
+                    assertTrue()
+                }
+            }
+        }
+    }
+
     private void joueDejoue(Gaufre g, Coup c) {
         boolean[][] copie = new boolean[g.getLignes()][g.getColonnes()];
         for (int i = 0; i < g.getLignes(); i++) {
@@ -96,12 +120,4 @@ public class ModeleTest {
         }
     }
 
-    public void afficher(boolean[][] m) {
-        for (int i = 0; i < m.length; i++) {
-            for (int j = 0; j < m[0].length; j++) {
-                System.out.print(m[i][j] ? 'O' : 'X');
-            }
-            System.out.println();
-        }
-    }
 }

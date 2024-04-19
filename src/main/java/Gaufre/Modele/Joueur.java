@@ -1,4 +1,4 @@
-package Modele;
+package Gaufre.Modele;
 
 class Joueur {
     private int num;
