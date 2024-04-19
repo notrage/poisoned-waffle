@@ -1,4 +1,4 @@
-package Modele;
+package Gaufre.Modele;
 
 import java.awt.Point;
 import java.util.ArrayList;

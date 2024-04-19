@@ -1,4 +1,4 @@
-package Modele;
+package Gaufre.Modele;
 import java.util.ArrayList;
 
 public class Historique {

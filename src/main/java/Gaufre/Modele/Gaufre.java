@@ -1,6 +1,8 @@
-package Modele;
+package Gaufre.Modele;
 
 import java.awt.Point;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -8,25 +10,22 @@ public class Gaufre{
 
     private Joueur[] joueurs;
     private int joueurCourant;
-    private boolean[][] plateau;
+    private int[] plateau;
     private Historique historique;
+    private int nbLignes;
+    private int nbColonnes;
 
     public Gaufre(int nbL, int nbC) {
         Joueur j1 = new Joueur(1);
         Joueur j2 = new Joueur(2);
+        setnbLignes(nbL);
+        setnbColonnes(nbC);
         this.joueurs = new Joueur[]{j1, j2};
         Random rand = new Random();
         this.joueurCourant = rand.nextInt(2);
-        this.plateau = new boolean[nbL][nbC];
+        this.plateau = new int[nbL];
         for (int i = 0; i < nbL; i++){
-            for (int j = 0; j < nbC; j++){
-                this.plateau[i][j] = true;
-            }
-        }
-        for (int i = 0; i < nbL; i++) {
-            for (int j = 0; j < nbC; j++) {
-                setCase(i, j, true);
-            }
+            this.plateau[i] = nbC;;
         }
         this.historique = new Historique();
     }
@@ -40,7 +39,7 @@ public class Gaufre{
         return this.joueurs[this.joueurCourant];
     }
 
-    public boolean[][] getPlateau() {
+    public int[] getPlateau() {
         return this.plateau;
     }
 
@@ -49,15 +48,15 @@ public class Gaufre{
     }
 
     public int getLignes(){
-        return plateau.length;
+        return nbLignes;
     }
 
     public int getColonnes(){
-        return plateau[0].length;
+        return nbColonnes;
     }
 
     public boolean getCase(int l, int c){
-        return plateau[l][c];
+        return plateau[l] > c;
     }
 
     public boolean getCase(Point p){
@@ -73,7 +72,7 @@ public class Gaufre{
         this.joueurCourant = joueurCourant.getNum()-1;
     }
 
-    public void setPlateau(boolean[][] plateau) {
+    public void setPlateau(int [] plateau) {
         this.plateau = plateau;
     }
 
@@ -82,11 +81,24 @@ public class Gaufre{
     }
 
     public void setCase(int l, int c, boolean b){
-        this.plateau[l][c] = b;
+        if (b){
+            plateau[l] = c;
+        }
+        else{
+            plateau[l] = Math.min(plateau[l],c);
+        }
     }
     
     public void setCase(Point p, boolean b){
         setCase(p.y,p.x,b);
+    }
+
+    public void setnbLignes(int nbL){
+        this.nbLignes = nbL;
+    }
+
+    public void setnbColonnes(int nbC){
+        this.nbColonnes = nbC;
     }
 
     //Autres methodes
@@ -97,13 +109,12 @@ public class Gaufre{
             s += j.toString() + "\n";
         }
         s += "joueurCourant= " + this.joueurCourant + "\n";
-        s += "plateau= ";
+        s += "plateau= \n";
+        s += nbColonnes + " " + nbLignes + "\n";
         for (int i = 0; i < plateau.length; i++) {
-            for (int j = 0; j < plateau[0].length; j++) {
-                s += plateau[i][j] + " ";
+                s += plateau[i] + " ";
             }
-            s += "\n";
-        }
+        s += "\n";
         s += "historique= " + this.historique + "\n";
         return s;
     }
@@ -115,14 +126,17 @@ public class Gaufre{
     // renvoie la liste des Point manges si le coup est possible, null sinon
     public ArrayList<Point> peutJouer(Coup coup) {
 
-        int x = coup.getPosition().x;
-        int y = coup.getPosition().y;
+        int l = coup.getPosition().x;
+        int c = coup.getPosition().y;
         
-        if (x >= 0 && x < plateau.length && y >= 0 && y < plateau[0].length) {
+        if (l >= 0 && l < getLignes() && c >= 0 && c < getColonnes() && getCase(l, c)) {
             ArrayList<Point> positionMangees = new ArrayList<Point>();
-            for (int i = x; i < plateau.length; i++) {
-                for (int j = y; j < plateau[0].length; j++) {
-                    if (plateau[i][j]) positionMangees.add(new Point(i, j));
+            for (int i = l; i < getLignes(); i++) {
+                for (int j = c; j < getColonnes(); j++) {
+                    if (!getCase(i, j)) {
+                        return positionMangees;
+                    }
+                    positionMangees.add(new Point(i, j));
                 }
             }
             return positionMangees;
@@ -181,10 +195,10 @@ public class Gaufre{
     }
 
     public Joueur estFinie() {
-        if (plateau[0][0] == false) {
+        if (plateau[0] == 0) {
             return getJoueurCourant();
         }
-        else if (plateau[0][1] == false && plateau[1][0] == false) {
+        else if (plateau[1] == 0 && plateau[0] == 1) {
             return joueurs[(joueurCourant + 1) % 2];
         }
         return null;
@@ -197,23 +211,36 @@ public class Gaufre{
     public boolean estRejouable(){
         return getHistorique().peutRefaire();
     }
-
-    public void sauvegarder() {
-        //TODO
+/* 
+    public void sauvegarder(String nomFichier) {
+        PrintStream p = new PrintStream(new OutputStream(nomFichier));
+        p.println(getLignes() + " " + getColonnes());
+        for (int i = 0; i < getLignes();i++){
+            p.print(plateau[i] + " ");
+        }
+        p.println();
+        p.println(joueurCourant);
+        p.println(historique.toString());
+        p.close();
         return;
     }
 
     public void restaurer(String nomFichier) {
-        //TODO
+        Scanner sc = new Scanner(new File(nomFichier));
+        setnbLignes(sc.nextInt());
+        setnbColonnes(sc.nextInt());
+        for (int i = 0; i < getLignes(); i++){
+            plateau[i] = sc.nextInt();
+        }
+        joueurCourant = sc.nextInt();
+        
         return;
     }
-
+*/
     public void reinitialiser() {
         historique.raz();
-        for (int i = 0; i < plateau.length; i++) {
-            for (int j = 0; j < plateau[0].length; j++) {
-                setCase(i, j, true);
-            }
+        for (int i = 0; i < getLignes(); i++) {
+            plateau[i] = getColonnes();
         }
         Random rand = new Random();
         this.joueurCourant = rand.nextInt(2);
