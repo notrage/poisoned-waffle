@@ -56,13 +56,13 @@ public class Historique {
         String s = "{";
         for (Coup c: faits) {
             s += c.pourSauvegarde();
-            s += "\n";
+            s += " ";
         }
         s = s.substring(0, s.length()-1);
-        s += "}\n\n{";
+        s += "}\n{";
         for (Coup c: defaits) {
             s += c.pourSauvegarde();
-            s += "\n";
+            s += " ";
         }
         s = s.substring(0, s.length()-1);
         s += "}";

@@ -3,23 +3,25 @@ package waffle.Modele;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-
 import org.junit.Test;
 
 import Gaufre.Modele.*;
 
 public class ModeleTest {
-/*    
+ 
     @Test
     public void sauvegardeRestaureGaufreTest() throws Exception {
         // Avec une gaufre simplement initialisée
-        Gaufre g = new Gaufre(3,3);
+        Gaufre g = new Gaufre(3,4);
+        // g.jouer(new Coup(2, 2));
+        // g.jouer(new Coup(1, 2));
+        // g.dejouer();
         g.sauvegarder("test.txt");
         Gaufre restoree = new Gaufre("test.txt");
         estGaufreEquivalente(g, restoree);
+
     }
-*/
+
     @Test 
     public void copieGaufreTest() {
         // Copie de base

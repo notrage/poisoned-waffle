@@ -47,28 +47,36 @@ public class Gaufre {
             setJoueur2(new Joueur(2));
             setNbLignes(Integer.parseInt(dimensions[0]));
             setNbColonnes(Integer.parseInt(dimensions[1]));
-
-            Random rand = new Random();
-            int r = rand.nextInt() % 2;
-            if (r == 0)
-                setJoueurCourant(joueur1);
-            else 
-                setJoueurCourant(joueur2);
             
             setPlateau(new int[getNbLignes()]);
             for (int i = 0; i < getNbLignes(); i++){
                 plateau[i] = getNbColonnes();
             }
-
             setHistorique(new Historique());
-
-            reader.readLine();
-            while (!(line = reader.readLine()).isEmpty()) {
-                jouer(new Coup(line));
+            
+            if ((line = reader.readLine()) != null){
+                if (!(line = line.substring(1, line.length() - 1)).isEmpty()){
+                    String[] faits = line.split(" ");
+                    for (String f: faits){
+                        jouer(new Coup(f));
+                    }
+                }
             }
-            reader.readLine();
-            while (!(line = reader.readLine()).isEmpty()) {
-                getHistorique().empileDefait(new Coup(line));
+            if ((line = reader.readLine()) != null){
+                if (!(line = line.substring(1, line.length() - 1)).isEmpty()){
+                    String[] defaits = line.split(" ");
+                    for (String d: defaits){
+                        getHistorique().empileDefait(new Coup(d));
+                    }
+                } 
+            }
+            line = reader.readLine();
+            if (Integer.parseInt(line) == 1){
+                System.out.println("Joueur 1");
+                setJoueurCourant(joueur1);
+            } else {
+                System.out.println("Joueur 2");
+                setJoueurCourant(joueur2);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -296,8 +304,8 @@ public class Gaufre {
     public void sauvegarder(String nomFichier) throws Exception {
         PrintStream ps = new PrintStream(new FileOutputStream(nomFichier));
         ps.println(getNbLignes() + " " + getNbColonnes());
-        ps.println();
-        ps.print(getHistorique().pourSauvegarde());
+        ps.println(getHistorique().pourSauvegarde());
+        ps.print(getJoueurCourant().getNum());
         ps.close();
         return;
     }
