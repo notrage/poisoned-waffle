@@ -5,9 +5,35 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import Modele.*;
+import Gaufre.Modele.*;
 
 public class ModeleTest {
+    @Test 
+    public void copieGaufreTest() {
+        // Copie de base
+        Gaufre g = new Gaufre(3, 3);
+        g.jouer(new Coup(0, 1));
+        Gaufre copie = g.clone();
+        assertTrue(g.getNbColonnes() == copie.getNbColonnes());
+        assertTrue(g.getNbLignes() == copie.getNbLignes());
+        assertTrue(g.getJoueur1().getNum() == copie.getJoueur1().getNum());
+        assertTrue(g.getJoueurCourant().getNum() == copie.getJoueurCourant().getNum());
+        if (g.getJoueurCourant() == g.getJoueur1())
+            assertTrue(copie.getJoueurCourant() == copie.getJoueur1());
+        else
+            assertTrue(copie.getJoueurCourant() == copie.getJoueur2());
+        for (int i = 0; i < g.getNbLignes(); i++){
+            for (int j = 0; j < g.getNbColonnes(); j++){
+                assertTrue(g.getCase(i, j) == copie.getCase(i, j));
+            }
+        }
+
+        // Copie plus un coup joue
+        // g.reinitialiser();
+        // copie = g.clone();
+        // assertTrue(g.getNbColonnes() == copie.getNbColonnes());
+        // assertTrue(g.getNbLignes() == copie.getNbLignes());
+    }
 
     @Test
     public void coupTest() {
@@ -28,8 +54,6 @@ public class ModeleTest {
         // Un autre coup invalide
         coupInvalide = new Coup(-1, 0);
         assertFalse(g.jouer(coupInvalide));
-
-
     }
 
     @Test
@@ -37,18 +61,27 @@ public class ModeleTest {
         // Joue un coup, le déjoue, vérifie si le plateau est de retour à son état
         // initial
         Gaufre g = new Gaufre(3, 3);
+        Joueur jcourant = g.getJoueurCourant();
         joueDejoue(g, new Coup(2, 2));
+        assert(g.getJoueurCourant() == jcourant);
         assertTrue(g.jouer(new Coup(2, 2)));
+        jcourant = g.getJoueurCourant();
         joueDejoue(g, new Coup(0, 1));
+        assert(g.getJoueurCourant() == jcourant);
         joueDejoue(g, new Coup(1, 0));
+        assert(g.getJoueurCourant() == jcourant);
         joueDejoue(g, new Coup(0, 0));
         assertTrue(g.dejouer());
-        assertTrue(g.jouer(new Coup(0, 1)));
+        g.jouer(new Coup(0, 1));
+        jcourant = g.getJoueurCourant();
         dejoueRejoue(g);
+        assert(g.getJoueurCourant() == jcourant);
         assertTrue(g.dejouer());
         assertFalse(g.dejouer());
         assertTrue(g.estRejouable());
+        jcourant = g.getJoueurCourant();
         g.jouer(new Coup(0, 1));
+        assert(g.getJoueurCourant() != jcourant);
         assertFalse(g.estRejouable());
     }
 
@@ -78,19 +111,14 @@ public class ModeleTest {
                 if (i != 0 || j != 0)
                     assertTrue(g.estFinie() == null);
                 else
-                    assertTrue()
-                }
+                    assertTrue(g.estFinie() != null);
             }
         }
     }
 
     private void joueDejoue(Gaufre g, Coup c) {
-        boolean[][] copie = new boolean[g.getLignes()][g.getColonnes()];
-        for (int i = 0; i < g.getLignes(); i++) {
-            for (int j = 0; j < g.getColonnes(); j++) {
-                copie[i][j] = g.getCase(i, j);
-            }
-        }
+        int[] copie = g.clonePlateau();
+
         // Si le coup est valide on le déjoue
         if (g.jouer(c)) {
             g.dejouer();
@@ -99,12 +127,8 @@ public class ModeleTest {
     }
 
     private void dejoueRejoue(Gaufre g) {
-        boolean[][] copie = new boolean[g.getLignes()][g.getColonnes()];
-        for (int i = 0; i < g.getLignes(); i++) {
-            for (int j = 0; j < g.getColonnes(); j++) {
-                copie[i][j] = g.getCase(i, j);
-            }
-        }
+        int[] copie = g.clonePlateau();
+
         assertTrue(g.estDejouable());
         g.dejouer();
         assertTrue(g.estRejouable());
@@ -112,11 +136,10 @@ public class ModeleTest {
         equivalent(copie, g.getPlateau());
     }
 
-    public void equivalent(boolean[][] m1, boolean[][] m2) {
-        for (int i = 0; i < m1.length; i++) {
-            for (int j = 0; j < m1[0].length; j++) {
-                assertTrue(m1[i][j] == m2[i][j]);
-            }
+    public void equivalent(int[] g1, int[] g2) {
+        assertTrue(g1.length == g2.length);
+        for (int i = 0; i < g1.length; i++) {
+            assertTrue(g1[i] == g2[i]);
         }
     }
 

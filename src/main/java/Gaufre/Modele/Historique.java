@@ -5,12 +5,13 @@ public class Historique {
     private ArrayList<Coup> faits ;
     private ArrayList<Coup> defaits;
 
-
+    // Constructeur
     public Historique() {
         this.faits = new ArrayList<Coup>();
         this.defaits = new ArrayList<Coup>();
     }
 
+    //Autres méthodes
 
     public boolean peutDefaire() {
         return this.faits.size() > 0;
@@ -50,7 +51,7 @@ public class Historique {
 
     @Override
     public String toString() {
-        String s = "Historique{\n faits= ";
+        String s = "faits{ ";
         for (Coup c : this.faits) {
             s += c.toString() + "\n";
         }
