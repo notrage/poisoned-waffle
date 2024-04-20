@@ -54,6 +54,7 @@ public class Gaufre {
             }
             setHistorique(new Historique());
             
+            // Lecture des coups faits
             if ((line = reader.readLine()) != null){
                 if (!(line = line.substring(1, line.length() - 1)).isEmpty()){
                     String[] faits = line.split(" ");
@@ -62,6 +63,7 @@ public class Gaufre {
                     }
                 }
             }
+            // Lecture des coups défaits
             if ((line = reader.readLine()) != null){
                 if (!(line = line.substring(1, line.length() - 1)).isEmpty()){
                     String[] defaits = line.split(" ");
@@ -70,14 +72,12 @@ public class Gaufre {
                     }
                 } 
             }
+            // Lecture du joueur courant
             line = reader.readLine();
-            if (Integer.parseInt(line) == 1){
-                System.out.println("Joueur 1");
+            if (Integer.parseInt(line) == 1)
                 setJoueurCourant(joueur1);
-            } else {
-                System.out.println("Joueur 2");
+            else 
                 setJoueurCourant(joueur2);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -257,7 +257,6 @@ public class Gaufre {
             changerJoueur();
             return jouerSansHistorique(getHistorique().refait());
         }
-        // refaire le dernier coup annulé (update historique)
         return false;
     }
 
@@ -317,9 +316,8 @@ public class Gaufre {
         if (o == null || getClass() != o.getClass())
             return false;
         Gaufre that = (Gaufre) o;
-        if (getJoueurCourant().getNum() != that.getJoueurCourant().getNum()){
+        if (getJoueurCourant().getNum() != that.getJoueurCourant().getNum())
             return false;
-        }
         for (int i = 0; i < getNbLignes(); i++){
             if (getPlateau()[i] != that.getPlateau()[i]) return false;
         } 

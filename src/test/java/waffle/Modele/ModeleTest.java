@@ -13,13 +13,32 @@ public class ModeleTest {
     public void sauvegardeRestaureGaufreTest() throws Exception {
         // Avec une gaufre simplement initialisée
         Gaufre g = new Gaufre(3,4);
-        // g.jouer(new Coup(2, 2));
-        // g.jouer(new Coup(1, 2));
-        // g.dejouer();
-        g.sauvegarder("test.txt");
-        Gaufre restoree = new Gaufre("test.txt");
+        g.sauvegarder("test1.txt");
+        Gaufre restoree = new Gaufre("test1.txt");
+        estGaufreEquivalente(g, restoree);
+        
+        // Avec une gaufre avec des coups joués
+        g.jouer(new Coup(2, 2));
+        g.jouer(new Coup(1, 2));
+        g.sauvegarder("test2.txt");
+        restoree = new Gaufre("test2.txt");
         estGaufreEquivalente(g, restoree);
 
+        // Avec une gaufre avec des coups déjoués
+        g.dejouer();
+        g.dejouer();
+        g.sauvegarder("test3.txt");
+        restoree = new Gaufre("test3.txt");
+        estGaufreEquivalente(g, restoree);
+
+        // Avec une gaufre avec des coups joués et déjoués
+        g.reinitialiser();
+        g.jouer(new Coup(2, 2));
+        g.jouer(new Coup(1, 2));
+        g.dejouer();
+        g.sauvegarder("test4.txt");
+        restoree = new Gaufre("test4.txt");
+        estGaufreEquivalente(g, restoree);
     }
 
     @Test 

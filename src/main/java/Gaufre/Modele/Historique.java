@@ -53,18 +53,24 @@ public class Historique {
     }
 
     public String pourSauvegarde() {
+        boolean added = false;
         String s = "{";
         for (Coup c: faits) {
             s += c.pourSauvegarde();
             s += " ";
+            added = true;
         }
-        s = s.substring(0, s.length()-1);
+        if (added)
+            s = s.substring(0, s.length()-1);
         s += "}\n{";
+        added = false;
         for (Coup c: defaits) {
             s += c.pourSauvegarde();
             s += " ";
+            added = true;
         }
-        s = s.substring(0, s.length()-1);
+        if (added)
+            s = s.substring(0, s.length()-1);
         s += "}";
         return s;
     }
