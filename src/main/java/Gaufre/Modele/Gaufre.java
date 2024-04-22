@@ -26,7 +26,7 @@ public class Gaufre {
         Random rand = new Random();
         int r = rand.nextInt() % 2;
         if (r == 0)
-            setJoueurCourant(joueur1);
+            setJoueurCourant(joueur2);
         else 
             setJoueurCourant(joueur2);
         
@@ -163,7 +163,7 @@ public class Gaufre {
         nbColonnes = nbC;
     }
 
-    //Autres methodes
+    @Override
     public String toString() {
         String s = "Gaufre{\n joueurs= \n";
         s += joueur1.toString() + " \n" + joueur2.toString() + "\n";
@@ -326,6 +326,10 @@ public class Gaufre {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPlateau(), getJoueurCourant());
+        int s = 0;
+        for (int i = 0; i < getNbLignes(); i++){
+            s += plateau[i] * (Math.pow(10, i));
+        }
+        return Objects.hash(joueurCourant) + s;
     } 
 }

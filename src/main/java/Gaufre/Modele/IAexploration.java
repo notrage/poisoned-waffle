@@ -3,55 +3,67 @@ package Gaufre.Modele;
 import java.util.HashMap;
 
 public class IAexploration implements IA {
-    Gaufre gaufre;
-    HashMap<Gaufre, Joueur> vainqueur;
     HashMap<Gaufre, Coup> coups;
+    HashMap<Gaufre, Boolean> vainqueur;
+    Gaufre gaufreInitiale;
+
     public IAexploration() {
+        vainqueur = new HashMap<>();
+        coups = new HashMap<>();
     }
 
     public void init(Gaufre g) {
-        System.out.println("Debut exploration");
-        coups = new HashMap<>();
-        vainqueur = new HashMap<>();
-        gaufre = g.clone();
-        exploration(g, g.getJoueurCourant());
-        System.out.println("Fin exploration");
+        gaufreInitiale = g;
+        if (exploration(g.clone())) {
+            System.out.println("Victoire trouvée !");
+        } else {
+            System.out.println("Pas de victoire possible");
+        }
 
     }
 
     public Coup coupSuivant() {
-        return coups.get(gaufre);
+        return coups.get(gaufreInitiale);
     }
 
-    private Boolean exploration(Gaufre g, Joueur j) {
-        Joueur v;
-        Coup c;
-        if ((v = g.estFinie()) != null) {
-            System.out.println("Fin de partie, victoire du " + v);
-            vainqueur.put(g, v);
-            return v == g.getJoueur2(); // true si l'IA gagne
-        } else if (vainqueur.containsKey(g)) {
-            System.out.println("Solution déjà explorée");
-            return vainqueur.get(g) == g.getJoueur2(); // true si l'IA gagne
+    private Boolean exploration(Gaufre g) {
+        Joueur joueur;
+        Boolean r;
+        if (g.getJoueurCourant() == g.getJoueur2()) {
+            r = false;
         } else {
-            for (int x = 0; x < g.getNbLignes(); x++){
-                for (int y = 0; y < g.getNbColonnes(); x++){
-                    c = new Coup(x, y);
-                    if (g.jouer(c)){
-                        System.out.println("Test du coup " + c);
-                        Gaufre clone = g.clone();
-                        boolean res = exploration(clone, g.getJoueur1());
-                        if (j == g.getJoueur2() && res){ // Arbre OU 
-                            coups.put(g, c);
-                            return true;
-                        } else if (j == g.getJoueur1() && !res){ // Arbre ET 
-                            return false;
-                        }
+            r = true;
+        }
+
+        if ((joueur = g.estFinie()) != null) {
+            //System.out.println("Vainqueur: " + joueur.getNum() + "\n");
+            vainqueur.put(g.clone(), joueur == g.getJoueur2());
+            return joueur == g.getJoueur2();
+        } else if (vainqueur.containsKey(g)){
+           return vainqueur.get(g);
+        } else {
+            for (int i = 0; i < g.getNbLignes(); i++) {
+                for (int j = 0; j < g.getNbColonnes(); j++) {
+                    Coup c = new Coup(i, j);
+                    if (g.estJouable(c)) {
+                        joueur = g.getJoueurCourant();
+                        g.jouer(c);
+                        //System.out.println("Exploration du coup" + c);
+                        Boolean resultat = exploration(g);
                         g.dejouer();
+                        if (joueur == g.getJoueur2()) {
+                            r = r || resultat;
+                            if (resultat) {
+                                coups.put(g.clone(), c);
+                            }
+                        } else if (joueur == g.getJoueur1()) {
+                            r = r && resultat;
+                        }
                     }
                 }
             }
-            return true;
+            vainqueur.put(g.clone(), r);
+            return r;
         }
     }
 

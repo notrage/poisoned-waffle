@@ -62,6 +62,11 @@ public class Joueur {
         return that.getNum() == getNum();
     }
 
+    @Override 
+    public int hashCode(){
+        return getNum();
+    }
+
     public String pourSauvegarde() {
         return "{" + getNum() + "," + getNum() + "}";
     }
