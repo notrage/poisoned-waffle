@@ -14,17 +14,17 @@ public class InterfaceGraphique implements Runnable {
     public final int MENU = 0;
     public final int JEU = 1;
     public final int QUIT = -1;
-    private Gaufre modele;
+    private ModeGraphique modele;
     private EcouteurMenu ecouteurMenu = new EcouteurMenu(this);
     private int etat;
     private JFrame fenetre;
 
-    InterfaceGraphique(Gaufre m) {
+    InterfaceGraphique(ModeGraphique mg) {
         etat = MENU;
-        modele = m;
+        modele = mg;
     }
 
-    public static InterfaceGraphique demarrer(Gaufre m) {
+    public static InterfaceGraphique demarrer(ModeGraphique m) {
         InterfaceGraphique vue = new InterfaceGraphique(m);
         SwingUtilities.invokeLater(vue);
         return vue;
@@ -76,7 +76,7 @@ public class InterfaceGraphique implements Runnable {
         c = new GridBagConstraints();
         c.weightx = 0.5;
         c.weighty = 0.5;
-        c.ipady = c.fill = GridBagConstraints.BOTH; // Allow component to grow in both directions
+        c.ipady = c.fill = GridBagConstraints.BOTH;
         c.gridy = 0;
         c.gridx = 3;
         pane.add(texte, c);
@@ -86,7 +86,7 @@ public class InterfaceGraphique implements Runnable {
         c = new GridBagConstraints();
         c.weightx = 1.0;
         c.weighty = 0.1;
-        c.fill = GridBagConstraints.BOTH; // Allow component to grow in both directions
+        c.fill = GridBagConstraints.BOTH;
         c.gridy = 1;
         c.gridx = 3;
         bouton.setActionCommand("Jeu1J");
@@ -99,7 +99,7 @@ public class InterfaceGraphique implements Runnable {
         c.gridwidth = 4;
         c.weightx = 1.0;
         c.weighty = 0.1;
-        c.fill = GridBagConstraints.BOTH; // Allow component to grow in both directions
+        c.fill = GridBagConstraints.BOTH;
         c.gridy = 2;
         c.gridx = 0;
         pane.add(bouton, c);
@@ -110,7 +110,7 @@ public class InterfaceGraphique implements Runnable {
         c.gridwidth = 4;
         c.weightx = 1.0;
         c.weighty = 0.1;
-        c.fill = GridBagConstraints.BOTH; // Allow component to grow in both directions
+        c.fill = GridBagConstraints.BOTH;
         c.gridy = 3;
         c.gridx = 0;
         bouton.addActionListener(ecouteurMenu);
@@ -154,6 +154,7 @@ public class InterfaceGraphique implements Runnable {
         c.gridy = 0;
         c.gridx = 0;
         pane.add(texte, c);
+        modele.reset();
 
         return pane;
     }
@@ -162,4 +163,16 @@ public class InterfaceGraphique implements Runnable {
         etat = newEtat;
         metAJourFenetre();
     }
+
+    public ModeGraphique getMG() {
+        return modele;
+    }
+
+    public static void main(String[] args) {
+        Gaufre g = new Gaufre(10, 10);
+        ModeGraphique mg = new ModeGraphique(g);
+        InterfaceGraphique.demarrer(mg);
+    }
+
+    
 }
