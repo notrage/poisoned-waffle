@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 
 import Gaufre.Vue.InterfaceGraphique;
 
+import Gaufre.Modele.IAcoupGagnant;
+
 public class EcouteurMenu implements ActionListener {
     private InterfaceGraphique vue;
 
@@ -17,6 +19,12 @@ public class EcouteurMenu implements ActionListener {
         switch (evt.getActionCommand()) {
             case "Jeu1J":
                 vue.setEtat(vue.JEU);
+                vue.getMG().setNbJoueurs(1);
+                vue.getMG().setIA(new IAcoupGagnant());
+                break;
+            case "Jeu2J":
+                vue.setEtat(vue.JEU);
+                vue.getMG().setNbJoueurs(2);
                 break;
             case "Quitter":
                 System.exit(0);

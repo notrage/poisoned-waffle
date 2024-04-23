@@ -24,7 +24,7 @@ public class IAcoupGagnant implements IA {
             int x = generateur.nextInt() % gaufre.getNbLignes();
             int y = generateur.nextInt() % gaufre.getNbColonnes();
             c = new Coup(x, y);
-            while (!gaufre.estJouable(c)) {
+            while ((x == 0 && y == 0) || !gaufre.estJouable(c)) {
                 x = generateur.nextInt() % gaufre.getNbLignes();
                 y = generateur.nextInt() % gaufre.getNbColonnes();
                 c = new Coup(x, y);
