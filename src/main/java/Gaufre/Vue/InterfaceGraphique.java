@@ -16,6 +16,7 @@ import java.io.InputStream;
 
 import Gaufre.Modele.Gaufre;
 import Gaufre.Controleur.EcouteurMenu;
+import Gaufre.Configuration.Config;
 import Gaufre.Configuration.ResourceLoader;
 
 public class InterfaceGraphique implements Runnable {
@@ -60,21 +61,20 @@ public class InterfaceGraphique implements Runnable {
     }
 
     private Image lireImage(String nom) {
-        InputStream in = null;
+        String imgPath = "images/" + nom + ".png";
+        InputStream in;
         try {
-            in = new FileInputStream("src/main/resources/images/" + nom + ".png");
-        } catch (FileNotFoundException e) {
-            System.err.println("ERREUR: impossible de trouver l'image " + nom + ".png");
-            return null;
-        }
-        try {
-            // Chargement d'une image utilisable dans Swing
+            in = ResourceLoader.getResourceAsStream(imgPath);
             return ImageIO.read(in);
+        } catch (FileNotFoundException e) {
+            System.err.println("Erreur: fichier " + imgPath + " introuvable");
+        } catch (NullPointerException e) {
+            System.err.println("Erreur: ressource " + imgPath + " introuvable");
         } catch (Exception e) {
             System.err.println("ERREUR: impossible de charger l'image " + nom);
-            return null;
         }
-
+        // If loading failed
+        return null;
     }
 
     public static InterfaceGraphique demarrer(ModeGraphique m) {
