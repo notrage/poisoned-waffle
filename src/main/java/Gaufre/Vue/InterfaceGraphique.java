@@ -2,6 +2,10 @@ package Gaufre.Vue;
 
 import java.awt.*;
 import java.awt.event.WindowEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.*;
 
@@ -16,14 +20,27 @@ public class InterfaceGraphique implements Runnable {
     private EcouteurMenu ecouteurMenu = new EcouteurMenu(this);
     private int etat;
     private JFrame fenetre;
+    private GraphicsEnvironment ge;
 
     InterfaceGraphique(ModeGraphique mg) {
         etat = MENU;
         modele = mg;
+        try {
+            ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            File fontFile = new File("src/main/resources/fonts/DEADLY_POISON_II.ttf");
+            Font titleFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+            ge.registerFont(titleFont);
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        }
     }
 
     public static InterfaceGraphique demarrer(ModeGraphique m) {
+        System.setProperty("sun.java2d.noddraw", Boolean.TRUE.toString());
         InterfaceGraphique vue = new InterfaceGraphique(m);
+        // Get graphical environment
+        // JFrame.setDefaultLookAndFeelDecorated(true); // Permet de mieux resize mais
+        // déplacer la fenêtre devient buggé
         SwingUtilities.invokeLater(vue);
         return vue;
     }
@@ -42,10 +59,12 @@ public class InterfaceGraphique implements Runnable {
         Container panel;
         switch (etat) {
             case MENU:
+                fenetre.getContentPane().removeAll();
                 panel = creerMenu();
                 break;
 
             case JEU:
+                fenetre.getContentPane().removeAll();
                 panel = creerJeu();
                 break;
 
@@ -61,78 +80,80 @@ public class InterfaceGraphique implements Runnable {
     }
 
     private Container creerMenu() {
-        Container pane = new Container();
-        JButton bouton;
-        JLabel texte;
-        GridBagConstraints c;
 
-        pane.setLayout(new GridBagLayout());
+        // Main container using BorderLayout
+        JPanel pane = new JPanel(new BorderLayout());
         pane.setMinimumSize(new Dimension(1000, 800));
+        pane.setBackground(new Color(255, 219, 77));
+        pane.setOpaque(true);
 
-        // Titre
-        texte = new JLabel("GAUFRE");
-        c = new GridBagConstraints();
-        c.weightx = 0.5;
-        c.weighty = 0.5;
-        c.ipady = c.fill = GridBagConstraints.BOTH;
-        c.gridy = 0;
-        c.gridx = 3;
-        pane.add(texte, c);
+        // Title section
+        JLabel title = new JLabel("GAUFRE", SwingConstants.CENTER);
+        title.setForeground(new Color(0, 128, 0));
+        title.setFont(new Font("DEADLY POISON II", Font.BOLD, 100));
+        fenetre.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                // Calculate font size based on window width
+                int newFontSize = Math.max(50, fenetre.getHeight() / 5);
+                title.setFont(new Font("DEADLY POISON II", Font.BOLD, newFontSize));
+            }
+        });
 
-        // 1 joueur (vs ordinateur)
-        bouton = new JButton("1 joueur");
-        c = new GridBagConstraints();
-        c.weightx = 1.0;
-        c.weighty = 0.1;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridy = 1;
-        c.gridx = 3;
-        bouton.setActionCommand("Jeu1J");
-        bouton.addActionListener(ecouteurMenu);
-        pane.add(bouton, c);
+        // Add title to the top of the BorderLayout
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
+        titlePanel.setOpaque(false);
+        titlePanel.add(Box.createVerticalGlue());
+        titlePanel.add(title);
+        titlePanel.add(Box.createVerticalGlue());
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // 2 joueurs (vs humain)
-        bouton = new JButton("2 joueurs");
-        c = new GridBagConstraints();
-        c.gridwidth = 4;
-        c.weightx = 1.0;
-        c.weighty = 0.1;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridy = 2;
-        c.gridx = 0;
-        pane.add(bouton, c);
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Quitter
-        bouton = new JButton("Quitter");
-        c = new GridBagConstraints();
-        c.gridwidth = 4;
-        c.weightx = 1.0;
-        c.weighty = 0.1;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridy = 3;
-        c.gridx = 0;
-        bouton.addActionListener(ecouteurMenu);
-        pane.add(bouton, c);
+        // Add titlePanel to the top of the BorderLayout
+        pane.add(titlePanel, BorderLayout.PAGE_START);
 
-        // Volume
-        bouton = new JButton("VOLUME");
-        c = new GridBagConstraints();
-        c.weighty = 1.0;
-        c.anchor = GridBagConstraints.PAGE_END;
-        c.insets = new Insets(10, 0, 0, 0);
-        c.gridy = 4;
-        c.gridx = 0;
-        pane.add(bouton, c);
+        // Middle section with vertically stacked buttons
+        JPanel middlePanel = new JPanel();
+        middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+        middlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        middlePanel.setOpaque(false);
 
-        // Version
-        texte = new JLabel(getClass().getPackage().getImplementationVersion());
-        c = new GridBagConstraints();
-        c.weighty = 1.0;
-        c.anchor = GridBagConstraints.LAST_LINE_END;
-        c.gridwidth = 4;
-        c.gridy = 4;
-        c.gridx = 3;
-        pane.add(texte, c);
+        JButton button1J = new JButton("1 joueur");
+        button1J.setActionCommand("Jeu1J");
+        button1J.addActionListener(ecouteurMenu);
+        button1J.setAlignmentX(Component.CENTER_ALIGNMENT);
+        middlePanel.add(Box.createVerticalGlue());
+        middlePanel.add(button1J);
+
+        JButton button2J = new JButton("2 joueurs");
+        button2J.addActionListener(ecouteurMenu);
+        button2J.setAlignmentX(Component.CENTER_ALIGNMENT);
+        middlePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        middlePanel.add(button2J);
+        middlePanel.add(Box.createVerticalGlue());
+
+        pane.add(middlePanel, BorderLayout.CENTER);
+
+        // Bottom section with horizontally stacked buttons and text
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.LINE_AXIS));
+        bottomPanel.setOpaque(false);
+
+        JPanel bottomLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        bottomLeft.setOpaque(false);
+        JButton volumeButton = new JButton("VOLUME");
+        bottomLeft.add(volumeButton);
+        bottomPanel.add(bottomLeft);
+
+        JPanel bottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottomRight.setOpaque(false);
+        JLabel versionLabel = new JLabel(getClass().getPackage().getImplementationVersion());
+        bottomRight.add(versionLabel);
+        bottomPanel.add(bottomRight);
+
+        pane.add(bottomPanel, BorderLayout.PAGE_END);
 
         return pane;
     }
