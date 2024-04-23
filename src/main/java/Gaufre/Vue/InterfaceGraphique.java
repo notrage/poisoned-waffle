@@ -4,19 +4,16 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.io.File;
 import java.io.IOException;
 
 import javax.swing.*;
 import javax.imageio.ImageIO;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import Gaufre.Modele.Gaufre;
 import Gaufre.Controleur.EcouteurMenu;
-import Gaufre.Configuration.Config;
 import Gaufre.Configuration.ResourceLoader;
 
 public class InterfaceGraphique implements Runnable {

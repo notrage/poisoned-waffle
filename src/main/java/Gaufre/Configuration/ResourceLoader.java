@@ -15,6 +15,7 @@ public class ResourceLoader {
             }
         } else {
             resourceStream = new FileInputStream(relativePath);
+            // Jsp pk c'est flag comme dead code
             if (resourceStream == null) {
                 throw new FileNotFoundException("File not found: " + relativePath);
             }

@@ -3,8 +3,6 @@ package Gaufre.Vue;
 import Gaufre.Modele.Gaufre;
 import Gaufre.Modele.Coup;
 import Gaufre.Modele.IA;
-import Gaufre.Modele.IAcoupGagnant;
-import Gaufre.Modele.IAaleatoire;
 import Gaufre.Modele.IAexploration;
 
 import java.util.Scanner;
