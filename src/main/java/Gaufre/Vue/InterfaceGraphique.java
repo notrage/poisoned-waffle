@@ -16,6 +16,7 @@ import java.io.InputStream;
 
 import Gaufre.Modele.Gaufre;
 import Gaufre.Controleur.EcouteurMenu;
+import Gaufre.Configuration.ResourceLoader;
 
 public class InterfaceGraphique implements Runnable {
     public final int MENU = 0;
@@ -35,8 +36,8 @@ public class InterfaceGraphique implements Runnable {
         modele = mg;
         try {
             ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            File fontFile = new File("src/main/resources/fonts/DEADLY_POISON_II.ttf");
-            Font titleFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+            Font titleFont = Font.createFont(Font.TRUETYPE_FONT,
+                    ResourceLoader.getResourceAsStream("fonts/DEADLY_POISON_II.ttf"));
             ge.registerFont(titleFont);
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
