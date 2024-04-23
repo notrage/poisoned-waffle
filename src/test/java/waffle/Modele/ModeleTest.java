@@ -7,7 +7,9 @@ import java.io.File;
 
 import org.junit.Test;
 
-import Gaufre.Modele.*;
+import Gaufre.Modele.Gaufre;
+import Gaufre.Modele.Coup;
+import Gaufre.Modele.Joueur;
 
 public class ModeleTest {
 
@@ -19,9 +21,7 @@ public class ModeleTest {
         Gaufre restoree = new Gaufre("test1.txt");
         estGaufreEquivalente(g, restoree);
         File test1 = new File("test1.txt");
-        if (test1.delete()) {
-            System.out.println("Deleted the file: " + test1.getName());
-        } else {
+        if (!test1.delete()) {
             System.out.println("Failed to delete the file.");
         }
 
@@ -32,9 +32,7 @@ public class ModeleTest {
         restoree = new Gaufre("test2.txt");
         estGaufreEquivalente(g, restoree);
         File test2 = new File("test2.txt");
-        if (test2.delete()) {
-            System.out.println("Deleted the file: " + test2.getName());
-        } else {
+        if (!test2.delete()) {
             System.out.println("Failed to delete the file.");
         }
 
@@ -45,9 +43,7 @@ public class ModeleTest {
         restoree = new Gaufre("test3.txt");
         estGaufreEquivalente(g, restoree);
         File test3 = new File("test3.txt");
-        if (test3.delete()) {
-            System.out.println("Deleted the file: " + test3.getName());
-        } else {
+        if (!test3.delete()) {
             System.out.println("Failed to delete the file.");
         }
 
@@ -60,9 +56,7 @@ public class ModeleTest {
         restoree = new Gaufre("test4.txt");
         estGaufreEquivalente(g, restoree);
         File test4 = new File("test4.txt");
-        if (test4.delete()) {
-            System.out.println("Deleted the file: " + test4.getName());
-        } else {
+        if (!test4.delete()) {
             System.out.println("Failed to delete the file.");
         }
     }

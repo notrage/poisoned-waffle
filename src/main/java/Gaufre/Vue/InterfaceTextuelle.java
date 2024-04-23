@@ -9,12 +9,12 @@ import Gaufre.Modele.IAexploration;
 
 import java.util.Scanner;
 
-public class ModeTextuel {
+public class InterfaceTextuelle {
     Gaufre gaufre;
     Scanner sc;
     IA ia;
 
-    public ModeTextuel(Gaufre g) {
+    public InterfaceTextuelle(Gaufre g) {
         gaufre = g;
         sc = new Scanner(System.in);
     }
@@ -104,7 +104,7 @@ public class ModeTextuel {
         while (nbJoueurs < 1 || nbJoueurs > 2) {
             nbJoueurs = sc.nextInt();
         }
-        ModeTextuel mt = new ModeTextuel(g);
+        InterfaceTextuelle mt = new InterfaceTextuelle(g);
         System.out.println("Les differentes commandes sont :\n"
                 + "- joue\n"
                 + "- affiche\n"
