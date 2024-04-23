@@ -1,0 +1,114 @@
+Entrez la taille de la gaufre 
+ Largeur : 
+Hauteur : 
+Nombre de joueurs : 
+Les differentes commandes sont :
+- joue
+- affiche
+- annule
+- refait
+- sauve
+- charge
+- scores
+- reset
+
+Exploration du coupCoup{position=0.0 0.0, ancienPlateau=[I@53d8d10a, joueur=Joueur 2 score : 0}
+Vainqueur: 1
+
+Exploration du coupCoup{position=0.0 1.0, ancienPlateau=[I@65ab7765, joueur=Joueur 2 score : 0}
+Exploration du coupCoup{position=0.0 0.0, ancienPlateau=[I@1b28cdfa, joueur=Joueur 1 score : 1}
+Vainqueur: 2
+
+Exploration du coupCoup{position=1.0 0.0, ancienPlateau=[I@eed1f14, joueur=Joueur 1 score : 1}
+Vainqueur: 1
+
+Exploration du coupCoup{position=1.0 0.0, ancienPlateau=[I@7229724f, joueur=Joueur 2 score : 1}
+Exploration du coupCoup{position=0.0 0.0, ancienPlateau=[I@4c873330, joueur=Joueur 1 score : 2}
+Vainqueur: 2
+
+Exploration du coupCoup{position=0.0 1.0, ancienPlateau=[I@119d7047, joueur=Joueur 1 score : 2}
+Vainqueur: 1
+
+Exploration du coupCoup{position=1.0 1.0, ancienPlateau=[I@776ec8df, joueur=Joueur 2 score : 2}
+Exploration du coupCoup{position=0.0 0.0, ancienPlateau=[I@4eec7777, joueur=Joueur 1 score : 3}
+Vainqueur: 2
+
+Exploration du coupCoup{position=0.0 1.0, ancienPlateau=[I@3b07d329, joueur=Joueur 1 score : 3}
+Exploration du coupCoup{position=0.0 0.0, ancienPlateau=[I@41629346, joueur=Joueur 2 score : 3}
+Vainqueur: 1
+
+Exploration du coupCoup{position=1.0 0.0, ancienPlateau=[I@404b9385, joueur=Joueur 2 score : 3}
+Vainqueur: 2
+
+Verification hashcode
+AJOUTGaufre{
+ joueurs= 
+Joueur 1 score : 4 
+Joueur 2 score : 4
+joueurCourant= Joueur 2 score : 4
+plateau= 
+2 2
+1 1 
+historique= faits{ Coup{position=1.0 1.0, ancienPlateau=[I@776ec8df, joueur=Joueur 2 score : 4}
+Coup{position=0.0 1.0, ancienPlateau=[I@3b07d329, joueur=Joueur 1 score : 4}
+defaits= Coup{position=1.0 0.0, ancienPlateau=[I@404b9385, joueur=Joueur 2 score : 4}
+
+
+Coup{position=1.0 0.0, ancienPlateau=[I@404b9385, joueur=Joueur 2 score : 4}
+
+
+Exploration du coupCoup{position=1.0 0.0, ancienPlateau=[I@682a0b20, joueur=Joueur 1 score : 4}
+Exploration du coupCoup{position=0.0 0.0, ancienPlateau=[I@3d075dc0, joueur=Joueur 2 score : 4}
+Vainqueur: 1
+
+Exploration du coupCoup{position=0.0 1.0, ancienPlateau=[I@214c265e, joueur=Joueur 2 score : 4}
+Vainqueur: 2
+
+Verification hashcode
+AJOUTGaufre{
+ joueurs= 
+Joueur 1 score : 5 
+Joueur 2 score : 5
+joueurCourant= Joueur 2 score : 5
+plateau= 
+2 2
+2 0 
+historique= faits{ Coup{position=1.0 1.0, ancienPlateau=[I@776ec8df, joueur=Joueur 2 score : 5}
+Coup{position=1.0 0.0, ancienPlateau=[I@682a0b20, joueur=Joueur 1 score : 5}
+defaits= Coup{position=0.0 1.0, ancienPlateau=[I@214c265e, joueur=Joueur 2 score : 5}
+
+
+Coup{position=0.0 1.0, ancienPlateau=[I@214c265e, joueur=Joueur 2 score : 5}
+
+
+Verification hashcode
+AJOUTGaufre{
+ joueurs= 
+Joueur 1 score : 5 
+Joueur 2 score : 5
+joueurCourant= Joueur 2 score : 5
+plateau= 
+2 2
+2 2 
+historique= faits{ defaits= Coup{position=0.0 1.0, ancienPlateau=[I@214c265e, joueur=Joueur 2 score : 5}
+Coup{position=1.0 0.0, ancienPlateau=[I@682a0b20, joueur=Joueur 1 score : 5}
+Coup{position=1.0 1.0, ancienPlateau=[I@776ec8df, joueur=Joueur 2 score : 5}
+
+
+Coup{position=1.0 1.0, ancienPlateau=[I@776ec8df, joueur=Joueur 2 score : 5}
+
+
+Victoire trouvée !
+L'IA commence !
+Verification hashcode
+Gaufre{
+ joueurs= 
+Joueur 1 score : 0 
+Joueur 2 score : 0
+joueurCourant= Joueur 2 score : 0
+plateau= 
+2 2
+2 2 
+historique= faits{ defaits= 
+ false
+Verification hashcode

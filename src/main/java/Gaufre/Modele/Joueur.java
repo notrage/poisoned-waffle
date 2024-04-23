@@ -10,8 +10,13 @@ public class Joueur {
         setScore(0);
     }
 
-    //Getters
-    
+    public Joueur(String sauvegarde) {
+        String parties[] = sauvegarde.substring(1, sauvegarde.length() - 1).split(",");
+        setNum(Integer.parseInt(parties[0]));
+        setScore(Integer.parseInt(parties[1]));
+    }
+
+    // Getters
     public int getNum() {
         return this.num;
     }
@@ -20,7 +25,7 @@ public class Joueur {
         return this.score;
     }
 
-    //Setters
+    // Setters
     public void setScore(int score) {
         this.score = score;
     }
@@ -29,12 +34,11 @@ public class Joueur {
         this.num = num;
     }
 
-    //Autres méthodes
+    // Autres méthodes
 
     public void incrementScore() {
         this.score++;
     }
-
 
     @Override
     public String toString() {
@@ -46,5 +50,24 @@ public class Joueur {
         j.setScore(this.getScore());
         return j;
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Joueur that = (Joueur) o;
+        return that.getNum() == getNum();
+    }
+
+    @Override 
+    public int hashCode(){
+        return getNum();
+    }
+
+    public String pourSauvegarde() {
+        return "{" + getNum() + "," + getNum() + "}";
+    }
 }
