@@ -28,8 +28,8 @@ public class ModeGraphique {
         InterfaceGraphique.demarrer(this);
     }
 
-    public void jouer(int x, int y) {
-        Coup coup = new Coup(x, y);
+    public boolean jouer(int l, int c) {
+        Coup coup = new Coup(l, c);
         if (gaufre.jouer(coup)) {
             if (nbJoueurs == 1) {
                 try { // On attend un peu avant que l'IA joue
@@ -40,7 +40,9 @@ public class ModeGraphique {
                 Coup coupIA = ia.coupSuivant();
                 gaufre.jouer(coupIA);
             }
+            return true;
         }
+        return false;
     }
 
 

@@ -4,6 +4,11 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 
 import javax.swing.*;
+import javax.imageio.ImageIO;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import Gaufre.Modele.Gaufre;
 import Gaufre.Controleur.EcouteurMenu;
@@ -12,15 +17,51 @@ public class InterfaceGraphique implements Runnable {
     public final int MENU = 0;
     public final int JEU = 1;
     public final int QUIT = -1;
+    private Image gaufreNE, gaufreSE, gaufreNO, gaufreSO, gaufreN, gaufreS, gaufreE, gaufreO, 
+                  gaufreMilieu, poison, miettes1, miettes2, miettes3, miettes4, iconeGaufre;
     private ModeGraphique modele;
     private EcouteurMenu ecouteurMenu = new EcouteurMenu(this);
     private int etat;
     private JFrame fenetre;
+    private Container plateau; // CONTIENT LE PLATEAU OU SE TROUVE LA GAUFRE
 
     InterfaceGraphique(ModeGraphique mg) {
         etat = MENU;
         modele = mg;
-    }
+        gaufreNO = lireImage("gaufreNO");
+        gaufreN = lireImage("gaufreN");
+        gaufreNE = lireImage("gaufreNE");
+        gaufreO = lireImage("gaufreO");
+        gaufreMilieu = lireImage("gaufreMilieu");
+        gaufreE = lireImage("gaufreE");
+        gaufreSO = lireImage("gaufreSO");
+        gaufreS = lireImage("gaufreS");
+        gaufreSE = lireImage("gaufreSE");
+        poison = lireImage("poison");
+        miettes1 = lireImage("miettes1");
+        miettes2 = lireImage("miettes2");
+        miettes3 = lireImage("miettes3");
+        miettes4 = lireImage("miettes4");
+        iconeGaufre = lireImage("iconeGaufre");
+   }
+
+   private Image lireImage(String nom) {
+       InputStream in = null;
+       try {
+       	in = new FileInputStream("src/main/resources/images/" + nom + ".png");
+       } catch (FileNotFoundException e) {
+       	System.err.println("ERREUR: impossible de trouver l'image " + nom + ".png");
+           return null;
+       }
+       try {
+       	// Chargement d'une image utilisable dans Swing 
+       	return ImageIO.read(in);
+       } catch (Exception e) {
+           System.err.println("ERREUR: impossible de charger l'image " + nom);
+           return null;
+       }
+    
+   }
 
     public static InterfaceGraphique demarrer(ModeGraphique m) {
         InterfaceGraphique vue = new InterfaceGraphique(m);
@@ -100,6 +141,8 @@ public class InterfaceGraphique implements Runnable {
         c.fill = GridBagConstraints.BOTH;
         c.gridy = 2;
         c.gridx = 0;
+        bouton.setActionCommand("Jeu2J");
+        bouton.addActionListener(ecouteurMenu);
         pane.add(bouton, c);
 
         // Quitter
@@ -152,9 +195,18 @@ public class InterfaceGraphique implements Runnable {
         c.gridy = 0;
         c.gridx = 0;
         pane.add(texte, c);
+        this.plateau = new Container();
+        this.plateau.setLayout(new GridLayout(modele.getGaufre().getNbLignes(), modele.getGaufre().getNbColonnes()));
+        pane.add(plateau);
         modele.reset();
+        afficherGaufre();
 
         return pane;
+    }
+
+    public void afficherGaufre() {
+        
+        //TODO
     }
 
     public void setEtat(int newEtat) {
@@ -162,8 +214,33 @@ public class InterfaceGraphique implements Runnable {
         metAJourFenetre();
     }
 
+    
+    public int getEtat() {
+        return etat;
+    }
+
     public ModeGraphique getMG() {
         return modele;
+    }
+
+    public int getTaillePlateauX() {
+        return plateau.getWidth();
+    }
+    
+    public int getTaillePlateauY() {
+        return plateau.getHeight();
+    }
+
+    public int getTailleCelluleX() {
+        return plateau.getWidth() / modele.getGaufre().getNbColonnes();
+    }
+
+    public int getTailleCelluleY() {
+        return plateau.getHeight() / modele.getGaufre().getNbLignes();
+    }
+
+    public Graphics2D getGraphics() {
+        return (Graphics2D) plateau.getGraphics();
     }
 
     public static void main(String[] args) {
