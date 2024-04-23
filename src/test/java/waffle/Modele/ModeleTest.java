@@ -3,26 +3,40 @@ package waffle.Modele;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+
 import org.junit.Test;
 
 import Gaufre.Modele.*;
 
 public class ModeleTest {
- 
+
     @Test
     public void sauvegardeRestaureGaufreTest() throws Exception {
         // Avec une gaufre simplement initialisée
-        Gaufre g = new Gaufre(3,4);
+        Gaufre g = new Gaufre(3, 4);
         g.sauvegarder("test1.txt");
         Gaufre restoree = new Gaufre("test1.txt");
         estGaufreEquivalente(g, restoree);
-        
+        File test1 = new File("test1.txt");
+        if (test1.delete()) {
+            System.out.println("Deleted the file: " + test1.getName());
+        } else {
+            System.out.println("Failed to delete the file.");
+        }
+
         // Avec une gaufre avec des coups joués
         g.jouer(new Coup(2, 2));
         g.jouer(new Coup(1, 2));
         g.sauvegarder("test2.txt");
         restoree = new Gaufre("test2.txt");
         estGaufreEquivalente(g, restoree);
+        File test2 = new File("test2.txt");
+        if (test2.delete()) {
+            System.out.println("Deleted the file: " + test2.getName());
+        } else {
+            System.out.println("Failed to delete the file.");
+        }
 
         // Avec une gaufre avec des coups déjoués
         g.dejouer();
@@ -30,6 +44,12 @@ public class ModeleTest {
         g.sauvegarder("test3.txt");
         restoree = new Gaufre("test3.txt");
         estGaufreEquivalente(g, restoree);
+        File test3 = new File("test3.txt");
+        if (test3.delete()) {
+            System.out.println("Deleted the file: " + test3.getName());
+        } else {
+            System.out.println("Failed to delete the file.");
+        }
 
         // Avec une gaufre avec des coups joués et déjoués
         g.reinitialiser();
@@ -39,9 +59,15 @@ public class ModeleTest {
         g.sauvegarder("test4.txt");
         restoree = new Gaufre("test4.txt");
         estGaufreEquivalente(g, restoree);
+        File test4 = new File("test4.txt");
+        if (test4.delete()) {
+            System.out.println("Deleted the file: " + test4.getName());
+        } else {
+            System.out.println("Failed to delete the file.");
+        }
     }
 
-    @Test 
+    @Test
     public void copieGaufreTest() {
         // Copie de base
         Gaufre g = new Gaufre(3, 3);
@@ -87,40 +113,40 @@ public class ModeleTest {
         Gaufre g = new Gaufre(3, 3);
         Joueur jcourant = g.getJoueurCourant();
         joueDejoue(g, new Coup(2, 2));
-        assert(g.getJoueurCourant() == jcourant);
+        assert (g.getJoueurCourant() == jcourant);
         assertTrue(g.jouer(new Coup(2, 2)));
         jcourant = g.getJoueurCourant();
         joueDejoue(g, new Coup(0, 1));
-        assert(g.getJoueurCourant() == jcourant);
+        assert (g.getJoueurCourant() == jcourant);
         joueDejoue(g, new Coup(1, 0));
-        assert(g.getJoueurCourant() == jcourant);
+        assert (g.getJoueurCourant() == jcourant);
         joueDejoue(g, new Coup(0, 0));
         assertTrue(g.dejouer());
         g.jouer(new Coup(0, 1));
         jcourant = g.getJoueurCourant();
         dejoueRejoue(g);
-        assert(g.getJoueurCourant() == jcourant);
+        assert (g.getJoueurCourant() == jcourant);
         assertTrue(g.dejouer());
         assertFalse(g.dejouer());
         assertTrue(g.estRejouable());
         jcourant = g.getJoueurCourant();
         g.jouer(new Coup(0, 1));
-        assert(g.getJoueurCourant() != jcourant);
+        assert (g.getJoueurCourant() != jcourant);
         assertFalse(g.estRejouable());
     }
 
-    @Test 
+    @Test
     public void testFinDePartie() {
         // Un test de base
         Gaufre g = new Gaufre(3, 3);
         assertTrue(g.estFinie() == null);
-        g.jouer(new Coup(0,1));
+        g.jouer(new Coup(0, 1));
         assertTrue(g.estFinie() == null);
-        g.jouer(new Coup(2,0));
+        g.jouer(new Coup(2, 0));
         assertTrue(g.estFinie() == null);
-        g.jouer(new Coup(1,0));
+        g.jouer(new Coup(1, 0));
         assertTrue(g.estFinie() != null);
-        
+
         // Cas où l'on joue un coup sur la case empoisonée
         g.reinitialiser();
         assertTrue(g.estFinie() == null);
@@ -176,8 +202,8 @@ public class ModeleTest {
             assertTrue(copie.getJoueurCourant() == copie.getJoueur1());
         else
             assertTrue(copie.getJoueurCourant() == copie.getJoueur2());
-        for (int i = 0; i < g.getNbLignes(); i++){
-            for (int j = 0; j < g.getNbColonnes(); j++){
+        for (int i = 0; i < g.getNbLignes(); i++) {
+            for (int j = 0; j < g.getNbColonnes(); j++) {
                 assertTrue(g.getCase(i, j) == copie.getCase(i, j));
             }
         }
