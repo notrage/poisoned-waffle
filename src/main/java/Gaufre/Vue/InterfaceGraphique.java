@@ -6,8 +6,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.*;
 
 import Gaufre.Modele.Gaufre;
-import Gaufre.Controleur.AdaptateurClavier;
-import Gaufre.Controleur.EcouteurJeu;
 import Gaufre.Controleur.EcouteurMenu;
 
 public class InterfaceGraphique implements Runnable {
@@ -174,5 +172,4 @@ public class InterfaceGraphique implements Runnable {
         InterfaceGraphique.demarrer(mg);
     }
 
-    
 }

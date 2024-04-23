@@ -2,13 +2,13 @@ package Gaufre;
 
 import Gaufre.Modele.Gaufre;
 import Gaufre.Vue.InterfaceGraphique;
+import Gaufre.Vue.ModeGraphique;
 
 public class Jeu {
-    Gaufre model;
 
     Jeu() {
-        model = new Gaufre(5, 5);
-        InterfaceGraphique vue = InterfaceGraphique.demarrer(model);
+        ModeGraphique mode = new ModeGraphique(new Gaufre(5, 5));
+        InterfaceGraphique vue = InterfaceGraphique.demarrer(mode);
     }
 
     public static void main(String[] args) {
