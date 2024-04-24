@@ -14,6 +14,7 @@ public class ResourceLoader {
             resourceStream = ResourceLoader.class.getClassLoader().getResourceAsStream(relativePath);
             if (resourceStream == null) {
                 System.err.println("Image " + relativePath + " not found.");
+                Config.debug("Attempting to use placeholder for image...");
                 resourceStream = ResourceLoader.class.getClassLoader().getResourceAsStream("images/notFound.png");
                 if (resourceStream == null) {
                     System.err.println("While handling missing resource " + relativePath + " new error occured :");
