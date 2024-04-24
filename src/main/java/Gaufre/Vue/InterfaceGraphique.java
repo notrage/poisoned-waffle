@@ -268,7 +268,7 @@ public class InterfaceGraphique implements Runnable {
                     (int) (0.15 * fenetre.getHeight()),
                     Image.SCALE_SMOOTH);
             ImageIcon offIcon = new ImageIcon(scaledImg);
-            changeButtonIcon(fenetre, offIcon);
+            changeButtonIcon(fenetre, offIcon, "volume");
         } else {
             bgMusique.play();
             BufferedImage volImg = ResourceLoader.lireImage("volume");
@@ -277,21 +277,21 @@ public class InterfaceGraphique implements Runnable {
                     (int) (0.15 * fenetre.getHeight()),
                     Image.SCALE_SMOOTH);
             ImageIcon onIcon = new ImageIcon(scaledImg);
-            changeButtonIcon(fenetre, onIcon);
+            changeButtonIcon(fenetre, onIcon, "volume");
         }
     }
 
-    private void changeButtonIcon(Component component, ImageIcon newIcon) {
+    private void changeButtonIcon(Component component, ImageIcon newIcon, String actionCmd) {
         if (component instanceof JButton) {
             JButton button = (JButton) component;
-            if (button.getActionCommand().equals("volume")) {
+            if (button.getActionCommand().equals(actionCmd)) {
                 button.setIcon(newIcon);
             }
         }
 
         if (component instanceof Container) {
             for (Component child : ((Container) component).getComponents()) {
-                changeButtonIcon(child, newIcon);
+                changeButtonIcon(child, newIcon, actionCmd);
             }
         }
     }
