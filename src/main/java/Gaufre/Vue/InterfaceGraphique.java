@@ -2,25 +2,26 @@ package Gaufre.Vue;
 
 import java.awt.*;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
 
 import javax.swing.*;
-import javax.imageio.ImageIO;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import javax.swing.Timer;
 
-import Gaufre.Modele.Gaufre;
 import Gaufre.Controleur.EcouteurMenu;
 import Gaufre.Configuration.ResourceLoader;
+import Gaufre.Configuration.Config;
 
 public class InterfaceGraphique implements Runnable {
     public final int MENU = 0;
     public final int JEU = 1;
     public final int QUIT = -1;
-    private Image gaufreNE, gaufreSE, gaufreNO, gaufreSO, gaufreN, gaufreS, gaufreE, gaufreO,
+    private BufferedImage gaufreNE, gaufreSE, gaufreNO, gaufreSO, gaufreN, gaufreS, gaufreE, gaufreO,
             gaufreMilieu, poison, miettes1, miettes2, miettes3, miettes4, iconeGaufre;
     private ModeGraphique modele;
     private EcouteurMenu ecouteurMenu = new EcouteurMenu(this);
@@ -40,41 +41,32 @@ public class InterfaceGraphique implements Runnable {
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
         }
-        gaufreNO = lireImage("gaufreNO");
-        gaufreN = lireImage("gaufreN");
-        gaufreNE = lireImage("gaufreNE");
-        gaufreO = lireImage("gaufreO");
-        gaufreMilieu = lireImage("gaufreMilieu");
-        gaufreE = lireImage("gaufreE");
-        gaufreSO = lireImage("gaufreSO");
-        gaufreS = lireImage("gaufreS");
-        gaufreSE = lireImage("gaufreSE");
-        poison = lireImage("poison");
-        miettes1 = lireImage("miettes1");
-        miettes2 = lireImage("miettes2");
-        miettes3 = lireImage("miettes3");
-        miettes4 = lireImage("miettes4");
-        iconeGaufre = lireImage("iconeGaufre");
-    }
-
-    private Image lireImage(String nom) {
-        String imgPath = "images/" + nom + ".png";
-        InputStream in;
-        try {
-            in = ResourceLoader.getResourceAsStream(imgPath);
-            return ImageIO.read(in);
-        } catch (FileNotFoundException e) {
-            System.err.println("Erreur: fichier " + imgPath + " introuvable");
-        } catch (NullPointerException e) {
-            System.err.println("Erreur: ressource " + imgPath + " introuvable");
-        } catch (Exception e) {
-            System.err.println("ERREUR: impossible de charger l'image " + nom);
-        }
-        // If loading failed
-        return null;
+        gaufreNO = ResourceLoader.lireImage("gaufreNO");
+        gaufreN = ResourceLoader.lireImage("gaufreN");
+        gaufreNE = ResourceLoader.lireImage("gaufreNE");
+        gaufreO = ResourceLoader.lireImage("gaufreO");
+        gaufreMilieu = ResourceLoader.lireImage("gaufreMilieu");
+        gaufreE = ResourceLoader.lireImage("gaufreE");
+        gaufreSO = ResourceLoader.lireImage("gaufreSO");
+        gaufreS = ResourceLoader.lireImage("gaufreS");
+        gaufreSE = ResourceLoader.lireImage("gaufreSE");
+        poison = ResourceLoader.lireImage("poison");
+        miettes1 = ResourceLoader.lireImage("miettes1");
+        miettes2 = ResourceLoader.lireImage("miettes2");
+        miettes3 = ResourceLoader.lireImage("miettes3");
+        miettes4 = ResourceLoader.lireImage("miettes4");
+        iconeGaufre = ResourceLoader.lireImage("iconeGaufre");
     }
 
     public static InterfaceGraphique demarrer(ModeGraphique m) {
+        try {
+            UIManager.setLookAndFeel(
+                    UIManager.getSystemLookAndFeelClassName());
+            Config.debug("Set Look and Feel to system.");
+        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
+                | IllegalAccessException e) {
+            System.err.println("Can't set look and feel : " + e);
+        }
         System.setProperty("sun.java2d.noddraw", Boolean.TRUE.toString());
         InterfaceGraphique vue = new InterfaceGraphique(m);
         // Get graphical environment
@@ -86,7 +78,7 @@ public class InterfaceGraphique implements Runnable {
 
     public void run() {
         fenetre = new JFrame("Gauffre");
-        fenetre.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fenetre.setLayout(new GridLayout());
         fenetre.setLocationRelativeTo(null);
         metAJourFenetre();
@@ -119,55 +111,58 @@ public class InterfaceGraphique implements Runnable {
     }
 
     private Container creerMenu() {
+        int menuWidth = 800;
+        int menuHeight = 600;
+        // Create the background panel
+        JLayeredPane layeredPane = new JLayeredPane();
+        layeredPane.setPreferredSize(new Dimension(menuWidth, menuHeight));
+        layeredPane.setOpaque(false);
+        FondMenu fond = new FondMenu();
+        fond.setBounds(0, 0, menuWidth, menuHeight);
+        fond.setOpaque(true);
+        layeredPane.add(fond, JLayeredPane.DEFAULT_LAYER);
 
         // Main container using BorderLayout
         JPanel pane = new JPanel(new BorderLayout());
-        pane.setMinimumSize(new Dimension(1000, 800));
-        pane.setBackground(new Color(255, 219, 77));
-        pane.setOpaque(true);
+        pane.setOpaque(false);
+        pane.setBounds(0, 0, menuWidth, menuHeight);
 
         // Title section
         JLabel title = new JLabel("GAUFRE", SwingConstants.CENTER);
-        title.setForeground(new Color(0, 128, 0));
-        title.setFont(new Font("DEADLY POISON II", Font.BOLD, 100));
-        fenetre.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                // Calculate font size based on window width
-                int newFontSize = Math.max(50, fenetre.getHeight() / 5);
-                title.setFont(new Font("DEADLY POISON II", Font.BOLD, newFontSize));
-            }
-        });
+        title.setOpaque(false);
+        title.setForeground(new Color(5, 199, 79));
+        int titleFontSize = 150;
+        title.setFont(new Font("DEADLY POISON II", Font.BOLD, titleFontSize));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Add title to the top of the BorderLayout
         JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setOpaque(false);
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.add(Box.createVerticalGlue());
         titlePanel.add(title);
         titlePanel.add(Box.createVerticalGlue());
         titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Add titlePanel to the top of the BorderLayout
         pane.add(titlePanel, BorderLayout.PAGE_START);
 
         // Middle section with vertically stacked buttons
         JPanel middlePanel = new JPanel();
+        middlePanel.setOpaque(false);
         middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
         middlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        middlePanel.setOpaque(false);
 
         JButton button1J = new JButton("1 joueur");
-        button1J.setActionCommand("Jeu1J");
         button1J.addActionListener(ecouteurMenu);
+        button1J.setActionCommand("Jeu1J");
         button1J.setAlignmentX(Component.CENTER_ALIGNMENT);
         middlePanel.add(Box.createVerticalGlue());
         middlePanel.add(button1J);
 
         JButton button2J = new JButton("2 joueurs");
         button2J.addActionListener(ecouteurMenu);
+        button2J.setActionCommand("Jeu2J");
         button2J.setAlignmentX(Component.CENTER_ALIGNMENT);
         middlePanel.add(Box.createRigidArea(new Dimension(0, 10)));
         middlePanel.add(button2J);
@@ -177,24 +172,46 @@ public class InterfaceGraphique implements Runnable {
 
         // Bottom section with horizontally stacked buttons and text
         JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.LINE_AXIS));
         bottomPanel.setOpaque(false);
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.LINE_AXIS));
 
         JPanel bottomLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
         bottomLeft.setOpaque(false);
         JButton volumeButton = new JButton("VOLUME");
+        volumeButton.addActionListener(ecouteurMenu);
+        volumeButton.setActionCommand("volume");
         bottomLeft.add(volumeButton);
         bottomPanel.add(bottomLeft);
 
         JPanel bottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottomRight.setOpaque(false);
         JLabel versionLabel = new JLabel(getClass().getPackage().getImplementationVersion());
+        versionLabel.setFont(new Font("Arial", Font.PLAIN, (int) titleFontSize / 8));
+        versionLabel.setForeground(new Color(34, 84, 124));
         bottomRight.add(versionLabel);
         bottomPanel.add(bottomRight);
 
         pane.add(bottomPanel, BorderLayout.PAGE_END);
 
-        return pane;
+        layeredPane.add(pane, JLayeredPane.PALETTE_LAYER);
+
+        fenetre.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                // Calculate font size based on window width
+                int newTitleFontSize = Math.max(50, fenetre.getHeight() / 5);
+                title.setFont(new Font("DEADLY POISON II", Font.BOLD, newTitleFontSize));
+                versionLabel.setFont(new Font("Arial", Font.PLAIN, (int) newTitleFontSize / 8));
+                // Calculate new background bounds
+                layeredPane.setBounds(0, 0, fenetre.getWidth(), fenetre.getHeight());
+                fond.setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
+                pane.setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
+                layeredPane.revalidate();
+                layeredPane.repaint();
+            }
+        });
+
+        return layeredPane;
     }
 
     private Container creerJeu() {
@@ -258,11 +275,47 @@ public class InterfaceGraphique implements Runnable {
     public Graphics2D getGraphics() {
         return (Graphics2D) plateau.getGraphics();
     }
+}
 
-    public static void main(String[] args) {
-        Gaufre g = new Gaufre(10, 10);
-        ModeGraphique mg = new ModeGraphique(g);
-        InterfaceGraphique.demarrer(mg);
+class FondMenu extends JPanel {
+    private BufferedImage textureImage;
+    private int BIHeight;
+    private int BIWidth;
+    private TexturePaint texturePaint;
+    private int xOffset = 0;
+    private int yOffset = 0;
+
+    public FondMenu() {
+        textureImage = ResourceLoader.lireImage("gaufreMilieu");
+        BIHeight = textureImage.getHeight();
+        BIWidth = textureImage.getWidth();
+        texturePaint = new TexturePaint(textureImage,
+                new Rectangle(0, 0, textureImage.getWidth(), textureImage.getHeight()));
+
+        // Start the animation
+        Timer timer = new Timer(50, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Update the offsets to create the panning effect
+                xOffset = (xOffset + 1) % BIWidth;
+                yOffset = (yOffset + 1) % BIHeight;
+
+                // Trigger a repaint
+                repaint();
+                getToolkit().sync();
+            }
+        });
+        timer.start();
     }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        // Adjust the texture paint's position based on the offsets
+        g2d.translate(-xOffset, -yOffset);
+        g2d.setPaint(texturePaint);
+        g2d.fillRect(0, 0, getWidth() + BIWidth, getHeight() + BIHeight);
+    }
 }
