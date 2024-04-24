@@ -3,6 +3,8 @@ package Gaufre.Configuration;
 public class Config {
     private static boolean estJar;
 
+    static private boolean muet = true;
+
     private static final boolean debug = true;
 
     public Config() {
@@ -11,6 +13,14 @@ public class Config {
 
     static public boolean estJar() {
         return estJar;
+    }
+
+    static public boolean estMuet() {
+        return muet;
+    }
+
+    static public void toggleSon() {
+        muet = !muet;
     }
 
     public static void debug(Object... args) {
