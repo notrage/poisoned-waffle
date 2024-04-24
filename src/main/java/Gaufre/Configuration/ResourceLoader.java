@@ -1,6 +1,7 @@
 package Gaufre.Configuration;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -8,7 +9,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 public class ResourceLoader {
-    static public InputStream getResourceAsStream(String relativePath) {
+    static public BufferedInputStream getResourceAsStream(String relativePath) {
         InputStream resourceStream = null;
         if (Config.estJar()) {
             resourceStream = ResourceLoader.class.getClassLoader().getResourceAsStream(relativePath);
@@ -37,7 +38,7 @@ public class ResourceLoader {
                 }
             }
         }
-        return resourceStream;
+        return resourceStream != null ? new BufferedInputStream(resourceStream) : null;
     }
 
     static public BufferedImage lireImage(String nom) {

@@ -2,6 +2,7 @@ package Gaufre;
 
 import Gaufre.Modele.Gaufre;
 import Gaufre.Vue.InterfaceGraphique;
+import Gaufre.Vue.Musique;
 import Gaufre.Vue.ModeGraphique;
 import Gaufre.Configuration.Config;
 

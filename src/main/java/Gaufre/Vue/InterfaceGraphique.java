@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.io.DataInputStream;
 import java.io.IOException;
 
 import javax.swing.*;
@@ -23,7 +22,8 @@ public class InterfaceGraphique implements Runnable {
     private BufferedImage gaufreNE, gaufreSE, gaufreNO, gaufreSO, gaufreN, gaufreS, gaufreE, gaufreO,
             gaufreMilieu, poison, miettes1, miettes2, miettes3, miettes4, iconeGaufre;
     private ModeGraphique modele;
-    private EcouteurMenu ecouteurMenu = new EcouteurMenu(this);
+    private EcouteurMenu ecouteurMenu;
+    private Musique bgMusique;
     private int etat;
     private JFrame fenetre;
     private GraphicsEnvironment ge;
@@ -32,6 +32,11 @@ public class InterfaceGraphique implements Runnable {
     InterfaceGraphique(ModeGraphique mg) {
         etat = MENU;
         modele = mg;
+        ecouteurMenu = new EcouteurMenu(this);
+        bgMusique = new Musique("sons/SpaceJazz.wav");
+        if (!Config.estMuet()) {
+            bgMusique.play();
+        }
         try {
             ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             Font titleFont = Font.createFont(Font.TRUETYPE_FONT,
@@ -81,6 +86,7 @@ public class InterfaceGraphique implements Runnable {
         fenetre.setLocationRelativeTo(null);
         fenetre.setSize(new Dimension(800, 600));
         metAJourFenetre();
+        fenetre.pack();
         fenetre.setVisible(true);
     }
 
@@ -129,7 +135,7 @@ public class InterfaceGraphique implements Runnable {
         // Title section
         JLabel title = new JLabel("GAUFRE", SwingConstants.CENTER);
         title.setOpaque(false);
-        title.setForeground(new Color(5, 199, 79));
+        title.setForeground(new Color(5, 158, 56));
         int titleFontSize = (int) (menuHeight / 4);
         title.setFont(new Font("DEADLY POISON II", Font.BOLD, titleFontSize));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -228,10 +234,10 @@ public class InterfaceGraphique implements Runnable {
                 title.setFont(new Font("DEADLY POISON II", Font.BOLD, newTitleFontSize));
                 versionLabel.setFont(new Font("Arial", Font.PLAIN, (int) (newTitleFontSize / 6)));
 
-                // Calculate new background bounds
                 layeredPane.setBounds(0, 0, fenetre.getWidth(), fenetre.getHeight());
                 fond.setBounds(0, 0, fenetre.getWidth(), fenetre.getHeight());
                 pane.setBounds(0, 0, fenetre.getWidth(), fenetre.getHeight());
+                bottomPanel.setPreferredSize(new Dimension(fenetre.getWidth(), (int) (fenetre.getHeight() * 0.2)));
 
                 // Change buttons sizes and margins
                 int insetSize = fenetre.getWidth() / 3;
@@ -254,7 +260,40 @@ public class InterfaceGraphique implements Runnable {
     }
 
     public void toggleSon() {
-        metAJourFenetre();
+        if (Config.estMuet()) {
+            bgMusique.stop();
+            BufferedImage volImg = ResourceLoader.lireImage("muet");
+            Image scaledImg = volImg.getScaledInstance(
+                    (int) (0.15 * fenetre.getHeight()),
+                    (int) (0.15 * fenetre.getHeight()),
+                    Image.SCALE_SMOOTH);
+            ImageIcon offIcon = new ImageIcon(scaledImg);
+            changeButtonIcon(fenetre, offIcon);
+        } else {
+            bgMusique.play();
+            BufferedImage volImg = ResourceLoader.lireImage("volume");
+            Image scaledImg = volImg.getScaledInstance(
+                    (int) (0.15 * fenetre.getHeight()),
+                    (int) (0.15 * fenetre.getHeight()),
+                    Image.SCALE_SMOOTH);
+            ImageIcon onIcon = new ImageIcon(scaledImg);
+            changeButtonIcon(fenetre, onIcon);
+        }
+    }
+
+    private void changeButtonIcon(Component component, ImageIcon newIcon) {
+        if (component instanceof JButton) {
+            JButton button = (JButton) component;
+            if (button.getActionCommand().equals("volume")) {
+                button.setIcon(newIcon);
+            }
+        }
+
+        if (component instanceof Container) {
+            for (Component child : ((Container) component).getComponents()) {
+                changeButtonIcon(child, newIcon);
+            }
+        }
     }
 
     private Container creerJeu() {
@@ -297,6 +336,14 @@ public class InterfaceGraphique implements Runnable {
 
     public ModeGraphique getMG() {
         return modele;
+    }
+
+    public Musique getMusique() {
+        return bgMusique;
+    }
+
+    public JFrame getFenetre() {
+        return fenetre;
     }
 
     public int getTaillePlateauX() {
