@@ -3,6 +3,7 @@ package Gaufre.Vue;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -197,13 +198,9 @@ public class InterfaceGraphique implements Runnable {
             volImg = ResourceLoader.lireImage("volume");
         }
         JButton volumeButton = new JButton();
-        Image scaledImg = volImg.getScaledInstance(
-                (int) (0.15 * menuHeight),
-                (int) (0.15 * menuHeight),
-                Image.SCALE_SMOOTH);
-        ImageIcon icon = new ImageIcon(scaledImg);
-        volumeButton.setIcon(icon);
-        volumeButton.setPreferredSize(new Dimension((int) (0.15 * menuHeight), (int) (0.15 * menuHeight)));
+        setButtonIcons(volumeButton, volImg);
+        // volumeButton.setPreferredSize(new Dimension((int) (0.15 * menuHeight), (int)
+        // (0.15 * menuHeight)));
         volumeButton.addActionListener(ecouteurMenu);
         volumeButton.setActionCommand("volume");
         volumeButton.setBorderPainted(false);
@@ -246,54 +243,70 @@ public class InterfaceGraphique implements Runnable {
                 middlePanel.removeAll();
                 middlePanel.add(button1J, gbc);
                 middlePanel.add(button2J, gbc);
-                volumeButton.setPreferredSize(
-                        new Dimension((int) (0.15 * fenetre.getHeight()), (int) (0.15 * fenetre.getHeight())));
-                Image scaledImg = volImg.getScaledInstance(
-                        (int) (0.15 * fenetre.getHeight()),
-                        (int) (0.15 * fenetre.getHeight()),
-                        Image.SCALE_SMOOTH);
-                ImageIcon icon = new ImageIcon(scaledImg);
-                volumeButton.setIcon(icon);
+                BufferedImage volImg;
+                if (Config.estMuet()) {
+                    volImg = ResourceLoader.lireImage("muet");
+                } else {
+                    volImg = ResourceLoader.lireImage("volume");
+                }
+                setButtonIcons(volumeButton, volImg);
             }
         });
         return layeredPane;
+    }
+
+    private void setButtonIcons(JButton b, BufferedImage img) {
+        Image scaledImg = img.getScaledInstance(
+                (int) (0.15 * fenetre.getWidth()),
+                (int) (0.15 * fenetre.getHeight()),
+                Image.SCALE_SMOOTH);
+        // Create a new BufferedImage from the scaled image
+        BufferedImage scaledBufferedImg = new BufferedImage(
+                scaledImg.getWidth(null),
+                scaledImg.getHeight(null),
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = scaledBufferedImg.createGraphics();
+        g2d.drawImage(scaledImg, 0, 0, null);
+        g2d.dispose();
+
+        RescaleOp op = new RescaleOp(0.7f, 0, null);
+        BufferedImage darkerImage = op.filter(scaledBufferedImg, null);
+        ImageIcon icon = new ImageIcon(scaledBufferedImg);
+        ImageIcon darkIcon = new ImageIcon(darkerImage);
+        b.setIcon(icon);
+        b.setRolloverIcon(darkIcon);
     }
 
     public void toggleSon() {
         if (Config.estMuet()) {
             bgMusique.stop();
             BufferedImage volImg = ResourceLoader.lireImage("muet");
-            Image scaledImg = volImg.getScaledInstance(
-                    (int) (0.15 * fenetre.getHeight()),
-                    (int) (0.15 * fenetre.getHeight()),
-                    Image.SCALE_SMOOTH);
-            ImageIcon offIcon = new ImageIcon(scaledImg);
-            changeButtonIcon(fenetre, offIcon, "volume");
+            setButtonIcons(getButtonByCmd(fenetre, "volume"), volImg);
         } else {
             bgMusique.play();
             BufferedImage volImg = ResourceLoader.lireImage("volume");
-            Image scaledImg = volImg.getScaledInstance(
-                    (int) (0.15 * fenetre.getHeight()),
-                    (int) (0.15 * fenetre.getHeight()),
-                    Image.SCALE_SMOOTH);
-            ImageIcon onIcon = new ImageIcon(scaledImg);
-            changeButtonIcon(fenetre, onIcon, "volume");
+            setButtonIcons(getButtonByCmd(fenetre, "volume"), volImg);
         }
     }
 
-    private void changeButtonIcon(Component component, ImageIcon newIcon, String actionCmd) {
+    private JButton getButtonByCmd(Component component, String actionCmd) {
         if (component instanceof JButton) {
             JButton button = (JButton) component;
             if (button.getActionCommand().equals(actionCmd)) {
-                button.setIcon(newIcon);
+                return button;
             }
         }
 
         if (component instanceof Container) {
             for (Component child : ((Container) component).getComponents()) {
-                changeButtonIcon(child, newIcon, actionCmd);
+                JButton foundButton = getButtonByCmd(child, actionCmd);
+                if (foundButton != null) {
+                    return foundButton; // Return the found button immediately
+                }
             }
         }
+
+        return null; // Return null if no button is found
     }
 
     private Container creerJeu() {
