@@ -17,55 +17,29 @@ public class EcouteurSouris extends MouseAdapter {
     }
 
     public void mouseClicked(MouseEvent e) {
-        // int x = e.getX() / taille d'une cellule (largeur)
-        // int y = e.getY() / taille d'une cellule (hauteur)
-        // if (gaufre.jouer(new Coup(x, y)));
-        // inter.repaint()
-        if (ig.getEtat() == ig.JEU) {
-            if (e.getX() < ig.getTaillePlateauX() && e.getY() < ig.getTaillePlateauY()) {
+        if (ig.getPlateau().contains(e.getX(), e.getY()) && !ig.getMG().estFini()) {
                 int c = e.getX() / ig.getTailleCelluleX();
                 int l = e.getY() / ig.getTailleCelluleY();
-                if (ig.getMG().jouer(l, c))
+                if (ig.getMG().getGaufre().jouer(new Coup(l, c))) {
                     ig.afficherGaufre();
-            }
-
+                    if (ig.getMG().estFini())
+                        ig.finPartie();
+                }
         }
+    }
+
+    public void mousePressed(MouseEvent e) {
+        return;
     }
 
     public void mouseReleased(MouseEvent e) {
-        // Repeindre le jeu en enlevant le masque vert ou rouge
-        if (ig.getEtat() == ig.JEU) {
-            if (e.getX() < ig.getTaillePlateauX() && e.getY() < ig.getTaillePlateauY()) {
-                ig.afficherGaufre();
-            }
-        }
+        return;
     }
-    
 
-
-    public void mousePressed(MouseEvent e) {
-        // Repeindre le jeu en ajoutant un masque vert ou rouge si le coup est valide
-        if (ig.getEtat() == ig.JEU) {
-            if (e.getX() < ig.getTaillePlateauX() && e.getY() < ig.getTaillePlateauY()) {
-                int c = e.getX() / ig.getTailleCelluleX();
-                int l = e.getY() / ig.getTailleCelluleY();
-                // Dessiner un masque vert ou rouge avec transparence
-                Graphics2D g2d = (Graphics2D) ig.getGraphics();
-                g2d.setColor(ig.getMG().getGaufre().estJouable(new Coup(l, c))
-                        ? new Color(0, 255, 0, 128)
-                        : new Color(255, 0, 0, 128));
-                g2d.fillRect(c * ig.getTailleCelluleX(), l * ig.getTailleCelluleY(), ig.getTailleCelluleX(),
-                        ig.getTailleCelluleY());
-            }
-        }
-    }
-    
     public void mouseExited(MouseEvent e) {
         // Repeindre le jeu en enlevant le masque vert ou rouge
-        if (ig.getEtat() == ig.JEU) {
-            if (e.getX() < ig.getTaillePlateauX() && e.getY() < ig.getTaillePlateauY()) {
-                ig.afficherGaufre();
-            }
-        }
+        Graphics2D g2d = (Graphics2D) ig.getGraphics();
+        g2d.setColor(new Color(0, 0, 0, 0));
+        g2d.fillRect(0, 0, ig.getPlateau().getWidth(), ig.getPlateau().getHeight());
     }
 }

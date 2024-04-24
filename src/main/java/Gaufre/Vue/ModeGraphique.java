@@ -5,9 +5,9 @@ import Gaufre.Modele.IA;
 import Gaufre.Modele.Coup;
 
 public class ModeGraphique {
-    Gaufre gaufre;
-    IA ia;
-    int nbJoueurs;
+    private Gaufre gaufre;
+    private IA ia;
+    private int nbJoueurs;
 
     public ModeGraphique(Gaufre g) {
         gaufre = g;
@@ -30,7 +30,8 @@ public class ModeGraphique {
 
     public boolean jouer(int l, int c) {
         Coup coup = new Coup(l, c);
-        if (gaufre.jouer(coup)) {
+        boolean res;
+        if (res = gaufre.jouer(coup)) {
             if (nbJoueurs == 1) {
                 try { // On attend un peu avant que l'IA joue
                     Thread.sleep(500);
@@ -40,9 +41,8 @@ public class ModeGraphique {
                 Coup coupIA = ia.coupSuivant();
                 gaufre.jouer(coupIA);
             }
-            return true;
         }
-        return false;
+        return res;
     }
 
 
