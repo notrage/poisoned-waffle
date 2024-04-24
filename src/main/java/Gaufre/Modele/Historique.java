@@ -12,6 +12,14 @@ public class Historique {
     }
 
     //Autres méthodes
+    public int getNbFaits() {
+        return this.faits.size();
+    }
+
+    public int getNbDefaits() {
+        return this.defaits.size();
+    }
+
     public void empileDefait(Coup c) {
         this.defaits.add(c);
     }

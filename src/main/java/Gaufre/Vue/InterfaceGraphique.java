@@ -13,7 +13,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import Gaufre.Modele.Gaufre;
+import Gaufre.Controleur.EcouteurJeu;
 import Gaufre.Controleur.EcouteurMenu;
+import Gaufre.Controleur.EcouteurSouris;
 import Gaufre.Configuration.ResourceLoader;
 
 public class InterfaceGraphique implements Runnable {
@@ -40,6 +42,7 @@ public class InterfaceGraphique implements Runnable {
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
         }
+        
         gaufreNO = lireImage("gaufreNO");
         gaufreN = lireImage("gaufreN");
         gaufreNE = lireImage("gaufreNE");
@@ -49,7 +52,7 @@ public class InterfaceGraphique implements Runnable {
         gaufreSO = lireImage("gaufreSO");
         gaufreS = lireImage("gaufreS");
         gaufreSE = lireImage("gaufreSE");
-        poison = lireImage("poison");
+        poison = lireImage("gaufrePoison");
         miettes1 = lireImage("miettes1");
         miettes2 = lireImage("miettes2");
         miettes3 = lireImage("miettes3");
@@ -128,6 +131,7 @@ public class InterfaceGraphique implements Runnable {
 
         // Title section
         JLabel title = new JLabel("GAUFRE", SwingConstants.CENTER);
+        final JLabel finalTitle = title;
         title.setForeground(new Color(0, 128, 0));
         title.setFont(new Font("DEADLY POISON II", Font.BOLD, 100));
         fenetre.addComponentListener(new ComponentAdapter() {
@@ -135,7 +139,7 @@ public class InterfaceGraphique implements Runnable {
             public void componentResized(ComponentEvent e) {
                 // Calculate font size based on window width
                 int newFontSize = Math.max(50, fenetre.getHeight() / 5);
-                title.setFont(new Font("DEADLY POISON II", Font.BOLD, newFontSize));
+                finalTitle.setFont(new Font("DEADLY POISON II", Font.BOLD, newFontSize));
             }
         });
 
@@ -151,7 +155,7 @@ public class InterfaceGraphique implements Runnable {
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Add titlePanel to the top of the BorderLayout
-        pane.add(titlePanel, BorderLayout.PAGE_START);
+        pane.add(titlePanel, BorderLayout.NORTH);
 
         // Middle section with vertically stacked buttons
         JPanel middlePanel = new JPanel();
@@ -167,6 +171,7 @@ public class InterfaceGraphique implements Runnable {
         middlePanel.add(button1J);
 
         JButton button2J = new JButton("2 joueurs");
+        button2J.setActionCommand("Jeu2J");
         button2J.addActionListener(ecouteurMenu);
         button2J.setAlignmentX(Component.CENTER_ALIGNMENT);
         middlePanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -199,31 +204,161 @@ public class InterfaceGraphique implements Runnable {
 
     private Container creerJeu() {
         Container pane = new Container();
-        JLabel texte;
-        GridBagConstraints c = new GridBagConstraints();
 
-        pane.setLayout(new GridBagLayout());
+        pane.setLayout(new BorderLayout());
 
         // Titre
-        texte = new JLabel("GAUFRE");
-        c.ipady = 40;
-        c.gridwidth = 4;
-        c.weightx = 0.5;
-        c.gridy = 0;
-        c.gridx = 0;
-        pane.add(texte, c);
+        // texte = new JLabel("GAUFRE")
+        // pane.add(texte, BorderLayout.NORTH);
+        pane.add(creerInfo(), BorderLayout.EAST);
         this.plateau = new Container();
         this.plateau.setLayout(new GridLayout(modele.getGaufre().getNbLignes(), modele.getGaufre().getNbColonnes()));
-        pane.add(plateau);
+        EcouteurSouris ecouteurSouris = new EcouteurSouris(this);
+        plateau.addMouseListener(ecouteurSouris);
+        pane.add(plateau, BorderLayout.CENTER);
+
+       
         modele.reset();
         afficherGaufre();
 
         return pane;
     }
+    
+    private Container creerInfo() {
+        Container pane = new Container();
+        ////
+        Container textes = new Container();
+        textes.setLayout(new BoxLayout(textes, BoxLayout.Y_AXIS));
+        JLabel texte0 = new JLabel();
+        JLabel texte1 = new JLabel();
+        JLabel texte2 = new JLabel();
+        JLabel texte3 = new JLabel();
+        JLabel texte4 = new JLabel();
+
+        
+        texte0.setText("");
+        texte1.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
+        texte2.setText("Scores :");
+        texte3.setText("Joueur 1 :" + modele.getGaufre().getJoueur1().getScore());
+        texte4.setText("Joueur 2 :" + modele.getGaufre().getJoueur2().getScore());
+
+        textes.add(texte1);
+        textes.add(texte0);
+        textes.add(texte2);
+        textes.add(texte3);
+        textes.add(texte4);
+        ////
+        Container boutons = new Container();
+        boutons.setLayout(new GridLayout(2,2));
+
+        JButton annuler = new JButton("Annuler");
+        annuler.setActionCommand("Annuler");
+        annuler.addActionListener(new EcouteurJeu(this));
+        JButton refaire = new JButton("Refaire");
+        refaire.setActionCommand("Refaire");
+        refaire.addActionListener(new EcouteurJeu(this));
+        JButton reset = new JButton("Reset");
+        reset.setActionCommand("Reset");
+        reset.addActionListener(new EcouteurJeu(this));
+        JButton quitter = new JButton("Quitter");
+        quitter.setActionCommand("Quitter");
+        quitter.addActionListener(new EcouteurJeu(this));
+
+        boutons.add(annuler);
+        boutons.add(refaire);
+        boutons.add(quitter);
+        boutons.add(reset);
+        
+        
+        pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+        pane.add(textes);
+        pane.add(boutons);
+
+        return pane;
+    }
+
+    public void majInfo() {
+        Container info = (Container) ((Container) fenetre.getContentPane()).getComponent(0);
+        Container textes = (Container) info.getComponent(0);
+        Container boutons = (Container) info.getComponent(1);
+  
+        JLabel texte1 = (JLabel) textes.getComponent(0);
+        JLabel texte3 = (JLabel) textes.getComponent(3);
+        JLabel texte4 = (JLabel) textes.getComponent(4);
+
+        texte1.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
+        texte3.setText("Joueur 1 :" + modele.getGaufre().getJoueur1().getScore());
+        texte4.setText("Joueur 2 :" + modele.getGaufre().getJoueur2().getScore());
+
+        
+        JButton annuler = (JButton) boutons.getComponent(0);
+        JButton refaire = (JButton) boutons.getComponent(1);
+        if (modele.peutAnnuler()) {
+            annuler.setEnabled(true);
+        }
+        else {
+            annuler.setEnabled(false);
+        }
+        if (modele.peutRefaire()) {
+            refaire.setEnabled(true);
+        }
+        else {
+            refaire.setEnabled(false);
+        }
+    }
 
     public void afficherGaufre() {
+        //majInfo();
+        plateau.removeAll();
 
-        // TODO
+        int lignes = modele.getGaufre().getNbLignes();
+        int colonnes = modele.getGaufre().getNbColonnes();
+
+        for (int i = 0; i < lignes; i++) {
+            for (int j = 0; j < colonnes; j++) {    
+                if (modele.getGaufre().getCase(i,j)){
+                    if (i==0 && j==0)
+                        plateau.add(new ajoutGaufre(poison));
+                    else
+                        plateau.add(new ajoutGaufre(gaufreMilieu));
+                }
+                else
+                    plateau.add(new ajoutGaufre(miettes1));
+            }
+        }
+
+        fenetre.revalidate();
+        fenetre.repaint();
+        return;
+    }
+
+
+    private class ajoutGaufre extends JPanel {
+        Image img;
+
+        public ajoutGaufre(Image img) {
+            this.img = img;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (img != null) {
+                g.drawImage(img, 0, 0, getTailleCelluleX(), getTailleCelluleY(), null);
+            }
+        }
+    }
+
+    public void finPartie() {
+        // BorderLayout layout = (BorderLayout) fenetre.getContentPane().getLayout();
+        // Component boutons = layout.getLayoutComponent(BorderLayout.SOUTH);
+
+        int gagnant = getMG().getGaufre().getJoueurCourant().getNum();
+        int nbCoupsJoues = getMG().getGaufre().getHistorique().getNbFaits();
+        
+        System.out.println("Joueur " + gagnant + " a gagné !");
+        System.out.println("La partie a duré " + nbCoupsJoues + " coups.");
+        
     }
 
     public void setEtat(int newEtat) {
@@ -245,6 +380,10 @@ public class InterfaceGraphique implements Runnable {
 
     public int getTaillePlateauY() {
         return plateau.getHeight();
+    }
+
+    public Container getPlateau() {
+        return plateau;
     }
 
     public int getTailleCelluleX() {
