@@ -23,16 +23,19 @@ public class EcouteurJeu implements ActionListener {
                 Config.debug("Click bouton annuler");
                 mg.annuler();
                 ig.syncGaufre();
+                ig.majInfo();
                 break;
             case "Refaire":
                 Config.debug("Click bouton refaire");
                 mg.refaire();
                 ig.syncGaufre();
+                ig.majInfo();
                 break;
             case "Reset":
                 Config.debug("Click bouton reset");
                 mg.reset();
                 ig.syncGaufre();
+                ig.majInfo();
                 break;
             case "Quitter":
                 System.exit(0);
