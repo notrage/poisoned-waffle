@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import Gaufre.Vue.InterfaceGraphique;
+import Gaufre.Configuration.Config;
 import Gaufre.Modele.Coup;
 
 public class EcouteurSouris extends MouseAdapter {
@@ -18,13 +19,14 @@ public class EcouteurSouris extends MouseAdapter {
 
     public void mouseClicked(MouseEvent e) {
         if (ig.getPlateau().contains(e.getX(), e.getY()) && !ig.getMG().estFini()) {
-                int c = e.getX() / ig.getTailleCelluleX();
-                int l = e.getY() / ig.getTailleCelluleY();
-                if (ig.getMG().getGaufre().jouer(new Coup(l, c))) {
-                    ig.afficherGaufre();
-                    if (ig.getMG().estFini())
-                        ig.finPartie();
-                }
+            int c = e.getX() / ig.getTailleCelluleX();
+            int l = e.getY() / ig.getTailleCelluleY();
+            if (ig.getMG().getGaufre().jouer(new Coup(l, c))) {
+                ig.mangeCellGaufre(l, c);
+                Config.debug("Click sur case ", l, c);
+                if (ig.getMG().estFini())
+                    ig.finPartie();
+            }
         }
     }
 

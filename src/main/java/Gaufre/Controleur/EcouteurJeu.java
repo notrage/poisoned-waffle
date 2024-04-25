@@ -14,20 +14,21 @@ public class EcouteurJeu implements ActionListener {
         this.ig = ig;
         this.mg = ig.getMG();
     }
+
     @Override
     public void actionPerformed(ActionEvent evt) {
         switch (evt.getActionCommand()) {
             case "Annuler":
                 mg.annuler();
-                ig.afficherGaufre();
+                ig.syncGaufre();
                 break;
             case "Refaire":
                 mg.refaire();
-                ig.afficherGaufre();
+                ig.syncGaufre();
                 break;
             case "Reset":
                 mg.reset();
-                ig.afficherGaufre();
+                ig.syncGaufre();
                 break;
             case "Quitter":
                 System.exit(0);
