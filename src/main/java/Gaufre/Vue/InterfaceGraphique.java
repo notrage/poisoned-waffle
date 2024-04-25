@@ -441,16 +441,22 @@ public class InterfaceGraphique implements Runnable {
         for (int i = startRow; i <= endRow; i++) {
             for (int j = startCol; j <= endCol; j++) {
                 cellGaufre cell = gaufreCells[i * nbColonnes + j];
-                randomMiettes = random.nextInt(4) ;
-                if(cell.getImg()==gaufreMilieu) {
-                    if (randomMiettes == 0)
-                        cell.setImg(miettes1);
-                    else if (randomMiettes == 1)
-                        cell.setImg(miettes2);
-                    else if (randomMiettes == 2)
-                        cell.setImg(miettes3);
-                    else
-                        cell.setImg(miettes4);
+                if (cell.getImg() == gaufreMilieu) {
+                    randomMiettes = random.nextInt(4);
+                    switch (randomMiettes) {
+                        case 0:
+                            cell.setImg(miettes1);
+                            break;
+                        case 1:
+                            cell.setImg(miettes2);
+                            break;
+                        case 2:
+                            cell.setImg(miettes3);
+                            break;
+                        default:
+                            cell.setImg(miettes4);
+                            break;
+                    }
                     cell.repaint();
                 }
             }
@@ -469,7 +475,8 @@ public class InterfaceGraphique implements Runnable {
         public void setImg(BufferedImage newImg) {
             this.img = newImg;
         }
-        public Image getImg(){
+
+        public Image getImg() {
             return this.img;
         }
 
