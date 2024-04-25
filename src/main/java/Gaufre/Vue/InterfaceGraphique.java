@@ -9,14 +9,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 import javax.swing.*;
 
 import Gaufre.Controleur.EcouteurJeu;
 import Gaufre.Controleur.EcouteurMenu;
 import Gaufre.Controleur.EcouteurSouris;
+import Gaufre.Modele.Gaufre;
 import Gaufre.Configuration.ResourceLoader;
 import Gaufre.Configuration.Config;
 
@@ -31,10 +30,8 @@ public class InterfaceGraphique implements Runnable {
     private int etat;
     private JFrame fenetre;
     private GraphicsEnvironment ge;
-    private Container plateau;
-
-    private ArrayList<JLabel> textesAModifier;
-    private ArrayList<JButton> boutonsAModifier;
+    private JPanel plateau;
+    private cellGaufre[] gaufreCells;
 
     InterfaceGraphique(ModeGraphique mg) {
         etat = MENU;
@@ -295,61 +292,70 @@ public class InterfaceGraphique implements Runnable {
         return null; // Return null if no button is found
     }
 
-    private Container creerJeu() {
-        Container pane = new Container();
+    private JPanel creerJeu() {
+        JPanel pane = new JPanel();
+        int l = modele.getGaufre().getNbLignes(), c = modele.getGaufre().getNbColonnes();
+        gaufreCells = new cellGaufre[l * c];
 
         pane.setLayout(new BorderLayout());
         pane.add(creerInfo(), BorderLayout.EAST);
-        this.plateau = new Container();
-        this.plateau.setLayout(new GridLayout(modele.getGaufre().getNbLignes(), modele.getGaufre().getNbColonnes()));
+        plateau = new JPanel(new GridLayout(l, c));
         EcouteurSouris ecouteurSouris = new EcouteurSouris(this);
         plateau.addMouseListener(ecouteurSouris);
         pane.add(plateau, BorderLayout.CENTER);
 
         modele.reset();
-        afficherGaufre();
+        Gaufre g = modele.getGaufre();
+        int lignes = g.getNbLignes();
+        int colonnes = g.getNbColonnes();
+
+        for (int i = 0; i < lignes; i++) {
+            for (int j = 0; j < colonnes; j++) {
+                cellGaufre cell = new cellGaufre(gaufreMilieu);
+                plateau.add(cell);
+                gaufreCells[i * g.getNbColonnes() + j] = cell;
+            }
+        }
+        gaufreCells[0].setImg(poison);
 
         return pane;
     }
 
     private Container creerInfo() {
         Container pane = new Container();
-        ////
-        textesAModifier = new ArrayList<JLabel>();
-        boutonsAModifier = new ArrayList<JButton>();
 
         Container textes = new Container();
         textes.setLayout(new BoxLayout(textes, BoxLayout.Y_AXIS));
-        JLabel texte0 = new JLabel();
-        JLabel texte1 = new JLabel();
-        JLabel texte2 = new JLabel();
-        JLabel texte3 = new JLabel();
-        JLabel texte4 = new JLabel();
+        JLabel tour = new JLabel();
+        tour.setName("texteTour");
+        JLabel vide = new JLabel();
+        JLabel score = new JLabel();
+        JLabel scoreJ1 = new JLabel();
+        scoreJ1.setName("texteScoreJ1");
+        JLabel scoreJ2 = new JLabel();
+        scoreJ2.setName("texteScoreJ2");
 
-        texte0.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
-        texte1.setText("");
-        texte2.setText("Scores :");
-        texte3.setText("Joueur 1 :" + modele.getGaufre().getJoueur1().getScore());
-        texte4.setText("Joueur 2 :" + modele.getGaufre().getJoueur2().getScore());
+        tour.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
+        vide.setText("");
+        score.setText("Scores :");
+        scoreJ1.setText("Joueur 1 :" + modele.getGaufre().getJoueur1().getScore());
+        scoreJ2.setText("Joueur 2 :" + modele.getGaufre().getJoueur2().getScore());
 
-        textes.add(texte0);
-        textes.add(texte1);
-        textes.add(texte2);
-        textes.add(texte3);
-        textes.add(texte4);
-        textesAModifier.add(texte0);
-        textesAModifier.add(texte1);
-        textesAModifier.add(texte2);
-        textesAModifier.add(texte3);
-        textesAModifier.add(texte4);
-        ////
+        textes.add(tour);
+        textes.add(vide);
+        textes.add(score);
+        textes.add(scoreJ1);
+        textes.add(scoreJ2);
+
         Container boutons = new Container();
         boutons.setLayout(new GridLayout(2, 2));
 
         JButton annuler = new JButton("Annuler");
+        annuler.setName("boutonAnnuler");
         annuler.setActionCommand("Annuler");
         annuler.addActionListener(new EcouteurJeu(this));
         JButton refaire = new JButton("Refaire");
+        refaire.setName("boutonRefaire");
         refaire.setActionCommand("Refaire");
         refaire.addActionListener(new EcouteurJeu(this));
         JButton reset = new JButton("Reset");
@@ -363,10 +369,6 @@ public class InterfaceGraphique implements Runnable {
         boutons.add(refaire);
         boutons.add(quitter);
         boutons.add(reset);
-        boutonsAModifier.add(annuler);
-        boutonsAModifier.add(refaire);
-        boutonsAModifier.add(reset);
-        boutonsAModifier.add(quitter);
 
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         pane.add(textes);
@@ -377,49 +379,78 @@ public class InterfaceGraphique implements Runnable {
 
     public void majInfo() {
 
-        JLabel texte0 = textesAModifier.get(0);
-        JLabel texte3 = textesAModifier.get(3);
-        JLabel texte4 = textesAModifier.get(4);
+        JLabel tour = (JLabel) getComponentByName(fenetre, "texteTour");
+        JLabel scoreJ1 = (JLabel) getComponentByName(fenetre, "texteScoreJ1");
+        JLabel scoreJ2 = (JLabel) getComponentByName(fenetre, "texteScoreJ2");
 
-        texte0.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
-        texte3.setText("Joueur 1 :" + modele.getGaufre().getJoueur1().getScore());
-        texte4.setText("Joueur 2 :" + modele.getGaufre().getJoueur2().getScore());
+        tour.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
+        scoreJ1.setText("Joueur 1 :" + modele.getGaufre().getJoueur1().getScore());
+        scoreJ2.setText("Joueur 2 :" + modele.getGaufre().getJoueur2().getScore());
 
-        JButton annuler = boutonsAModifier.get(0);
-        JButton refaire = boutonsAModifier.get(1);
+        JButton annuler = (JButton) getComponentByName(fenetre, "boutonAnnuler");
+        JButton refaire = (JButton) getComponentByName(fenetre, "boutonRefaire");
 
         annuler.setEnabled(modele.peutAnnuler());
         refaire.setEnabled(modele.peutRefaire());
     }
 
-    public void afficherGaufre() {
+    public void syncGaufre() {
+        Gaufre g = modele.getGaufre();
 
-        plateau.removeAll();
-
-        int lignes = modele.getGaufre().getNbLignes();
-        int colonnes = modele.getGaufre().getNbColonnes();
+        int lignes = g.getNbLignes();
+        int colonnes = g.getNbColonnes();
 
         for (int i = 0; i < lignes; i++) {
             for (int j = 0; j < colonnes; j++) {
-                if (modele.getGaufre().getCase(i, j)) {
-                    if (i == 0 && j == 0)
-                        plateau.add(new ajoutGaufre(poison));
-                    else
-                        plateau.add(new ajoutGaufre(gaufreMilieu));
-                } else
-                    plateau.add(new ajoutGaufre(miettes1));
+                cellGaufre cell = gaufreCells[i * g.getNbColonnes() + j];
+                if (g.getCase(i, j)) {
+                    if (i == 0 && j == 0) {
+                        cell.setImg(poison);
+                    } else {
+                        cell.setImg(gaufreMilieu);
+                    }
+                } else {
+                    cell.setImg(miettes1);
+                }
             }
         }
-        majInfo();
-        fenetre.revalidate();
-        fenetre.repaint();
+        plateau.repaint();
     }
 
-    private class ajoutGaufre extends JPanel {
+    public void mangeCellGaufre(int l, int c) {
+        Gaufre gaufre = modele.getGaufre();
+
+        // Get the dimensions of the waffle grid
+        int nbLignes = gaufre.getNbLignes();
+        int nbColonnes = gaufre.getNbColonnes();
+
+        // Define starting and ending row/column for the square
+        int startRow = Math.min(l, nbLignes - 1);
+        int startCol = Math.min(c, nbColonnes - 1);
+        int endRow = Math.max(l, nbLignes - 1);
+        int endCol = Math.max(c, nbColonnes - 1);
+
+        // Loop through cells in the square
+        for (int i = startRow; i <= endRow; i++) {
+            for (int j = startCol; j <= endCol; j++) {
+                cellGaufre cell = gaufreCells[i * nbColonnes + j];
+                cell.setImg(miettes1);
+                cell.repaint();
+            }
+        }
+
+        majInfo();
+    }
+
+    private class cellGaufre extends JPanel {
         Image img;
 
-        public ajoutGaufre(Image img) {
+        public cellGaufre(BufferedImage img) {
             this.img = img;
+        }
+
+        public void setImg(BufferedImage newImg) {
+            this.img = newImg;
         }
 
         @Override
