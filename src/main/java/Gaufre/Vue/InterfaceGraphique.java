@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -31,11 +33,14 @@ public class InterfaceGraphique implements Runnable {
     private GraphicsEnvironment ge;
     private Container plateau;
 
+    private ArrayList<JLabel> textesAModifier;
+    private ArrayList<JButton> boutonsAModifier;
+
     InterfaceGraphique(ModeGraphique mg) {
         etat = MENU;
         modele = mg;
         ecouteurMenu = new EcouteurMenu(this);
-        bgMusique = new Musique("sons/SpaceJazz.wav");
+        //bgMusique = new Musique("sons/SpaceJazz.wav");
         if (!Config.estMuet()) {
             bgMusique.play();
         }
@@ -48,7 +53,7 @@ public class InterfaceGraphique implements Runnable {
             e.printStackTrace();
         }
         gaufreMilieu = ResourceLoader.lireImage("gaufreMilieu");
-        poison = ResourceLoader.lireImage("poison");
+        poison = ResourceLoader.lireImage("gaufrePoison");
         miettes1 = ResourceLoader.lireImage("miettes1");
     }
 
@@ -297,10 +302,6 @@ public class InterfaceGraphique implements Runnable {
         Container pane = new Container();
 
         pane.setLayout(new BorderLayout());
-
-        // Titre
-        // texte = new JLabel("GAUFRE")
-        // pane.add(texte, BorderLayout.NORTH);
         pane.add(creerInfo(), BorderLayout.EAST);
         this.plateau = new Container();
         this.plateau.setLayout(new GridLayout(modele.getGaufre().getNbLignes(), modele.getGaufre().getNbColonnes()));
@@ -317,6 +318,9 @@ public class InterfaceGraphique implements Runnable {
     private Container creerInfo() {
         Container pane = new Container();
         ////
+        textesAModifier = new ArrayList<JLabel>();
+        boutonsAModifier = new ArrayList<JButton>();
+
         Container textes = new Container();
         textes.setLayout(new BoxLayout(textes, BoxLayout.Y_AXIS));
         JLabel texte0 = new JLabel();
@@ -325,17 +329,22 @@ public class InterfaceGraphique implements Runnable {
         JLabel texte3 = new JLabel();
         JLabel texte4 = new JLabel();
 
-        texte0.setText("");
-        texte1.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
+        texte0.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
+        texte1.setText("");
         texte2.setText("Scores :");
         texte3.setText("Joueur 1 :" + modele.getGaufre().getJoueur1().getScore());
         texte4.setText("Joueur 2 :" + modele.getGaufre().getJoueur2().getScore());
 
-        textes.add(texte1);
         textes.add(texte0);
+        textes.add(texte1);
         textes.add(texte2);
         textes.add(texte3);
         textes.add(texte4);
+        textesAModifier.add(texte0);
+        textesAModifier.add(texte1);
+        textesAModifier.add(texte2);
+        textesAModifier.add(texte3);
+        textesAModifier.add(texte4);
         ////
         Container boutons = new Container();
         boutons.setLayout(new GridLayout(2, 2));
@@ -357,6 +366,10 @@ public class InterfaceGraphique implements Runnable {
         boutons.add(refaire);
         boutons.add(quitter);
         boutons.add(reset);
+        boutonsAModifier.add(annuler);
+        boutonsAModifier.add(refaire);
+        boutonsAModifier.add(reset);
+        boutonsAModifier.add(quitter);
 
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         pane.add(textes);
@@ -365,26 +378,25 @@ public class InterfaceGraphique implements Runnable {
         return pane;
     }
 
-    public void majInfo() {
-        Container info = (Container) ((Container) fenetre.getContentPane()).getComponent(0);
-        Container textes = (Container) info.getComponent(0);
-        Container boutons = (Container) info.getComponent(1);
+    public void majInfo() {       
+    
+        JLabel texte0 = textesAModifier.get(0);
+        JLabel texte3 = textesAModifier.get(3);
+        JLabel texte4 = textesAModifier.get(4);
 
-        JLabel texte1 = (JLabel) textes.getComponent(0);
-        JLabel texte3 = (JLabel) textes.getComponent(3);
-        JLabel texte4 = (JLabel) textes.getComponent(4);
-
-        texte1.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
+        texte0.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
         texte3.setText("Joueur 1 :" + modele.getGaufre().getJoueur1().getScore());
         texte4.setText("Joueur 2 :" + modele.getGaufre().getJoueur2().getScore());
 
-        JButton annuler = (JButton) boutons.getComponent(0);
-        JButton refaire = (JButton) boutons.getComponent(1);
+        JButton annuler = boutonsAModifier.get(0);
+        JButton refaire = boutonsAModifier.get(1);
+
         if (modele.peutAnnuler()) {
             annuler.setEnabled(true);
         } else {
             annuler.setEnabled(false);
         }
+
         if (modele.peutRefaire()) {
             refaire.setEnabled(true);
         } else {
@@ -393,7 +405,7 @@ public class InterfaceGraphique implements Runnable {
     }
 
     public void afficherGaufre() {
-        // majInfo();
+        
         plateau.removeAll();
 
         int lignes = modele.getGaufre().getNbLignes();
@@ -410,7 +422,7 @@ public class InterfaceGraphique implements Runnable {
                     plateau.add(new ajoutGaufre(miettes1));
             }
         }
-
+        majInfo();
         fenetre.revalidate();
         fenetre.repaint();
         return;

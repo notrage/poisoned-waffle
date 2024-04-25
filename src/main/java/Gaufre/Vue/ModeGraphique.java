@@ -67,7 +67,7 @@ public class ModeGraphique {
 
 
     public boolean peutAnnuler() {
-        return gaufre.estDejouable();
+        return gaufre.estDejouable() && (gaufre.estFinie()==null);
     }
 
     public boolean peutRefaire() {
