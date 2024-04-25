@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.swing.*;
 
@@ -23,7 +24,7 @@ public class InterfaceGraphique implements Runnable {
     public final int MENU = 0;
     public final int JEU = 1;
     public final int QUIT = -1;
-    private BufferedImage gaufreMilieu, poison, miettes1;
+    private BufferedImage gaufreMilieu, poison, miettes1, miettes2, miettes3, miettes4;
     private ModeGraphique modele;
     private EcouteurMenu ecouteurMenu;
     private Musique bgMusique;
@@ -52,6 +53,10 @@ public class InterfaceGraphique implements Runnable {
         gaufreMilieu = ResourceLoader.lireImage("gaufreMilieu");
         poison = ResourceLoader.lireImage("gaufrePoison");
         miettes1 = ResourceLoader.lireImage("miettes1");
+        miettes2 = ResourceLoader.lireImage("miettes2");
+        miettes3 = ResourceLoader.lireImage("miettes3");
+        miettes4 = ResourceLoader.lireImage("miettes4");
+
     }
 
     public static InterfaceGraphique demarrer(ModeGraphique m) {
@@ -419,6 +424,8 @@ public class InterfaceGraphique implements Runnable {
 
     public void mangeCellGaufre(int l, int c) {
         Gaufre gaufre = modele.getGaufre();
+        Random random = new Random();
+        int randomMiettes;
 
         // Get the dimensions of the waffle grid
         int nbLignes = gaufre.getNbLignes();
@@ -434,8 +441,18 @@ public class InterfaceGraphique implements Runnable {
         for (int i = startRow; i <= endRow; i++) {
             for (int j = startCol; j <= endCol; j++) {
                 cellGaufre cell = gaufreCells[i * nbColonnes + j];
-                cell.setImg(miettes1);
-                cell.repaint();
+                randomMiettes = random.nextInt(4) ;
+                if(cell.getImg()==gaufreMilieu) {
+                    if (randomMiettes == 0)
+                        cell.setImg(miettes1);
+                    else if (randomMiettes == 1)
+                        cell.setImg(miettes2);
+                    else if (randomMiettes == 2)
+                        cell.setImg(miettes3);
+                    else
+                        cell.setImg(miettes4);
+                    cell.repaint();
+                }
             }
         }
 
@@ -451,6 +468,9 @@ public class InterfaceGraphique implements Runnable {
 
         public void setImg(BufferedImage newImg) {
             this.img = newImg;
+        }
+        public Image getImg(){
+            return this.img;
         }
 
         @Override
