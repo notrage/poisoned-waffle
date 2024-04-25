@@ -21,11 +21,13 @@ public class EcouteurSouris extends MouseAdapter {
         if (ig.getPlateau().contains(e.getX(), e.getY()) && !ig.getMG().estFini()) {
             int c = e.getX() / ig.getTailleCelluleX();
             int l = e.getY() / ig.getTailleCelluleY();
+            Config.debug("Click sur case ", l, c);
             if (ig.getMG().getGaufre().jouer(new Coup(l, c))) {
                 ig.mangeCellGaufre(l, c);
-                Config.debug("Click sur case ", l, c);
-                if (ig.getMG().estFini())
+                Config.debug("Coup valide");
+                if (ig.getMG().estFini()) {
                     ig.finPartie();
+                }
             }
         }
     }

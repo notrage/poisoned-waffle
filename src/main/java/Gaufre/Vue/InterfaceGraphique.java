@@ -276,7 +276,6 @@ public class InterfaceGraphique implements Runnable {
 
     private Component getComponentByName(Component component, String name) {
         String compName = component.getName();
-        Config.debug(compName);
         if (compName != null && compName.equals(name)) {
             return component;
         }
@@ -306,7 +305,18 @@ public class InterfaceGraphique implements Runnable {
         pane.add(plateau, BorderLayout.CENTER);
 
         modele.reset();
-        syncGaufre();
+        Gaufre g = modele.getGaufre();
+        int lignes = g.getNbLignes();
+        int colonnes = g.getNbColonnes();
+
+        for (int i = 0; i < lignes; i++) {
+            for (int j = 0; j < colonnes; j++) {
+                cellGaufre cell = new cellGaufre(gaufreMilieu);
+                plateau.add(cell);
+                gaufreCells[i * g.getNbColonnes() + j] = cell;
+            }
+        }
+        gaufreCells[0].setImg(poison);
 
         return pane;
     }
@@ -345,7 +355,7 @@ public class InterfaceGraphique implements Runnable {
         annuler.setActionCommand("Annuler");
         annuler.addActionListener(new EcouteurJeu(this));
         JButton refaire = new JButton("Refaire");
-        annuler.setName("boutonRefaire");
+        refaire.setName("boutonRefaire");
         refaire.setActionCommand("Refaire");
         refaire.addActionListener(new EcouteurJeu(this));
         JButton reset = new JButton("Reset");
@@ -385,26 +395,26 @@ public class InterfaceGraphique implements Runnable {
     }
 
     public void syncGaufre() {
-        plateau.removeAll();
+        Gaufre g = modele.getGaufre();
 
-        int lignes = modele.getGaufre().getNbLignes();
-        int colonnes = modele.getGaufre().getNbColonnes();
+        int lignes = g.getNbLignes();
+        int colonnes = g.getNbColonnes();
 
         for (int i = 0; i < lignes; i++) {
             for (int j = 0; j < colonnes; j++) {
-                cellGaufre c;
-                if (modele.getGaufre().getCase(i, j)) {
+                cellGaufre cell = gaufreCells[i * g.getNbColonnes() + j];
+                if (g.getCase(i, j)) {
                     if (i == 0 && j == 0) {
-                        plateau.add(c = new cellGaufre(poison));
+                        cell.setImg(poison);
                     } else {
-                        plateau.add(c = new cellGaufre(gaufreMilieu));
+                        cell.setImg(gaufreMilieu);
                     }
                 } else {
-                    plateau.add(c = new cellGaufre(miettes1));
+                    cell.setImg(miettes1);
                 }
-                gaufreCells[i * modele.getGaufre().getNbColonnes() + j] = c;
             }
         }
+        plateau.repaint();
     }
 
     public void mangeCellGaufre(int l, int c) {
@@ -428,6 +438,8 @@ public class InterfaceGraphique implements Runnable {
                 cell.repaint();
             }
         }
+
+        majInfo();
     }
 
     private class cellGaufre extends JPanel {

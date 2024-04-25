@@ -12,10 +12,11 @@ public class ModeGraphique {
     public ModeGraphique(Gaufre g) {
         gaufre = g;
     }
-    
+
     public void setIA(IA ia) {
         this.ia = ia;
     }
+
     public Gaufre getGaufre() {
         return gaufre;
     }
@@ -45,7 +46,6 @@ public class ModeGraphique {
         return res;
     }
 
-
     public void reset() {
         gaufre.reinitialiser();
     }
@@ -53,7 +53,6 @@ public class ModeGraphique {
     public void annuler() {
         gaufre.dejouer();
         if (nbJoueurs == 1) { // Si on joue contre l'IA on annule 2 fois
-
             gaufre.dejouer();
         }
     }
@@ -65,17 +64,16 @@ public class ModeGraphique {
         }
     }
 
-
     public boolean peutAnnuler() {
-        return gaufre.estDejouable() && (gaufre.estFinie()==null);
+        return gaufre.estDejouable() && (gaufre.estFinie() == null);
     }
 
     public boolean peutRefaire() {
         return gaufre.estRejouable();
     }
-    
+
     public boolean estFini() {
         return (gaufre.estFinie() != null);
     }
-    
+
 }
