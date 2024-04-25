@@ -380,16 +380,8 @@ public class InterfaceGraphique implements Runnable {
 
         JButton annuler = (JButton) boutons.getComponent(0);
         JButton refaire = (JButton) boutons.getComponent(1);
-        if (modele.peutAnnuler()) {
-            annuler.setEnabled(true);
-        } else {
-            annuler.setEnabled(false);
-        }
-        if (modele.peutRefaire()) {
-            refaire.setEnabled(true);
-        } else {
-            refaire.setEnabled(false);
-        }
+        annuler.setEnabled(modele.peutAnnuler());
+        refaire.setEnabled(modele.peutRefaire());
     }
 
     public void afficherGaufre() {
@@ -413,7 +405,6 @@ public class InterfaceGraphique implements Runnable {
 
         fenetre.revalidate();
         fenetre.repaint();
-        return;
     }
 
     private class ajoutGaufre extends JPanel {
