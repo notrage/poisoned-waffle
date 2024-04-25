@@ -1,16 +1,28 @@
-package Modele;
+package Gaufre.Modele;
 import java.util.ArrayList;
 
 public class Historique {
     private ArrayList<Coup> faits ;
     private ArrayList<Coup> defaits;
 
-
+    // Constructeur
     public Historique() {
         this.faits = new ArrayList<Coup>();
         this.defaits = new ArrayList<Coup>();
     }
 
+    //Autres méthodes
+    public int getNbFaits() {
+        return this.faits.size();
+    }
+
+    public int getNbDefaits() {
+        return this.defaits.size();
+    }
+
+    public void empileDefait(Coup c) {
+        this.defaits.add(c);
+    }
 
     public boolean peutDefaire() {
         return this.faits.size() > 0;
@@ -28,7 +40,7 @@ public class Historique {
     public Coup defait() {
         if (peutDefaire()) {
             Coup c = faits.remove(faits.size() - 1);
-            this.defaits.add(c);
+            empileDefait(c);
             return c;
         }
         return null;
@@ -48,9 +60,32 @@ public class Historique {
         this.defaits.clear();
     }
 
+    public String pourSauvegarde() {
+        boolean added = false;
+        String s = "{";
+        for (Coup c: faits) {
+            s += c.pourSauvegarde();
+            s += " ";
+            added = true;
+        }
+        if (added)
+            s = s.substring(0, s.length()-1);
+        s += "}\n{";
+        added = false;
+        for (Coup c: defaits) {
+            s += c.pourSauvegarde();
+            s += " ";
+            added = true;
+        }
+        if (added)
+            s = s.substring(0, s.length()-1);
+        s += "}";
+        return s;
+    }
+
     @Override
     public String toString() {
-        String s = "Historique{\n faits= ";
+        String s = "faits{ ";
         for (Coup c : this.faits) {
             s += c.toString() + "\n";
         }
