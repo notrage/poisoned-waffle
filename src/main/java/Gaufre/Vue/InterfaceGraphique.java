@@ -40,7 +40,7 @@ public class InterfaceGraphique implements Runnable {
         etat = MENU;
         modele = mg;
         ecouteurMenu = new EcouteurMenu(this);
-        // bgMusique = new Musique("sons/SpaceJazz.wav");
+        bgMusique = new Musique("sons/SpaceJazz.wav");
         if (!Config.estMuet()) {
             bgMusique.play();
         }
@@ -188,9 +188,8 @@ public class InterfaceGraphique implements Runnable {
         }
         JButton volumeButton = new JButton();
         setButtonIcons(volumeButton, volImg);
-        // volumeButton.setPreferredSize(new Dimension((int) (0.15 * menuHeight), (int)
-        // (0.15 * menuHeight)));
         volumeButton.addActionListener(ecouteurMenu);
+        volumeButton.setName("volumeButton");
         volumeButton.setActionCommand("volume");
         volumeButton.setBorderPainted(false);
         volumeButton.setFocusPainted(false);
@@ -270,27 +269,25 @@ public class InterfaceGraphique implements Runnable {
         if (Config.estMuet()) {
             bgMusique.stop();
             BufferedImage volImg = ResourceLoader.lireImage("muet");
-            setButtonIcons(getButtonByCmd(fenetre, "volume"), volImg);
+            setButtonIcons((JButton) getComponentByName(fenetre, "volumeButton"), volImg);
         } else {
             bgMusique.play();
             BufferedImage volImg = ResourceLoader.lireImage("volume");
-            setButtonIcons(getButtonByCmd(fenetre, "volume"), volImg);
+            setButtonIcons((JButton) getComponentByName(fenetre, "volumeButton"), volImg);
         }
     }
 
-    private JButton getButtonByCmd(Component component, String actionCmd) {
-        if (component instanceof JButton) {
-            JButton button = (JButton) component;
-            if (button.getActionCommand().equals(actionCmd)) {
-                return button;
-            }
+    private Component getComponentByName(Component component, String name) {
+        String compName = component.getName();
+        if (compName != null && compName.equals(name)) {
+            return component;
         }
 
         if (component instanceof Container) {
             for (Component child : ((Container) component).getComponents()) {
-                JButton foundButton = getButtonByCmd(child, actionCmd);
-                if (foundButton != null) {
-                    return foundButton;
+                Component foundComponent = getComponentByName(child, name);
+                if (foundComponent != null) {
+                    return foundComponent;
                 }
             }
         }
