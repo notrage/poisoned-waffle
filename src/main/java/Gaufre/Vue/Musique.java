@@ -21,15 +21,25 @@ public class Musique {
             clip.open(audioStream);
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            System.err.println("Music " + audioFilePath + " not found. Disabling music.");
         }
     }
 
     public void play() {
+        if (clip == null) {
+            System.err.println("Music not loaded, maybe due to missing file.");
+            return;
+        }
         clip.start();
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
 
     public void stop() {
+        if (clip == null) {
+            System.err.println("Music not loaded, maybe due to missing file.");
+            return;
+        }
         clip.stop();
     }
 }
