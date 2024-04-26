@@ -1,8 +1,9 @@
 package Gaufre.Modele;
+
 import java.util.ArrayList;
 
 public class Historique {
-    private ArrayList<Coup> faits ;
+    private ArrayList<Coup> faits;
     private ArrayList<Coup> defaits;
 
     // Constructeur
@@ -11,7 +12,7 @@ public class Historique {
         this.defaits = new ArrayList<Coup>();
     }
 
-    //Autres méthodes
+    // Autres méthodes
     public int getNbFaits() {
         return this.faits.size();
     }
@@ -63,22 +64,22 @@ public class Historique {
     public String pourSauvegarde() {
         boolean added = false;
         String s = "{";
-        for (Coup c: faits) {
+        for (Coup c : faits) {
             s += c.pourSauvegarde();
             s += " ";
             added = true;
         }
         if (added)
-            s = s.substring(0, s.length()-1);
+            s = s.substring(0, s.length() - 1);
         s += "}\n{";
         added = false;
-        for (Coup c: defaits) {
+        for (Coup c : defaits) {
             s += c.pourSauvegarde();
             s += " ";
             added = true;
         }
         if (added)
-            s = s.substring(0, s.length()-1);
+            s = s.substring(0, s.length() - 1);
         s += "}";
         return s;
     }
