@@ -311,7 +311,7 @@ public class InterfaceGraphique implements Runnable {
         return null; // Return null if no button is found
     }
 
-    private JPanel creerJeu() {
+    private Container creerJeu() {
         JPanel pane = new JPanel();
         int l = modele.getGaufre().getNbLignes(), c = modele.getGaufre().getNbColonnes();
         gaufreCells = new cellGaufre[l * c];
