@@ -2,6 +2,7 @@ package Gaufre.Controleur;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.concurrent.TimeUnit;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -22,9 +23,15 @@ public class EcouteurSouris extends MouseAdapter {
             int c = e.getX() / ig.getTailleCelluleX();
             int l = e.getY() / ig.getTailleCelluleY();
             Config.debug("Click sur case ", l, c);
-            if (ig.getMG().getGaufre().jouer(new Coup(l, c))) {
+            if (ig.getMG().jouer(l, c)) {
                 ig.mangeCellGaufre(l, c);
-                Config.debug("Coup valide");
+                if (ig.getMG().getNbJoueurs() == 1 && !ig.getMG().estFini()) {
+                    Coup coupIA = ig.getMG().jouerIA();
+                    l = (int) coupIA.getPosition().getY();
+                    c = (int) coupIA.getPosition().getX();
+                    Config.debug("Coup IA : ", l, c);
+                    ig.mangeCellGaufre(l,c);
+                }
                 if (ig.getMG().estFini()) {
                     ig.finPartie();
                 }

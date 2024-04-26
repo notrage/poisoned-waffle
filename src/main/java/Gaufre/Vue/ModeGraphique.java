@@ -15,10 +15,15 @@ public class ModeGraphique {
 
     public void setIA(IA ia) {
         this.ia = ia;
+        ia.init(gaufre);
     }
 
     public Gaufre getGaufre() {
         return gaufre;
+    }
+    
+    public int getNbJoueurs() {
+        return nbJoueurs;
     }
 
     public void setNbJoueurs(int nbJoueurs) {
@@ -44,6 +49,12 @@ public class ModeGraphique {
             }
         }
         return res;
+    }
+
+    public Coup jouerIA() {
+        Coup coupIA = ia.coupSuivant();
+        gaufre.jouer(coupIA);
+        return coupIA;
     }
 
     public void reset() {
