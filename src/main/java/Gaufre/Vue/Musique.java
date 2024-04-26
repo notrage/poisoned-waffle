@@ -6,9 +6,10 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.IOException;
 
-import Gaufre.Configuration.Config;
+import java.io.IOException;
+import java.util.IllegalFormatException;
+
 import Gaufre.Configuration.ResourceLoader;
 
 public class Musique {
@@ -26,9 +27,10 @@ public class Musique {
                 }
             });
             clip.open(audioStream);
-            Config.debug(clip.getFormat());
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
+        } catch (IllegalFormatException e) {
+            System.err.println("Music " + audioFilePath + "ses an unsupported file encoding. Try 24KHz wave.");
         } catch (NullPointerException e) {
             System.err.println("Music " + audioFilePath + " not found. Disabling music.");
         }
