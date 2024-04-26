@@ -23,7 +23,7 @@ public class EcouteurSouris extends MouseAdapter {
             Config.debug("Click sur case ", l, c);
             if (ig.getMG().jouer(l, c)) {
                 ig.mangeCellGaufre(l, c);
-                // Peut-être remplacer par un truc du genre if .contreIA()
+                // Peut-être à remplacer par un truc du genre if .contreIA()
                 if (ig.getMG().getNbJoueurs() == 1 && !ig.getMG().estFini()) {
                     try {
                         Thread.sleep(500);

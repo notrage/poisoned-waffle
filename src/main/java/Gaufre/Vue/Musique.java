@@ -3,10 +3,12 @@ package Gaufre.Vue;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 
+import Gaufre.Configuration.Config;
 import Gaufre.Configuration.ResourceLoader;
 
 public class Musique {
@@ -18,7 +20,13 @@ public class Musique {
             AudioInputStream audioStream = AudioSystem
                     .getAudioInputStream(ResourceLoader.getResourceAsStream(audioFilePath));
             clip = AudioSystem.getClip();
+            clip.addLineListener(event -> {
+                if (LineEvent.Type.STOP.equals(event.getType())) {
+                    clip.close();
+                }
+            });
             clip.open(audioStream);
+            Config.debug(clip.getFormat());
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
