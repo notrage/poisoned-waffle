@@ -86,14 +86,15 @@ public class Historique {
 
     @Override
     public String toString() {
-        String s = "faits{ ";
+        String s = "faits{\n";
         for (Coup c : this.faits) {
-            s += c.toString() + "\n";
+            s += "\t" + c.toString() + "\n";
         }
-        s += "defaits= ";
+        s += "}, defaits{\n";
         for (Coup c : this.defaits) {
-            s += c.toString() + "\n";
+            s += "\t" + c.toString() + "\n";
         }
+        s += "}\n";
         return s;
     }
 }
