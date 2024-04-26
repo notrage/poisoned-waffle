@@ -488,7 +488,9 @@ public class InterfaceGraphique implements Runnable {
                 }
             }
         }
-
+        if (!Config.estMuet()) {
+            EffetsSonores.playSound("crunch");
+        }
         majInfo();
     }
 
