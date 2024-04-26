@@ -347,21 +347,22 @@ public class InterfaceGraphique implements Runnable {
         textes.setLayout(new BoxLayout(textes, BoxLayout.Y_AXIS));
         JLabel tour = new JLabel();
         tour.setName("texteTour");
-        JLabel vide = new JLabel();
+        tour.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel score = new JLabel();
+        score.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel scoreJ1 = new JLabel();
         scoreJ1.setName("texteScoreJ1");
+        scoreJ1.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel scoreJ2 = new JLabel();
         scoreJ2.setName("texteScoreJ2");
+        scoreJ2.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         tour.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
-        vide.setText("");
         score.setText("Scores :");
-        scoreJ1.setText("Joueur 1 :" + modele.getGaufre().getJoueur1().getScore());
-        scoreJ2.setText("Joueur 2 :" + modele.getGaufre().getJoueur2().getScore());
+        scoreJ1.setText("Joueur 1 : " + modele.getGaufre().getJoueur1().getScore());
+        scoreJ2.setText("Joueur 2 : " + modele.getGaufre().getJoueur2().getScore());
 
         textes.add(tour);
-        textes.add(vide);
         textes.add(score);
         textes.add(scoreJ1);
         textes.add(scoreJ2);
@@ -456,7 +457,7 @@ public class InterfaceGraphique implements Runnable {
             for (int j = startCol; j <= endCol; j++) {
                 cellGaufre cell = gaufreCells[i * nbColonnes + j];
                 if (cell.getImg() == gaufreMilieu) {
-                    randomMiettes = random.nextInt(4);
+                    randomMiettes = random.nextInt(3);
                     switch (randomMiettes) {
                         case 0:
                             cell.setImg(miettes1);
