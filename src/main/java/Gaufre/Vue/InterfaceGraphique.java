@@ -104,17 +104,17 @@ public class InterfaceGraphique implements Runnable {
                 throw new UnsupportedOperationException("Etat de jeu " + etat + " non supporté");
         }
         if (Config.showBorders()) {
-            updateBorders(panel);
+            showAllBorders(panel);
         }
         fenetre.setContentPane(panel);
         fenetre.revalidate();
         fenetre.repaint();
     }
 
-    private void updateBorders(Container container) {
+    private void showAllBorders(Container container) {
         for (Component comp : container.getComponents()) {
             if (comp instanceof Container) {
-                updateBorders((Container) comp);
+                showAllBorders((Container) comp);
             }
             if (comp instanceof JPanel) {
                 ((JPanel) comp).setBorder(BorderFactory.createLineBorder(Color.red));
