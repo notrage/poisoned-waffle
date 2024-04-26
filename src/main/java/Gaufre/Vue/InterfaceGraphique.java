@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Random;
 
@@ -144,8 +145,6 @@ public class InterfaceGraphique implements Runnable {
         JLabel title = new JLabel("GAUFRE", SwingConstants.CENTER);
         title.setOpaque(false);
         title.setForeground(new Color(5, 158, 56));
-        int titleFontSize = (int) (menuHeight / 4);
-        title.setFont(new Font("DEADLY POISON II", Font.BOLD, titleFontSize));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Add title to the top of the BorderLayout
@@ -173,13 +172,17 @@ public class InterfaceGraphique implements Runnable {
         gbc.weighty = 1;
         gbc.insets = insets;
 
-        JButton button1J = new JButton("1 joueur");
+        JButton button1J = new JButton("Contre IA");
+        button1J.setBackground(new Color(255, 209, 102));
+        button1J.setMnemonic(KeyEvent.VK_I);
         button1J.addActionListener(ecouteurMenu);
         button1J.setActionCommand("Jeu1J");
         button1J.setAlignmentX(Component.CENTER_ALIGNMENT);
         middlePanel.add(button1J, gbc);
 
         JButton button2J = new JButton("2 joueurs");
+        button2J.setBackground(new Color(255, 209, 102));
+        button2J.setMnemonic(KeyEvent.VK_J);
         button2J.addActionListener(ecouteurMenu);
         button2J.setActionCommand("Jeu2J");
         button2J.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -217,7 +220,6 @@ public class InterfaceGraphique implements Runnable {
         bottomRight.setLayout(new BoxLayout(bottomRight, BoxLayout.Y_AXIS));
         bottomRight.setOpaque(false);
         JLabel versionLabel = new JLabel(getClass().getPackage().getImplementationVersion());
-        versionLabel.setFont(new Font("Arial", Font.PLAIN, (int) (titleFontSize / 6)));
         versionLabel.setForeground(new Color(34, 84, 124));
         bottomRight.add(Box.createVerticalGlue());
         bottomRight.add(versionLabel);
@@ -234,6 +236,12 @@ public class InterfaceGraphique implements Runnable {
                 int newTitleFontSize = Math.max(50, fenetre.getHeight() / 4);
                 title.setFont(new Font("DEADLY POISON II", Font.BOLD, newTitleFontSize));
                 versionLabel.setFont(new Font("Arial", Font.PLAIN, (int) (newTitleFontSize / 6)));
+
+                int buttonFontSize = (int) (newTitleFontSize * 0.2); // Adjust the multiplier as needed
+                Font buttonFont = new Font("Arial", Font.PLAIN, buttonFontSize);
+                button1J.setFont(buttonFont);
+                button2J.setFont(buttonFont);
+                volumeButton.setFont(buttonFont);
 
                 layeredPane.setBounds(0, 0, fenetre.getWidth(), fenetre.getHeight());
                 fond.setBounds(0, 0, fenetre.getWidth(), fenetre.getHeight());
@@ -371,17 +379,21 @@ public class InterfaceGraphique implements Runnable {
         boutons.setLayout(new GridLayout(2, 2));
 
         JButton annuler = new JButton("Annuler");
+        annuler.setMnemonic(KeyEvent.VK_A);
         annuler.setName("boutonAnnuler");
         annuler.setActionCommand("Annuler");
         annuler.addActionListener(new EcouteurJeu(this));
         JButton refaire = new JButton("Refaire");
+        refaire.setMnemonic(KeyEvent.VK_R);
         refaire.setName("boutonRefaire");
         refaire.setActionCommand("Refaire");
         refaire.addActionListener(new EcouteurJeu(this));
         JButton reset = new JButton("Reset");
+        reset.setMnemonic(KeyEvent.VK_S);
         reset.setActionCommand("Reset");
         reset.addActionListener(new EcouteurJeu(this));
         JButton quitter = new JButton("Quitter");
+        quitter.setMnemonic(KeyEvent.VK_Q);
         quitter.setActionCommand("Quitter");
         quitter.addActionListener(new EcouteurJeu(this));
 
