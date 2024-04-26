@@ -404,8 +404,8 @@ public class InterfaceGraphique implements Runnable {
         JLabel scoreJ2 = (JLabel) getComponentByName(fenetre, "texteScoreJ2");
 
         tour.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
-        scoreJ1.setText("Joueur 1 :" + modele.getGaufre().getJoueur1().getScore());
-        scoreJ2.setText("Joueur 2 :" + modele.getGaufre().getJoueur2().getScore());
+        scoreJ1.setText("Joueur 1 : " + modele.getGaufre().getJoueur1().getScore());
+        scoreJ2.setText("Joueur 2 : " + modele.getGaufre().getJoueur2().getScore());
 
         JButton annuler = (JButton) getComponentByName(fenetre, "boutonAnnuler");
         JButton refaire = (JButton) getComponentByName(fenetre, "boutonRefaire");
