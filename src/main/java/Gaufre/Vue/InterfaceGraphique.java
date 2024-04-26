@@ -103,9 +103,23 @@ public class InterfaceGraphique implements Runnable {
             default:
                 throw new UnsupportedOperationException("Etat de jeu " + etat + " non supporté");
         }
+        if (Config.showBorders()) {
+            updateBorders(panel);
+        }
         fenetre.setContentPane(panel);
         fenetre.revalidate();
         fenetre.repaint();
+    }
+
+    private void updateBorders(Container container) {
+        for (Component comp : container.getComponents()) {
+            if (comp instanceof Container) {
+                updateBorders((Container) comp);
+            }
+            if (comp instanceof JPanel) {
+                ((JPanel) comp).setBorder(BorderFactory.createLineBorder(Color.red));
+            }
+        }
     }
 
     private Container creerMenu() {
@@ -327,9 +341,9 @@ public class InterfaceGraphique implements Runnable {
     }
 
     private Container creerInfo() {
-        Container pane = new Container();
+        JPanel pane = new JPanel();
 
-        Container textes = new Container();
+        JPanel textes = new JPanel();
         textes.setLayout(new BoxLayout(textes, BoxLayout.Y_AXIS));
         JLabel tour = new JLabel();
         tour.setName("texteTour");
@@ -352,7 +366,7 @@ public class InterfaceGraphique implements Runnable {
         textes.add(scoreJ1);
         textes.add(scoreJ2);
 
-        Container boutons = new Container();
+        JPanel boutons = new JPanel();
         boutons.setLayout(new GridLayout(2, 2));
 
         JButton annuler = new JButton("Annuler");
