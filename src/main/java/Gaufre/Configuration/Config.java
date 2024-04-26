@@ -7,7 +7,7 @@ public class Config {
 
     private static final boolean debug = true;
 
-    private static final boolean showBorders = true;
+    private static final boolean showBorders = false;
 
     public Config() {
         estJar = System.getProperty("java.class.path").endsWith("jar");
