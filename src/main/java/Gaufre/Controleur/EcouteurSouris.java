@@ -2,7 +2,6 @@ package Gaufre.Controleur;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.concurrent.TimeUnit;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -11,7 +10,6 @@ import Gaufre.Configuration.Config;
 import Gaufre.Modele.Coup;
 
 public class EcouteurSouris extends MouseAdapter {
-    // InterfaceGraphique inter;
     InterfaceGraphique ig;
 
     public EcouteurSouris(InterfaceGraphique ig) {
@@ -25,12 +23,18 @@ public class EcouteurSouris extends MouseAdapter {
             Config.debug("Click sur case ", l, c);
             if (ig.getMG().jouer(l, c)) {
                 ig.mangeCellGaufre(l, c);
+                // Peut-être remplacer par un truc du genre if .contreIA()
                 if (ig.getMG().getNbJoueurs() == 1 && !ig.getMG().estFini()) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
                     Coup coupIA = ig.getMG().jouerIA();
                     l = (int) coupIA.getPosition().getY();
                     c = (int) coupIA.getPosition().getX();
                     Config.debug("Coup IA : ", l, c);
-                    ig.mangeCellGaufre(l,c);
+                    ig.mangeCellGaufre(l, c);
                 }
                 if (ig.getMG().estFini()) {
                     ig.finPartie();

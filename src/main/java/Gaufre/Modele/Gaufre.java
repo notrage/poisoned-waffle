@@ -216,7 +216,6 @@ public class Gaufre {
     }
 
     private boolean jouerSansHistorique(Coup coup) {
-
         if (estJouable(coup)) {
             coup.setAncienPlateau(clonePlateau());
             coup.setJoueur(getJoueurCourant());
@@ -229,7 +228,6 @@ public class Gaufre {
     }
 
     public boolean jouer(Coup coup) {
-
         if (jouerSansHistorique(coup)) {
             getHistorique().fait(coup);
             changerJoueur();

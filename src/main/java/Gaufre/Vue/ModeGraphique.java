@@ -21,7 +21,7 @@ public class ModeGraphique {
     public Gaufre getGaufre() {
         return gaufre;
     }
-    
+
     public int getNbJoueurs() {
         return nbJoueurs;
     }
@@ -39,13 +39,6 @@ public class ModeGraphique {
         boolean res;
         if (res = gaufre.jouer(coup)) {
             if (nbJoueurs == 1) {
-                try { // On attend un peu avant que l'IA joue
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Coup coupIA = ia.coupSuivant();
-                gaufre.jouer(coupIA);
             }
         }
         return res;

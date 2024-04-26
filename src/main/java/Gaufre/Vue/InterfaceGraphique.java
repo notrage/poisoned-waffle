@@ -517,15 +517,11 @@ public class InterfaceGraphique implements Runnable {
     }
 
     public void finPartie() {
-        // BorderLayout layout = (BorderLayout) fenetre.getContentPane().getLayout();
-        // Component boutons = layout.getLayoutComponent(BorderLayout.SOUTH);
-
         int gagnant = getMG().getGaufre().getJoueurCourant().getNum();
         int nbCoupsJoues = getMG().getGaufre().getHistorique().getNbFaits();
 
         System.out.println("Joueur " + gagnant + " a gagné !");
         System.out.println("La partie a duré " + nbCoupsJoues + " coups.");
-
     }
 
     public void setEtat(int newEtat) {
