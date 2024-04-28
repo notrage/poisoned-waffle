@@ -3,6 +3,7 @@ package Gaufre.Controleur;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Gaufre.Configuration.Config;
 import Gaufre.Vue.InterfaceGraphique;
 import Gaufre.Vue.ModeGraphique;
 
@@ -14,20 +15,27 @@ public class EcouteurJeu implements ActionListener {
         this.ig = ig;
         this.mg = ig.getMG();
     }
+
     @Override
     public void actionPerformed(ActionEvent evt) {
         switch (evt.getActionCommand()) {
             case "Annuler":
+                Config.debug("Click bouton annuler");
                 mg.annuler();
-                ig.afficherGaufre();
+                ig.syncGaufre();
+                ig.majInfo();
                 break;
             case "Refaire":
+                Config.debug("Click bouton refaire");
                 mg.refaire();
-                ig.afficherGaufre();
+                ig.syncGaufre();
+                ig.majInfo();
                 break;
             case "Reset":
+                Config.debug("Click bouton reset");
                 mg.reset();
-                ig.afficherGaufre();
+                ig.syncGaufre();
+                ig.majInfo();
                 break;
             case "Quitter":
                 System.exit(0);

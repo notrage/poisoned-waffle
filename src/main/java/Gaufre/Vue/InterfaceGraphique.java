@@ -8,13 +8,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.swing.*;
 
 import Gaufre.Controleur.EcouteurJeu;
 import Gaufre.Controleur.EcouteurMenu;
 import Gaufre.Controleur.EcouteurSouris;
+import Gaufre.Modele.Gaufre;
 import Gaufre.Configuration.ResourceLoader;
 import Gaufre.Configuration.Config;
 
@@ -22,14 +25,15 @@ public class InterfaceGraphique implements Runnable {
     public final int MENU = 0;
     public final int JEU = 1;
     public final int QUIT = -1;
-    private BufferedImage gaufreMilieu, poison, miettes1;
+    private BufferedImage gaufreMilieu, poison, miettes1, miettes2, miettes3, miettes4;
     private ModeGraphique modele;
     private EcouteurMenu ecouteurMenu;
     private Musique bgMusique;
     private int etat;
     private JFrame fenetre;
     private GraphicsEnvironment ge;
-    private Container plateau;
+    private JPanel plateau;
+    private cellGaufre[] gaufreCells;
 
     InterfaceGraphique(ModeGraphique mg) {
         etat = MENU;
@@ -48,8 +52,12 @@ public class InterfaceGraphique implements Runnable {
             e.printStackTrace();
         }
         gaufreMilieu = ResourceLoader.lireImage("gaufreMilieu");
-        poison = ResourceLoader.lireImage("poison");
+        poison = ResourceLoader.lireImage("gaufrePoison");
         miettes1 = ResourceLoader.lireImage("miettes1");
+        miettes2 = ResourceLoader.lireImage("miettes2");
+        miettes3 = ResourceLoader.lireImage("miettes3");
+        miettes4 = ResourceLoader.lireImage("miettes4");
+
     }
 
     public static InterfaceGraphique demarrer(ModeGraphique m) {
@@ -96,9 +104,23 @@ public class InterfaceGraphique implements Runnable {
             default:
                 throw new UnsupportedOperationException("Etat de jeu " + etat + " non supporté");
         }
+        if (Config.showBorders()) {
+            showAllBorders(panel);
+        }
         fenetre.setContentPane(panel);
         fenetre.revalidate();
         fenetre.repaint();
+    }
+
+    private void showAllBorders(Container container) {
+        for (Component comp : container.getComponents()) {
+            if (comp instanceof Container) {
+                showAllBorders((Container) comp);
+            }
+            if (comp instanceof JPanel) {
+                ((JPanel) comp).setBorder(BorderFactory.createLineBorder(Color.red));
+            }
+        }
     }
 
     private Container creerMenu() {
@@ -123,8 +145,6 @@ public class InterfaceGraphique implements Runnable {
         JLabel title = new JLabel("GAUFRE", SwingConstants.CENTER);
         title.setOpaque(false);
         title.setForeground(new Color(5, 158, 56));
-        int titleFontSize = (int) (menuHeight / 4);
-        title.setFont(new Font("DEADLY POISON II", Font.BOLD, titleFontSize));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Add title to the top of the BorderLayout
@@ -152,13 +172,17 @@ public class InterfaceGraphique implements Runnable {
         gbc.weighty = 1;
         gbc.insets = insets;
 
-        JButton button1J = new JButton("1 joueur");
+        JButton button1J = new JButton("Contre IA");
+        button1J.setBackground(new Color(255, 209, 102));
+        button1J.setMnemonic(KeyEvent.VK_I);
         button1J.addActionListener(ecouteurMenu);
         button1J.setActionCommand("Jeu1J");
         button1J.setAlignmentX(Component.CENTER_ALIGNMENT);
         middlePanel.add(button1J, gbc);
 
         JButton button2J = new JButton("2 joueurs");
+        button2J.setBackground(new Color(255, 209, 102));
+        button2J.setMnemonic(KeyEvent.VK_J);
         button2J.addActionListener(ecouteurMenu);
         button2J.setActionCommand("Jeu2J");
         button2J.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -183,9 +207,8 @@ public class InterfaceGraphique implements Runnable {
         }
         JButton volumeButton = new JButton();
         setButtonIcons(volumeButton, volImg);
-        // volumeButton.setPreferredSize(new Dimension((int) (0.15 * menuHeight), (int)
-        // (0.15 * menuHeight)));
         volumeButton.addActionListener(ecouteurMenu);
+        volumeButton.setName("volumeButton");
         volumeButton.setActionCommand("volume");
         volumeButton.setBorderPainted(false);
         volumeButton.setFocusPainted(false);
@@ -197,7 +220,6 @@ public class InterfaceGraphique implements Runnable {
         bottomRight.setLayout(new BoxLayout(bottomRight, BoxLayout.Y_AXIS));
         bottomRight.setOpaque(false);
         JLabel versionLabel = new JLabel(getClass().getPackage().getImplementationVersion());
-        versionLabel.setFont(new Font("Arial", Font.PLAIN, (int) (titleFontSize / 6)));
         versionLabel.setForeground(new Color(34, 84, 124));
         bottomRight.add(Box.createVerticalGlue());
         bottomRight.add(versionLabel);
@@ -214,6 +236,12 @@ public class InterfaceGraphique implements Runnable {
                 int newTitleFontSize = Math.max(50, fenetre.getHeight() / 4);
                 title.setFont(new Font("DEADLY POISON II", Font.BOLD, newTitleFontSize));
                 versionLabel.setFont(new Font("Arial", Font.PLAIN, (int) (newTitleFontSize / 6)));
+
+                int buttonFontSize = (int) (newTitleFontSize * 0.2); // Adjust the multiplier as needed
+                Font buttonFont = new Font("Arial", Font.PLAIN, buttonFontSize);
+                button1J.setFont(buttonFont);
+                button2J.setFont(buttonFont);
+                volumeButton.setFont(buttonFont);
 
                 layeredPane.setBounds(0, 0, fenetre.getWidth(), fenetre.getHeight());
                 fond.setBounds(0, 0, fenetre.getWidth(), fenetre.getHeight());
@@ -265,27 +293,25 @@ public class InterfaceGraphique implements Runnable {
         if (Config.estMuet()) {
             bgMusique.stop();
             BufferedImage volImg = ResourceLoader.lireImage("muet");
-            setButtonIcons(getButtonByCmd(fenetre, "volume"), volImg);
+            setButtonIcons((JButton) getComponentByName(fenetre, "volumeButton"), volImg);
         } else {
             bgMusique.play();
             BufferedImage volImg = ResourceLoader.lireImage("volume");
-            setButtonIcons(getButtonByCmd(fenetre, "volume"), volImg);
+            setButtonIcons((JButton) getComponentByName(fenetre, "volumeButton"), volImg);
         }
     }
 
-    private JButton getButtonByCmd(Component component, String actionCmd) {
-        if (component instanceof JButton) {
-            JButton button = (JButton) component;
-            if (button.getActionCommand().equals(actionCmd)) {
-                return button;
-            }
+    private Component getComponentByName(Component component, String name) {
+        String compName = component.getName();
+        if (compName != null && compName.equals(name)) {
+            return component;
         }
 
         if (component instanceof Container) {
             for (Component child : ((Container) component).getComponents()) {
-                JButton foundButton = getButtonByCmd(child, actionCmd);
-                if (foundButton != null) {
-                    return foundButton;
+                Component foundComponent = getComponentByName(child, name);
+                if (foundComponent != null) {
+                    return foundComponent;
                 }
             }
         }
@@ -294,62 +320,80 @@ public class InterfaceGraphique implements Runnable {
     }
 
     private Container creerJeu() {
-        Container pane = new Container();
+        JPanel pane = new JPanel();
+        int l = modele.getGaufre().getNbLignes(), c = modele.getGaufre().getNbColonnes();
+        gaufreCells = new cellGaufre[l * c];
 
         pane.setLayout(new BorderLayout());
-
-        // Titre
-        // texte = new JLabel("GAUFRE")
-        // pane.add(texte, BorderLayout.NORTH);
         pane.add(creerInfo(), BorderLayout.EAST);
-        this.plateau = new Container();
-        this.plateau.setLayout(new GridLayout(modele.getGaufre().getNbLignes(), modele.getGaufre().getNbColonnes()));
+        plateau = new JPanel(new GridLayout(l, c));
         EcouteurSouris ecouteurSouris = new EcouteurSouris(this);
         plateau.addMouseListener(ecouteurSouris);
         pane.add(plateau, BorderLayout.CENTER);
 
         modele.reset();
-        afficherGaufre();
+        Gaufre g = modele.getGaufre();
+        int lignes = g.getNbLignes();
+        int colonnes = g.getNbColonnes();
+
+        for (int i = 0; i < lignes; i++) {
+            for (int j = 0; j < colonnes; j++) {
+                cellGaufre cell = new cellGaufre(gaufreMilieu);
+                plateau.add(cell);
+                gaufreCells[i * g.getNbColonnes() + j] = cell;
+            }
+        }
+        gaufreCells[0].setImg(poison);
 
         return pane;
     }
 
     private Container creerInfo() {
-        Container pane = new Container();
-        ////
-        Container textes = new Container();
+        JPanel pane = new JPanel();
+
+        JPanel textes = new JPanel();
         textes.setLayout(new BoxLayout(textes, BoxLayout.Y_AXIS));
-        JLabel texte0 = new JLabel();
-        JLabel texte1 = new JLabel();
-        JLabel texte2 = new JLabel();
-        JLabel texte3 = new JLabel();
-        JLabel texte4 = new JLabel();
+        JLabel tour = new JLabel();
+        tour.setName("texteTour");
+        tour.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel score = new JLabel();
+        score.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel scoreJ1 = new JLabel();
+        scoreJ1.setName("texteScoreJ1");
+        scoreJ1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel scoreJ2 = new JLabel();
+        scoreJ2.setName("texteScoreJ2");
+        scoreJ2.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        texte0.setText("");
-        texte1.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
-        texte2.setText("Scores :");
-        texte3.setText("Joueur 1 :" + modele.getGaufre().getJoueur1().getScore());
-        texte4.setText("Joueur 2 :" + modele.getGaufre().getJoueur2().getScore());
+        tour.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
+        score.setText("Scores :");
+        scoreJ1.setText("Joueur 1 : " + modele.getGaufre().getJoueur1().getScore());
+        scoreJ2.setText("Joueur 2 : " + modele.getGaufre().getJoueur2().getScore());
 
-        textes.add(texte1);
-        textes.add(texte0);
-        textes.add(texte2);
-        textes.add(texte3);
-        textes.add(texte4);
-        ////
-        Container boutons = new Container();
+        textes.add(tour);
+        textes.add(score);
+        textes.add(scoreJ1);
+        textes.add(scoreJ2);
+
+        JPanel boutons = new JPanel();
         boutons.setLayout(new GridLayout(2, 2));
 
         JButton annuler = new JButton("Annuler");
+        annuler.setMnemonic(KeyEvent.VK_A);
+        annuler.setName("boutonAnnuler");
         annuler.setActionCommand("Annuler");
         annuler.addActionListener(new EcouteurJeu(this));
         JButton refaire = new JButton("Refaire");
+        refaire.setMnemonic(KeyEvent.VK_R);
+        refaire.setName("boutonRefaire");
         refaire.setActionCommand("Refaire");
         refaire.addActionListener(new EcouteurJeu(this));
         JButton reset = new JButton("Reset");
+        reset.setMnemonic(KeyEvent.VK_S);
         reset.setActionCommand("Reset");
         reset.addActionListener(new EcouteurJeu(this));
         JButton quitter = new JButton("Quitter");
+        quitter.setMnemonic(KeyEvent.VK_Q);
         quitter.setActionCommand("Quitter");
         quitter.addActionListener(new EcouteurJeu(this));
 
@@ -366,61 +410,103 @@ public class InterfaceGraphique implements Runnable {
     }
 
     public void majInfo() {
-        Container info = (Container) ((Container) fenetre.getContentPane()).getComponent(0);
-        Container textes = (Container) info.getComponent(0);
-        Container boutons = (Container) info.getComponent(1);
 
-        JLabel texte1 = (JLabel) textes.getComponent(0);
-        JLabel texte3 = (JLabel) textes.getComponent(3);
-        JLabel texte4 = (JLabel) textes.getComponent(4);
+        JLabel tour = (JLabel) getComponentByName(fenetre, "texteTour");
+        JLabel scoreJ1 = (JLabel) getComponentByName(fenetre, "texteScoreJ1");
+        JLabel scoreJ2 = (JLabel) getComponentByName(fenetre, "texteScoreJ2");
 
-        texte1.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
-        texte3.setText("Joueur 1 :" + modele.getGaufre().getJoueur1().getScore());
-        texte4.setText("Joueur 2 :" + modele.getGaufre().getJoueur2().getScore());
+        tour.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
+        scoreJ1.setText("Joueur 1 : " + modele.getGaufre().getJoueur1().getScore());
+        scoreJ2.setText("Joueur 2 : " + modele.getGaufre().getJoueur2().getScore());
 
-        JButton annuler = (JButton) boutons.getComponent(0);
-        JButton refaire = (JButton) boutons.getComponent(1);
-        if (modele.peutAnnuler()) {
-            annuler.setEnabled(true);
-        } else {
-            annuler.setEnabled(false);
-        }
-        if (modele.peutRefaire()) {
-            refaire.setEnabled(true);
-        } else {
-            refaire.setEnabled(false);
-        }
+        JButton annuler = (JButton) getComponentByName(fenetre, "boutonAnnuler");
+        JButton refaire = (JButton) getComponentByName(fenetre, "boutonRefaire");
+
+        annuler.setEnabled(modele.peutAnnuler());
+        refaire.setEnabled(modele.peutRefaire());
     }
 
-    public void afficherGaufre() {
-        // majInfo();
-        plateau.removeAll();
+    public void syncGaufre() {
+        Gaufre g = modele.getGaufre();
 
-        int lignes = modele.getGaufre().getNbLignes();
-        int colonnes = modele.getGaufre().getNbColonnes();
+        int lignes = g.getNbLignes();
+        int colonnes = g.getNbColonnes();
 
         for (int i = 0; i < lignes; i++) {
             for (int j = 0; j < colonnes; j++) {
-                if (modele.getGaufre().getCase(i, j)) {
-                    if (i == 0 && j == 0)
-                        plateau.add(new ajoutGaufre(poison));
-                    else
-                        plateau.add(new ajoutGaufre(gaufreMilieu));
-                } else
-                    plateau.add(new ajoutGaufre(miettes1));
+                cellGaufre cell = gaufreCells[i * g.getNbColonnes() + j];
+                if (g.getCase(i, j)) {
+                    if (i == 0 && j == 0) {
+                        cell.setImg(poison);
+                    } else {
+                        cell.setImg(gaufreMilieu);
+                    }
+                } else {
+                    cell.setImg(miettes1);
+                }
             }
         }
-
-        fenetre.revalidate();
-        fenetre.repaint();
-        return;
+        plateau.repaint();
     }
 
-    private class ajoutGaufre extends JPanel {
+    public void mangeCellGaufre(int l, int c) {
+        Gaufre gaufre = modele.getGaufre();
+        Random random = new Random();
+        int randomMiettes;
+
+        // Get the dimensions of the waffle grid
+        int nbLignes = gaufre.getNbLignes();
+        int nbColonnes = gaufre.getNbColonnes();
+
+        // Define starting and ending row/column for the square
+        int startRow = Math.min(l, nbLignes - 1);
+        int startCol = Math.min(c, nbColonnes - 1);
+        int endRow = Math.max(l, nbLignes - 1);
+        int endCol = Math.max(c, nbColonnes - 1);
+
+        // Loop through cells in the square
+        for (int i = startRow; i <= endRow; i++) {
+            for (int j = startCol; j <= endCol; j++) {
+                cellGaufre cell = gaufreCells[i * nbColonnes + j];
+                if (cell.getImg() == gaufreMilieu) {
+                    randomMiettes = random.nextInt(3);
+                    switch (randomMiettes) {
+                        case 0:
+                            cell.setImg(miettes1);
+                            break;
+                        case 1:
+                            cell.setImg(miettes2);
+                            break;
+                        case 2:
+                            cell.setImg(miettes3);
+                            break;
+                        default:
+                            cell.setImg(miettes4);
+                            break;
+                    }
+                    cell.repaint();
+                }
+            }
+        }
+        if (!Config.estMuet()) {
+            EffetsSonores.playSound("crunch");
+        }
+        majInfo();
+    }
+
+    private class cellGaufre extends JPanel {
         Image img;
 
-        public ajoutGaufre(Image img) {
+        public cellGaufre(BufferedImage img) {
             this.img = img;
+        }
+
+        public void setImg(BufferedImage newImg) {
+            this.img = newImg;
+        }
+
+        public Image getImg() {
+            return this.img;
         }
 
         @Override
@@ -433,15 +519,11 @@ public class InterfaceGraphique implements Runnable {
     }
 
     public void finPartie() {
-        // BorderLayout layout = (BorderLayout) fenetre.getContentPane().getLayout();
-        // Component boutons = layout.getLayoutComponent(BorderLayout.SOUTH);
-
         int gagnant = getMG().getGaufre().getJoueurCourant().getNum();
         int nbCoupsJoues = getMG().getGaufre().getHistorique().getNbFaits();
 
         System.out.println("Joueur " + gagnant + " a gagné !");
         System.out.println("La partie a duré " + nbCoupsJoues + " coups.");
-
     }
 
     public void setEtat(int newEtat) {

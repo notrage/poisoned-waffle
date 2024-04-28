@@ -14,28 +14,14 @@ public class ResourceLoader {
         if (Config.estJar()) {
             resourceStream = ResourceLoader.class.getClassLoader().getResourceAsStream(relativePath);
             if (resourceStream == null) {
-                System.err.println("Image " + relativePath + " not found.");
-                Config.debug("Attempting to use placeholder for image...");
-                resourceStream = ResourceLoader.class.getClassLoader().getResourceAsStream("images/notFound.png");
-                if (resourceStream == null) {
-                    System.err.println("While handling missing resource " + relativePath + " new error occured :");
-                    System.err.println("Missing required resource images/notFound.png");
-                    System.exit(1);
-                }
+                System.err.println("Resource " + relativePath + " not found.");
             }
         } else {
             try {
                 resourceStream = new FileInputStream(relativePath);
             } catch (FileNotFoundException e1) {
-                System.err.println("Image " + relativePath + " not found.");
-                try {
-                    resourceStream = new FileInputStream("images/notFound.png");
-                } catch (FileNotFoundException e2) {
-                    System.err.println("While handling " + e1 + " new error occured :");
-                    System.err.println("Missing required file images/notFound.png : " + e2);
-                    System.exit(1);
-
-                }
+                System.err.println("File " + relativePath + " not found.");
+                resourceStream = null;
             }
         }
         return resourceStream != null ? new BufferedInputStream(resourceStream) : null;
@@ -46,6 +32,16 @@ public class ResourceLoader {
         InputStream in;
         try {
             in = ResourceLoader.getResourceAsStream(imgPath);
+            if (in == null) {
+                Config.debug("Attempting to use placeholder for image...");
+                in = ResourceLoader.class.getClassLoader().getResourceAsStream("images/notFound.png");
+                if (in == null) {
+                    System.err.println("While handling missing resource " + imgPath + " new error occured :");
+                    System.err.println("Missing required resource images/notFound.png");
+                    System.exit(1);
+                }
+
+            }
             return ImageIO.read(in);
         } catch (FileNotFoundException e) {
             System.err.println("Erreur: fichier " + imgPath + " introuvable");

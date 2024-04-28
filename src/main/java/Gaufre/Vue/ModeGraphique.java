@@ -12,12 +12,18 @@ public class ModeGraphique {
     public ModeGraphique(Gaufre g) {
         gaufre = g;
     }
-    
+
     public void setIA(IA ia) {
         this.ia = ia;
+        ia.init(gaufre);
     }
+
     public Gaufre getGaufre() {
         return gaufre;
+    }
+
+    public int getNbJoueurs() {
+        return nbJoueurs;
     }
 
     public void setNbJoueurs(int nbJoueurs) {
@@ -33,18 +39,16 @@ public class ModeGraphique {
         boolean res;
         if (res = gaufre.jouer(coup)) {
             if (nbJoueurs == 1) {
-                try { // On attend un peu avant que l'IA joue
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Coup coupIA = ia.coupSuivant();
-                gaufre.jouer(coupIA);
             }
         }
         return res;
     }
 
+    public Coup jouerIA() {
+        Coup coupIA = ia.coupSuivant();
+        gaufre.jouer(coupIA);
+        return coupIA;
+    }
 
     public void reset() {
         gaufre.reinitialiser();
@@ -53,7 +57,6 @@ public class ModeGraphique {
     public void annuler() {
         gaufre.dejouer();
         if (nbJoueurs == 1) { // Si on joue contre l'IA on annule 2 fois
-
             gaufre.dejouer();
         }
     }
@@ -65,17 +68,16 @@ public class ModeGraphique {
         }
     }
 
-
     public boolean peutAnnuler() {
-        return gaufre.estDejouable();
+        return gaufre.estDejouable() && (gaufre.estFinie() == null);
     }
 
     public boolean peutRefaire() {
         return gaufre.estRejouable();
     }
-    
+
     public boolean estFini() {
         return (gaufre.estFinie() != null);
     }
-    
+
 }

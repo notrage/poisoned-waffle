@@ -7,6 +7,8 @@ public class Config {
 
     private static final boolean debug = true;
 
+    private static final boolean showBorders = false;
+
     public Config() {
         estJar = System.getProperty("java.class.path").endsWith("jar");
     }
@@ -17,6 +19,10 @@ public class Config {
 
     static public boolean estMuet() {
         return muet;
+    }
+
+    static public boolean showBorders() {
+        return showBorders;
     }
 
     static public void toggleSon() {
