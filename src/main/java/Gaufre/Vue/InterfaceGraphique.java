@@ -16,6 +16,7 @@ import javax.swing.*;
 
 import Gaufre.Controleur.EcouteurJeu;
 import Gaufre.Controleur.EcouteurMenu;
+import Gaufre.Controleur.EcouteurChoixIA;
 import Gaufre.Controleur.EcouteurSouris;
 import Gaufre.Modele.Gaufre;
 import Gaufre.Configuration.ResourceLoader;
@@ -24,10 +25,12 @@ import Gaufre.Configuration.Config;
 public class InterfaceGraphique implements Runnable {
     public final int MENU = 0;
     public final int JEU = 1;
+    public final int CHOIX_IA = 2;
     public final int QUIT = -1;
     private BufferedImage gaufreMilieu, poison, miettes1, miettes2, miettes3, miettes4;
     private ModeGraphique modele;
     private EcouteurMenu ecouteurMenu;
+    private EcouteurChoixIA ecouteurChoixIA;
     private Musique bgMusique;
     private int etat;
     private JFrame fenetre;
@@ -39,6 +42,7 @@ public class InterfaceGraphique implements Runnable {
         etat = MENU;
         modele = mg;
         ecouteurMenu = new EcouteurMenu(this);
+        ecouteurChoixIA = new EcouteurChoixIA(this);
         bgMusique = new Musique("sons/SpaceJazz.wav");
         if (!Config.estMuet()) {
             bgMusique.play();
@@ -57,7 +61,6 @@ public class InterfaceGraphique implements Runnable {
         miettes2 = ResourceLoader.lireImage("miettes2");
         miettes3 = ResourceLoader.lireImage("miettes3");
         miettes4 = ResourceLoader.lireImage("miettes4");
-
     }
 
     public static InterfaceGraphique demarrer(ModeGraphique m) {
@@ -96,6 +99,11 @@ public class InterfaceGraphique implements Runnable {
             case JEU:
                 fenetre.getContentPane().removeAll();
                 panel = creerJeu();
+                break;
+
+            case CHOIX_IA:
+                fenetre.getContentPane().removeAll();
+                panel = creerChoixIA();
                 break;
 
             case QUIT:
@@ -317,6 +325,36 @@ public class InterfaceGraphique implements Runnable {
         }
 
         return null; // Return null if no button is found
+    }
+
+    private Container creerChoixIA() {
+        JPanel pane = new JPanel();
+        pane.setLayout(new GridLayout(1, 3));
+
+        //Creating three buttons - easy ; medium ; hard
+
+        JButton easy = new JButton("Easy");
+        easy.setBackground(new Color(255, 209, 102));
+        easy.setMnemonic(KeyEvent.VK_E);
+        easy.addActionListener(ecouteurChoixIA);
+        easy.setActionCommand("EasyDifficulty");
+        pane.add(easy, null);
+
+        JButton medium = new JButton("Medium");
+        medium.setBackground(new Color(255, 209, 102));
+        medium.setMnemonic(KeyEvent.VK_M);
+        medium.addActionListener(ecouteurChoixIA);
+        medium.setActionCommand("MediumDifficulty");
+        pane.add(medium, null);
+
+        JButton hard = new JButton("Hard");
+        hard.setBackground(new Color(255, 209, 102));
+        hard.setMnemonic(KeyEvent.VK_H);
+        hard.addActionListener(ecouteurChoixIA);
+        hard.setActionCommand("HardDifficulty");
+        pane.add(hard, null);
+
+        return pane;
     }
 
     private Container creerJeu() {
