@@ -3,6 +3,7 @@ package Gaufre.Controleur;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Gaufre.Jeu;
 import Gaufre.Configuration.Config;
 import Gaufre.Vue.InterfaceGraphique;
 import Gaufre.Vue.ModeGraphique;
@@ -34,12 +35,25 @@ public class EcouteurJeu implements ActionListener {
             case "Reset":
                 Config.debug("Click bouton reset");
                 mg.reset();
-                ig.syncGaufre();
-                ig.majInfo();
+                ig.setEtat(ig.JEU);
                 break;
-            case "Quitter":
-                System.exit(0);
+            case "QuitterJeu":
+                Config.debug("Click bouton quitter jeu");
+                ig.setEtat(ig.MENU);
                 break;
+            case "Plus":
+                Config.debug("Click bouton plus");
+                mg.plus();
+                ig.setEtat(ig.JEU);
+                
+                break;
+            case "Moins":
+                Config.debug("Click bouton moins");
+                mg.moins();
+                ig.setEtat(ig.JEU);
+
+                break;
+
             default:
                 throw new UnsupportedOperationException("Bouton du jeu non supporté");
         }

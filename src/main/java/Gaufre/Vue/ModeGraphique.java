@@ -75,4 +75,18 @@ public class ModeGraphique {
         return (gaufre.estFinie() != null);
     }
 
+    public void plus() {
+            gaufre.resize(gaufre.getNbLignes() + 1, gaufre.getNbColonnes() + 1);
+    }
+    
+    public void moins() {
+        if (gaufre.getNbLignes() > 1) {
+            gaufre.resize(gaufre.getNbLignes() - 1, gaufre.getNbColonnes() - 1);
+        }
+    }
+
+    public void resize(int l, int c) {
+        gaufre.resize(l, c);
+    }
+
 }

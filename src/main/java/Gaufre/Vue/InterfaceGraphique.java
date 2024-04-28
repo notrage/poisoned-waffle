@@ -16,6 +16,7 @@ import javax.swing.*;
 
 import Gaufre.Controleur.EcouteurJeu;
 import Gaufre.Controleur.EcouteurMenu;
+import Gaufre.Controleur.EcouteurChoixIA;
 import Gaufre.Controleur.EcouteurSouris;
 import Gaufre.Modele.Gaufre;
 import Gaufre.Configuration.ResourceLoader;
@@ -24,10 +25,12 @@ import Gaufre.Configuration.Config;
 public class InterfaceGraphique implements Runnable {
     public final int MENU = 0;
     public final int JEU = 1;
+    public final int CHOIX_IA = 2;
     public final int QUIT = -1;
     private BufferedImage gaufreMilieu, poison, miettes1, miettes2, miettes3, miettes4;
     private ModeGraphique modele;
     private EcouteurMenu ecouteurMenu;
+    private EcouteurChoixIA ecouteurChoixIA;
     private Musique bgMusique;
     private int etat;
     private JFrame fenetre;
@@ -39,6 +42,7 @@ public class InterfaceGraphique implements Runnable {
         etat = MENU;
         modele = mg;
         ecouteurMenu = new EcouteurMenu(this);
+        ecouteurChoixIA = new EcouteurChoixIA(this);
         bgMusique = new Musique("sons/SpaceJazz.wav");
         if (!Config.estMuet()) {
             bgMusique.play();
@@ -95,6 +99,11 @@ public class InterfaceGraphique implements Runnable {
             case JEU:
                 fenetre.getContentPane().removeAll();
                 panel = creerJeu();
+                break;
+
+            case CHOIX_IA:
+                fenetre.getContentPane().removeAll();
+                panel = creerChoixIA();
                 break;
 
             case QUIT:
@@ -227,7 +236,15 @@ public class InterfaceGraphique implements Runnable {
         pane.add(bottomPanel, BorderLayout.PAGE_END);
 
         layeredPane.add(pane, JLayeredPane.PALETTE_LAYER);
-
+        int newTitleFontSize = Math.max(50, fenetre.getHeight() / 4);
+        title.setFont(new Font("DEADLY POISON II", Font.BOLD, newTitleFontSize));
+        versionLabel.setFont(new Font("Arial", Font.PLAIN, (int) (newTitleFontSize / 6)));
+        int buttonFontSize = (int) (newTitleFontSize * 0.2); // Adjust the multiplier as needed
+        Font buttonFont = new Font("Arial", Font.PLAIN, buttonFontSize);
+        button1J.setFont(buttonFont);
+        button2J.setFont(buttonFont);
+        volumeButton.setFont(buttonFont);
+        
         fenetre.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -235,7 +252,7 @@ public class InterfaceGraphique implements Runnable {
                 int newTitleFontSize = Math.max(50, fenetre.getHeight() / 4);
                 title.setFont(new Font("DEADLY POISON II", Font.BOLD, newTitleFontSize));
                 versionLabel.setFont(new Font("Arial", Font.PLAIN, (int) (newTitleFontSize / 6)));
-
+                
                 int buttonFontSize = (int) (newTitleFontSize * 0.2); // Adjust the multiplier as needed
                 Font buttonFont = new Font("Arial", Font.PLAIN, buttonFontSize);
                 button1J.setFont(buttonFont);
@@ -318,6 +335,36 @@ public class InterfaceGraphique implements Runnable {
         return null; // Return null if no button is found
     }
 
+    private Container creerChoixIA() {
+        JPanel pane = new JPanel();
+        pane.setLayout(new GridLayout(1, 3));
+
+        //Creating three buttons - easy ; medium ; hard
+
+        JButton easy = new JButton("Easy");
+        easy.setBackground(new Color(255, 209, 102));
+        easy.setMnemonic(KeyEvent.VK_E);
+        easy.addActionListener(ecouteurChoixIA);
+        easy.setActionCommand("EasyDifficulty");
+        pane.add(easy, null);
+
+        JButton medium = new JButton("Medium");
+        medium.setBackground(new Color(255, 209, 102));
+        medium.setMnemonic(KeyEvent.VK_M);
+        medium.addActionListener(ecouteurChoixIA);
+        medium.setActionCommand("MediumDifficulty");
+        pane.add(medium, null);
+
+        JButton hard = new JButton("Hard");
+        hard.setBackground(new Color(255, 209, 102));
+        hard.setMnemonic(KeyEvent.VK_H);
+        hard.addActionListener(ecouteurChoixIA);
+        hard.setActionCommand("HardDifficulty");
+        pane.add(hard, null);
+
+        return pane;
+    }
+
     private Container creerJeu() {
         JPanel pane = new JPanel();
         int l = modele.getGaufre().getNbLignes(), c = modele.getGaufre().getNbColonnes();
@@ -343,7 +390,6 @@ public class InterfaceGraphique implements Runnable {
             }
         }
         gaufreCells[0].setImg(poison);
-
         return pane;
     }
 
@@ -384,31 +430,43 @@ public class InterfaceGraphique implements Runnable {
         scrollPane.setPreferredSize(new Dimension(fenetre.getHeight() / 4, fenetre.getHeight() / 3));
 
         JPanel boutons = new JPanel();
-        boutons.setLayout(new GridLayout(2, 2));
+        boutons.setLayout(new GridLayout(3, 3));
 
         JButton annuler = new JButton("Annuler");
         annuler.setMnemonic(KeyEvent.VK_A);
         annuler.setName("boutonAnnuler");
         annuler.setActionCommand("Annuler");
         annuler.addActionListener(new EcouteurJeu(this));
+        annuler.setEnabled(modele.peutAnnuler());
         JButton refaire = new JButton("Refaire");
         refaire.setMnemonic(KeyEvent.VK_R);
         refaire.setName("boutonRefaire");
         refaire.setActionCommand("Refaire");
         refaire.addActionListener(new EcouteurJeu(this));
+        refaire.setEnabled(modele.peutRefaire());
         JButton reset = new JButton("Reset");
         reset.setMnemonic(KeyEvent.VK_S);
         reset.setActionCommand("Reset");
         reset.addActionListener(new EcouteurJeu(this));
         JButton quitter = new JButton("Quitter");
         quitter.setMnemonic(KeyEvent.VK_Q);
-        quitter.setActionCommand("Quitter");
+        quitter.setActionCommand("QuitterJeu");
         quitter.addActionListener(new EcouteurJeu(this));
+        JButton plus = new JButton("+");
+        plus.setMnemonic(KeyEvent.VK_P);
+        plus.setActionCommand("Plus");
+        plus.addActionListener(new EcouteurJeu(this));
+        JButton moins = new JButton("-");
+        moins.setMnemonic(KeyEvent.VK_M);
+        moins.setActionCommand("Moins");
+        moins.addActionListener(new EcouteurJeu(this));
 
         boutons.add(annuler);
         boutons.add(refaire);
         boutons.add(quitter);
         boutons.add(reset);
+        boutons.add(plus);
+        boutons.add(moins);
 
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         pane.add(textes);

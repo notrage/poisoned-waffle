@@ -1,5 +1,7 @@
 package Gaufre.Modele;
 
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Random;
 
 // IA jouant aléatoirement SAUF si il existe un coup gagnat 
@@ -21,19 +23,27 @@ public class IAcoupGagnant implements IA {
         if ((c = trouveGagnant()) != null) {
             return c;
         } else {
-            int x = generateur.nextInt() % gaufre.getNbLignes();
-            int y = generateur.nextInt() % gaufre.getNbColonnes();
-            c = new Coup(x, y);
-            while ((x == 0 && y == 0) || !gaufre.estJouable(c)) {
-                x = generateur.nextInt() % gaufre.getNbLignes();
-                y = generateur.nextInt() % gaufre.getNbColonnes();
-                c = new Coup(x, y);
+            ArrayList<Point> ensPossible = new ArrayList<>();
+            for (int i = 0; i < gaufre.getNbLignes(); i++) {
+                for (int j = 0; j < gaufre.getNbColonnes(); j++) {
+                    if (i == 0 && j == 0)
+                        continue;
+                    Point p = new Point(i, j);
+                    if (gaufre.estJouable(new Coup(p))) {
+                        ensPossible.add(p);
+                    }
+                }
             }
+            if (ensPossible.size() == 0) {
+                return new Coup(0, 0);
+            }
+            int x = Math.abs(generateur.nextInt() % ensPossible.size());
+            c = new Coup(ensPossible.get(x));
+            return c;
         }
-        return c;
     }
 
-    // Méthode qui retourne un coup gagant, ou null si il n'en existe pas 
+    // Méthode qui retourne un coup gagant, ou null si il n'en existe pas
     public Coup trouveGagnant() {
         Coup c;
         Gaufre copie = gaufre.clone();
@@ -45,7 +55,7 @@ public class IAcoupGagnant implements IA {
                     if (copie.estFinie() == copie.getJoueur2()) {
                         return c;
                     } else {
-                        // Si le coup n'est pas gagnat, on l'annule et on essaye un autre 
+                        // Si le coup n'est pas gagnat, on l'annule et on essaye un autre
                         copie.dejouer();
                     }
                 }

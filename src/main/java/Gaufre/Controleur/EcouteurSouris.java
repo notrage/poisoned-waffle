@@ -37,6 +37,7 @@ public class EcouteurSouris extends MouseAdapter {
                     ig.mangeCellGaufre(l, c);
                 }
                 if (ig.getMG().estFini()) {
+                    ig.getMG().getGaufre().estFinie().incrementScore();
                     ig.finPartie();
                 }
             }

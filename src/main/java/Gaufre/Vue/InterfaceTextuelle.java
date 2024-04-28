@@ -171,6 +171,7 @@ public class InterfaceTextuelle {
             }
             mt.afficher();
             if (mt.partieFinie()) {
+                mt.gaufre.estFinie().incrementScore();
                 System.out.println("Partie terminée");
                 System.out.println("Vainqueur : " + mt.gaufre.estFinie());
             }

@@ -259,14 +259,11 @@ public class Gaufre {
 
     public Joueur estFinie() {
         if (!getCase(0, 0)) {
-            getJoueurCourant().incrementScore();
             return getJoueurCourant();
         } else if (!getCase(0, 1) && !getCase(1, 0)) {
             if (getJoueurCourant() == getJoueur1()) {
-                getJoueur2().incrementScore();
                 return getJoueur2();
             } else {
-                getJoueur1().incrementScore();
                 return getJoueur1();
             }
         }
@@ -328,5 +325,15 @@ public class Gaufre {
             s += plateau[i] * (Math.pow(10, i));
         }
         return Objects.hash(joueurCourant) + s;
+    }
+
+    public void resize(int l, int c) {
+        int[] newPlateau = new int[l];
+        setNbLignes(l);
+        setNbColonnes(c); 
+        for (int i = 0; i < l; i++) {
+            newPlateau[i] = getNbColonnes();
+        }
+        setPlateau(newPlateau);
     }
 }
