@@ -18,9 +18,13 @@ import Gaufre.Controleur.EcouteurJeu;
 import Gaufre.Controleur.EcouteurMenu;
 import Gaufre.Controleur.EcouteurChoixIA;
 import Gaufre.Controleur.EcouteurSouris;
+
 import Gaufre.Modele.Coup;
 import Gaufre.Modele.Gaufre;
 import Gaufre.Modele.IAaleatoire;
+import Gaufre.Modele.IAcoupGagnant;
+import Gaufre.Modele.IAexploration;
+
 import Gaufre.Configuration.ResourceLoader;
 import Gaufre.Configuration.Config;
 
@@ -29,16 +33,23 @@ public class InterfaceGraphique implements Runnable {
     public final int JEU = 1;
     public final int CHOIX_IA = 2;
     public final int QUIT = -1;
+    public final int ALEA = 10;
+    public final int GAGNANT = 11;
+    public final int EXPLO = 12;
+
     private BufferedImage gaufreMilieu, poison, miettes1, miettes2, miettes3, miettes4;
     private ModeGraphique modele;
     private EcouteurMenu ecouteurMenu;
     private EcouteurChoixIA ecouteurChoixIA;
     private Musique bgMusique;
     private int etat;
+    private int typeIA;
     private JFrame fenetre;
     private GraphicsEnvironment ge;
     private JPanel plateau;
     private cellGaufre[] gaufreCells;
+    private JLabel affichageNorth;
+    public boolean boolCoupInval;
 
     InterfaceGraphique(ModeGraphique mg) {
         etat = MENU;
@@ -63,6 +74,7 @@ public class InterfaceGraphique implements Runnable {
         miettes2 = ResourceLoader.lireImage("miettes2");
         miettes3 = ResourceLoader.lireImage("miettes3");
         miettes4 = ResourceLoader.lireImage("miettes4");
+        boolCoupInval = false;
     }
 
     public static InterfaceGraphique demarrer(ModeGraphique m) {
@@ -82,6 +94,7 @@ public class InterfaceGraphique implements Runnable {
 
     public void run() {
         fenetre = new JFrame("Gauffre");
+        fenetre.setIconImage(gaufreMilieu);
         fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fenetre.setLocationRelativeTo(null);
         fenetre.setSize(new Dimension(800, 600));
@@ -346,7 +359,7 @@ public class InterfaceGraphique implements Runnable {
         BufferedImage gaufreMedium = ResourceLoader.lireImage("gaufreMedium");
         BufferedImage gaufreHard = ResourceLoader.lireImage("gaufreHard");
 
-        //Creating three buttons - easy ; medium ; hard
+        // Creating three buttons - easy ; medium ; hard
 
         JPanel pane = new JPanel();
         pane.setLayout(new GridLayout(1, 3));
@@ -422,15 +435,21 @@ public class InterfaceGraphique implements Runnable {
 
         pane.setLayout(new BorderLayout());
         pane.add(creerInfo(), BorderLayout.EAST);
+        pane.add(creerSauv(), BorderLayout.SOUTH);
         plateau = new JPanel(new GridLayout(l, c));
         EcouteurSouris ecouteurSouris = new EcouteurSouris(this);
         plateau.addMouseListener(ecouteurSouris);
         pane.add(plateau, BorderLayout.CENTER);
 
-        modele.reset();
         Gaufre g = modele.getGaufre();
         int lignes = g.getNbLignes();
         int colonnes = g.getNbColonnes();
+
+        affichageNorth = new JLabel("    ");
+        affichageNorth.setForeground(new Color(250, 50, 50));
+        affichageNorth.setOpaque(false);
+        affichageNorth.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pane.add(affichageNorth, BorderLayout.NORTH);
 
         for (int i = 0; i < lignes; i++) {
             for (int j = 0; j < colonnes; j++) {
@@ -440,11 +459,27 @@ public class InterfaceGraphique implements Runnable {
             }
         }
         gaufreCells[0].setImg(poison);
+        for (int i = 0; i < lignes; i++) {
+            for (int j = 0; j < colonnes; j++) {
+                if (!g.getCase(i, j)) {
+                    mangeCellGaufre(i, j);
+                }
+            }
+        }
 
         // Faire jouer l'ia tout de suite si mode 1 joueur et J2 commence
         if (modele.getNbJoueurs() == 1) {
-            modele.setIA(new IAaleatoire());
-            Config.debug(modele.getIA());
+            switch (getTypeIA()) {
+                case ALEA:
+                    modele.setIA(new IAaleatoire());
+                    break;
+                case GAGNANT:
+                    modele.setIA(new IAcoupGagnant());
+                    break;
+                case EXPLO:
+                    modele.setIA(new IAexploration());
+                    break;
+            }
             if (modele.getGaufre().getJoueurCourant() == modele.getGaufre().getJoueur2()) {
                 Config.debug("L'IA commence !");
                 Coup coupIA = modele.jouerIA();
@@ -456,6 +491,37 @@ public class InterfaceGraphique implements Runnable {
         }
         return pane;
 
+    }
+
+    private Container creerSauv() {
+        JPanel pane = new JPanel();
+        pane.setLayout(new GridLayout(1, 2));
+        JButton sauvegarder = new JButton("Sauvegarder");
+        sauvegarder.setMnemonic(KeyEvent.VK_S);
+        sauvegarder.setActionCommand("Sauvegarder");
+        sauvegarder.addActionListener(new EcouteurJeu(this));
+        JButton charger = new JButton("Charger");
+        charger.setMnemonic(KeyEvent.VK_C);
+        charger.setActionCommand("Charger");
+        charger.addActionListener(new EcouteurJeu(this));
+
+        pane.add(sauvegarder);
+        pane.add(charger);
+        return pane;
+    }
+
+    public void afficheGagnant() {
+        affichageNorth.setText("Victoire du Joueur " + getMG().getGaufre().estFinie().getNum() + ", trop fort !");
+        affichageNorth.setForeground(new Color(70, 200, 10));
+    }
+
+    public void revertAfficahgeInval() {
+        affichageNorth.setText("    ");
+        boolCoupInval = false;
+    }
+
+    public void coupInval() {
+        affichageNorth.setText("Coup Invalide");
     }
 
     private Container creerInfo() {
@@ -510,7 +576,7 @@ public class InterfaceGraphique implements Runnable {
         refaire.addActionListener(new EcouteurJeu(this));
         refaire.setEnabled(modele.peutRefaire());
         JButton reset = new JButton("Reset");
-        reset.setMnemonic(KeyEvent.VK_S);
+        reset.setMnemonic(KeyEvent.VK_DELETE);
         reset.setActionCommand("Reset");
         reset.addActionListener(new EcouteurJeu(this));
         JButton quitter = new JButton("Quitter");
@@ -547,13 +613,24 @@ public class InterfaceGraphique implements Runnable {
         JLabel scoreJ1 = (JLabel) getComponentByName(fenetre, "texteScoreJ1");
         JLabel scoreJ2 = (JLabel) getComponentByName(fenetre, "texteScoreJ2");
         JPanel histPanel = (JPanel) getComponentByName(fenetre, "histPanel");
+        if (getMG().getNbJoueurs() == 1) {
+            if (modele.getGaufre().getJoueurCourant().getNum() == 1) {
+                tour.setText("Tour du Joueur");
+            } else {
+                tour.setText("Tour de l'IA");
+            }
+            scoreJ1.setText("Joueur : " + modele.getGaufre().getJoueur1().getScore());
+            scoreJ2.setText("IA     : " + modele.getGaufre().getJoueur2().getScore());
+        } else {
+            tour.setText("Tour du Joueur " + modele.getGaufre().getJoueurCourant().getNum());
+            scoreJ1.setText("Joueur 1 : " + modele.getGaufre().getJoueur1().getScore());
+            scoreJ2.setText("Joueur 2 : " + modele.getGaufre().getJoueur2().getScore());
+        }
 
-        tour.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
-        scoreJ1.setText("Joueur 1 : " + modele.getGaufre().getJoueur1().getScore());
-        scoreJ2.setText("Joueur 2 : " + modele.getGaufre().getJoueur2().getScore());
         JLabel hist = new JLabel();
-        hist.setText(modele.getGaufre().getHistorique().pourAffichage());
+        hist.setText(modele.getGaufre().getHistorique().pourAffichage(getMG().getNbJoueurs() == 1));
         histPanel.removeAll();
+        histPanel.repaint();
         histPanel.add(hist);
 
         JButton annuler = (JButton) getComponentByName(fenetre, "boutonAnnuler");
@@ -565,6 +642,8 @@ public class InterfaceGraphique implements Runnable {
 
     public void syncGaufre() {
         Gaufre g = modele.getGaufre();
+        Random random = new Random();
+        int randomMiettes;
 
         int lignes = g.getNbLignes();
         int colonnes = g.getNbColonnes();
@@ -579,8 +658,23 @@ public class InterfaceGraphique implements Runnable {
                         cell.setImg(gaufreMilieu);
                     }
                 } else {
-                    // randomiser miettes
-                    cell.setImg(miettes1);
+                    if (cell.getImg() == gaufreMilieu) {
+                        randomMiettes = random.nextInt(4);
+                        switch (randomMiettes) {
+                            case 0:
+                                cell.setImg(miettes1);
+                                break;
+                            case 1:
+                                cell.setImg(miettes2);
+                                break;
+                            case 2:
+                                cell.setImg(miettes3);
+                                break;
+                            default:
+                                cell.setImg(miettes4);
+                                break;
+                        }
+                    }
                 }
             }
         }
@@ -656,9 +750,9 @@ public class InterfaceGraphique implements Runnable {
     }
 
     public void finPartie() {
-        int gagnant = getMG().getGaufre().getJoueurCourant().getNum();
+        int gagnant = getMG().getGaufre().estFinie().getNum();
         int nbCoupsJoues = getMG().getGaufre().getHistorique().getNbFaits();
-
+        majInfo();
         // Afficher à l'écran
         System.out.println("Joueur " + gagnant + " a gagné !");
         System.out.println("La partie a duré " + nbCoupsJoues + " coups.");
@@ -667,6 +761,10 @@ public class InterfaceGraphique implements Runnable {
     public void setEtat(int newEtat) {
         etat = newEtat;
         metAJourFenetre();
+    }
+
+    public void setTypeIA(int type) {
+        this.typeIA = type;
     }
 
     public int getEtat() {
@@ -707,6 +805,10 @@ public class InterfaceGraphique implements Runnable {
 
     public Graphics2D getGraphics() {
         return (Graphics2D) plateau.getGraphics();
+    }
+
+    public int getTypeIA() {
+        return typeIA;
     }
 }
 

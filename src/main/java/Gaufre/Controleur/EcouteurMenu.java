@@ -19,12 +19,12 @@ public class EcouteurMenu implements ActionListener {
         Config.debug("Received action : ", evt.getActionCommand());
         switch (evt.getActionCommand()) {
             case "Jeu1J":
-                vue.setEtat(vue.CHOIX_IA);
                 vue.getMG().setNbJoueurs(1);
+                vue.setEtat(vue.CHOIX_IA);
                 break;
             case "Jeu2J":
-                vue.setEtat(vue.JEU);
                 vue.getMG().setNbJoueurs(2);
+                vue.setEtat(vue.JEU);
                 break;
             case "volume":
                 Config.toggleSon();

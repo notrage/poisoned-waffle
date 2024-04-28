@@ -6,9 +6,7 @@ import java.awt.event.ActionListener;
 import Gaufre.Vue.InterfaceGraphique;
 
 import Gaufre.Configuration.Config;
-import Gaufre.Modele.IAaleatoire;
-import Gaufre.Modele.IAcoupGagnant;
-import Gaufre.Modele.IAexploration;
+
 
 public class EcouteurChoixIA implements ActionListener {
     private InterfaceGraphique vue;
@@ -22,15 +20,15 @@ public class EcouteurChoixIA implements ActionListener {
         Config.debug("Received action : ", evt.getActionCommand());
         switch (evt.getActionCommand()) {
             case "EasyDifficulty":
-                vue.getMG().setIA(new IAaleatoire());
+                vue.setTypeIA(vue.ALEA);
                 vue.setEtat(vue.JEU);
                 break;
             case "MediumDifficulty":
-                vue.getMG().setIA(new IAcoupGagnant());
+                vue.setTypeIA(vue.GAGNANT);
                 vue.setEtat(vue.JEU);
                 break;
             case "HardDifficulty":
-                vue.getMG().setIA(new IAexploration());
+                vue.setTypeIA(vue.EXPLO);
                 vue.setEtat(vue.JEU);
                 break;
             default:

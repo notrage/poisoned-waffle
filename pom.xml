@@ -51,7 +51,8 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>Gaufre.Jeu</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

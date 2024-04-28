@@ -2,7 +2,6 @@ package Gaufre.Modele;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Historique {
     private ArrayList<Coup> faits;
@@ -95,14 +94,23 @@ public class Historique {
         return s;
     }
 
-    public String pourAffichage() {
+    public String pourAffichage(boolean IA) {
         String s = "<html>";
         ArrayList<Coup> faits = getFaits();
         for (int i = faits.size() - 1; i >= 0; i--) {
             Coup c = faits.get(i);
             Joueur joueur = c.getJoueur();
             Point position = c.getPosition();
-            s += "J" + joueur.getNum() + " : (" + (int) position.getX() + ", " + (int) position.getY() + ")<br>";
+            if (IA) {
+                if (joueur.getNum() == 1) {
+                    s += "Vous" + " : (";
+                } else {
+                    s += "IA" + " : (";
+                }
+            } else {
+                s += "J" + joueur.getNum() + " : (";
+            }
+            s += (int) (position.getX() + 1) + ", " + (int) (position.getY() + 1 )+ ")<br>";
         }
         s += "</html>";
         return s;

@@ -22,6 +22,9 @@ public class EcouteurSouris extends MouseAdapter {
             int l = e.getY() / ig.getTailleCelluleY();
             Config.debug("Click sur case ", l, c);
             if (ig.getMG().jouer(l, c)) {
+                if(ig.boolCoupInval){
+                    ig.revertAfficahgeInval();
+                }
                 ig.mangeCellGaufre(l, c);
                 ig.majInfo();
                 // Peut-être à remplacer par un truc du genre if .contreIA()
@@ -32,12 +35,16 @@ public class EcouteurSouris extends MouseAdapter {
                     Config.debug("Coup IA : ", l, c);
                     ig.mangeCellGaufre(l, c);
                     ig.majInfo();
-
                 }
                 if (ig.getMG().estFini()) {
                     ig.getMG().getGaufre().estFinie().incrementScore();
+                    ig.afficheGagnant();
                     ig.finPartie();
                 }
+            }
+            else {
+                ig.boolCoupInval=true;
+                ig.coupInval();
             }
         }
     }

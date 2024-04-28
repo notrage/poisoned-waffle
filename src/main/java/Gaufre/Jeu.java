@@ -8,7 +8,7 @@ import Gaufre.Configuration.Config;
 public class Jeu {
 
     Jeu() {
-        ModeGraphique mode = new ModeGraphique(new Gaufre(5, 5));
+        ModeGraphique mode = new ModeGraphique(new Gaufre(6, 5));
         InterfaceGraphique.demarrer(mode);
     }
 
