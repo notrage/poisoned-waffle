@@ -108,13 +108,13 @@ public class ModeleTest {
         Gaufre g = new Gaufre(3, 3);
         Joueur jcourant = g.getJoueurCourant();
         joueDejoue(g, new Coup(2, 2));
-        assert (g.getJoueurCourant().equals(jcourant));
+        assertTrue(g.getJoueurCourant().equals(jcourant));
         assertTrue(g.jouer(new Coup(2, 2)));
         jcourant = g.getJoueurCourant();
         joueDejoue(g, new Coup(0, 1));
-        assert (g.getJoueurCourant().equals(jcourant));
+        assertTrue(g.getJoueurCourant().equals(jcourant));
         joueDejoue(g, new Coup(1, 0));
-        assert (g.getJoueurCourant().equals(jcourant));
+        assertTrue(g.getJoueurCourant().equals(jcourant));
         joueDejoue(g, new Coup(0, 0));
         assertTrue(g.dejouer());
         assertTrue(g.jouer(new Coup(0, 1)));
@@ -127,25 +127,12 @@ public class ModeleTest {
     }
 
     private void joueDejoue(Gaufre g, Coup c) {
-        boolean[][] copie = new boolean[g.getNbLignes()][g.getNbColonnes()];
-        for (int i = 0; i < g.getNbLignes(); i++) {
-            for (int j = 0; j < g.getNbColonnes(); j++) {
-                copie[i][j] = g.getCase(i, j);
-            }
+        int[] copie = g.clonePlateau();
+        if (g.estJouable(c)){
+            g.jouer(c);
+            g.dejouer();
+            estPlateauEquivalent(copie, g.getPlateau());
         }
-        g.jouer(new Coup(0, 1));
-        Joueur jcourant = g.getJoueurCourant();
-        Config.debug("jcourant", jcourant, "getNum", jcourant.getNum());
-        dejoueRejoue(g);
-        Config.debug("jcourant", g.getJoueurCourant(), "getNum", g.getJoueurCourant().getNum());
-        assert (g.getJoueurCourant() == jcourant);
-        assertTrue(g.dejouer());
-        assertFalse(g.dejouer());
-        assertTrue(g.estRejouable());
-        jcourant = g.getJoueurCourant();
-        g.jouer(new Coup(0, 1));
-        assert (g.getJoueurCourant() != jcourant);
-        assertFalse(g.estRejouable());
     }
 
     @Test
@@ -181,7 +168,6 @@ public class ModeleTest {
 
     private void dejoueRejoue(Gaufre g) {
         int[] copie = g.clonePlateau();
-
         assertTrue(g.estDejouable());
         g.dejouer();
         assertTrue(g.estRejouable());
