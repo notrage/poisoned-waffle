@@ -2,7 +2,6 @@ package Gaufre.Modele;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Historique {
     private ArrayList<Coup> faits;

@@ -84,7 +84,7 @@ public class ModeGraphique {
     }
     
     public void moins() {
-        if (gaufre.getNbLignes() > 1) {
+        if (gaufre.getNbLignes() > 1 && gaufre.getNbColonnes() > 1) {
             gaufre.resize(gaufre.getNbLignes() - 1, gaufre.getNbColonnes() - 1);
         }
     }

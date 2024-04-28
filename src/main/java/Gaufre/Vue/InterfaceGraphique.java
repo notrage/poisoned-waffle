@@ -630,7 +630,7 @@ public class InterfaceGraphique implements Runnable {
     public void finPartie() {
         int gagnant = getMG().getGaufre().estFinie().getNum();
         int nbCoupsJoues = getMG().getGaufre().getHistorique().getNbFaits();
-
+        majInfo();
         // Afficher à l'écran
         System.out.println("Joueur " + gagnant + " a gagné !");
         System.out.println("La partie a duré " + nbCoupsJoues + " coups.");
