@@ -57,7 +57,6 @@ public class InterfaceGraphique implements Runnable {
         miettes2 = ResourceLoader.lireImage("miettes2");
         miettes3 = ResourceLoader.lireImage("miettes3");
         miettes4 = ResourceLoader.lireImage("miettes4");
-
     }
 
     public static InterfaceGraphique demarrer(ModeGraphique m) {
@@ -375,6 +374,15 @@ public class InterfaceGraphique implements Runnable {
         textes.add(scoreJ1);
         textes.add(scoreJ2);
 
+        // Historique
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        JPanel histPanel = new JPanel();
+        histPanel.setLayout(new BoxLayout(histPanel, BoxLayout.Y_AXIS));
+        histPanel.setName("histPanel");
+        scrollPane.setViewportView(histPanel);
+        scrollPane.setPreferredSize(new Dimension(fenetre.getHeight() / 4, fenetre.getHeight() / 3));
+
         JPanel boutons = new JPanel();
         boutons.setLayout(new GridLayout(2, 2));
 
@@ -404,6 +412,7 @@ public class InterfaceGraphique implements Runnable {
 
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         pane.add(textes);
+        pane.add(scrollPane);
         pane.add(boutons);
 
         return pane;
@@ -414,10 +423,15 @@ public class InterfaceGraphique implements Runnable {
         JLabel tour = (JLabel) getComponentByName(fenetre, "texteTour");
         JLabel scoreJ1 = (JLabel) getComponentByName(fenetre, "texteScoreJ1");
         JLabel scoreJ2 = (JLabel) getComponentByName(fenetre, "texteScoreJ2");
+        JPanel histPanel = (JPanel) getComponentByName(fenetre, "histPanel");
 
         tour.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
         scoreJ1.setText("Joueur 1 : " + modele.getGaufre().getJoueur1().getScore());
         scoreJ2.setText("Joueur 2 : " + modele.getGaufre().getJoueur2().getScore());
+        JLabel hist = new JLabel();
+        hist.setText(modele.getGaufre().getHistorique().pourAffichage());
+        histPanel.removeAll();
+        histPanel.add(hist);
 
         JButton annuler = (JButton) getComponentByName(fenetre, "boutonAnnuler");
         JButton refaire = (JButton) getComponentByName(fenetre, "boutonRefaire");
@@ -442,6 +456,7 @@ public class InterfaceGraphique implements Runnable {
                         cell.setImg(gaufreMilieu);
                     }
                 } else {
+                    // randomiser miettes
                     cell.setImg(miettes1);
                 }
             }
@@ -522,6 +537,7 @@ public class InterfaceGraphique implements Runnable {
         int gagnant = getMG().getGaufre().getJoueurCourant().getNum();
         int nbCoupsJoues = getMG().getGaufre().getHistorique().getNbFaits();
 
+        // Afficher à l'écran
         System.out.println("Joueur " + gagnant + " a gagné !");
         System.out.println("La partie a duré " + nbCoupsJoues + " coups.");
     }
