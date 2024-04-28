@@ -466,7 +466,15 @@ public class InterfaceGraphique implements Runnable {
     }
 
     public void afficheGagnant() {
-        affichageNorth.setText("Victoire du Joueur " + getMG().getGaufre().estFinie().getNum() + ", trop fort !");
+        if (getMG().getNbJoueurs() == 1) {
+            if (getMG().getGaufre().estFinie().getNum() == 1) {
+                affichageNorth.setText("Victoire du Joueur, tu viens de sauver l'humanité !");
+            } else {
+                affichageNorth.setText("Victoire de l'IA, les robots nous dominent...");
+            }
+        } else {
+            affichageNorth.setText("Victoire du Joueur " + getMG().getGaufre().estFinie().getNum() + ", trop fort !");
+        }
         affichageNorth.setForeground(new Color(70, 200, 10));
     }
 
