@@ -26,11 +26,6 @@ public class EcouteurSouris extends MouseAdapter {
                 ig.majInfo();
                 // Peut-être à remplacer par un truc du genre if .contreIA()
                 if (ig.getMG().getNbJoueurs() == 1 && !ig.getMG().estFini()) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
                     Coup coupIA = ig.getMG().jouerIA();
                     c = (int) coupIA.getPosition().getY();
                     l = (int) coupIA.getPosition().getX();
