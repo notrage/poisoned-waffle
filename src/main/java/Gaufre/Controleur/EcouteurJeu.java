@@ -37,8 +37,9 @@ public class EcouteurJeu implements ActionListener {
                 ig.syncGaufre();
                 ig.majInfo();
                 break;
-            case "Quitter":
-                System.exit(0);
+            case "QuitterJeu":
+                ig.setEtat(ig.MENU);
+                ig.
                 break;
             default:
                 throw new UnsupportedOperationException("Bouton du jeu non supporté");

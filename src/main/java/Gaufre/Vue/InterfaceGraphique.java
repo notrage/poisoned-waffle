@@ -394,7 +394,7 @@ public class InterfaceGraphique implements Runnable {
         reset.addActionListener(new EcouteurJeu(this));
         JButton quitter = new JButton("Quitter");
         quitter.setMnemonic(KeyEvent.VK_Q);
-        quitter.setActionCommand("Quitter");
+        quitter.setActionCommand("QuitterJeu");
         quitter.addActionListener(new EcouteurJeu(this));
 
         boutons.add(annuler);
