@@ -104,11 +104,13 @@ public class ModeGraphique {
 
     public boolean charger() {
         try {
-            gaufre = new Gaufre("save.txt");
+            Gaufre newgaufre = new Gaufre("save.txt");
+            if (newgaufre != null){
+                gaufre = newgaufre;
+            }
             Config.debug("Chargement réussi");
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
     }

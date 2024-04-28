@@ -40,7 +40,7 @@ public class Gaufre {
         setHistorique(new Historique());
     }
 
-    public Gaufre(String nomFichier) {
+    public Gaufre(String nomFichier) throws IOException {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(nomFichier))) {
             String line = reader.readLine();
@@ -93,7 +93,7 @@ public class Gaufre {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw e;
         }
         return;
     }
@@ -316,7 +316,7 @@ public class Gaufre {
     }
 
     public void sauvegarder(String nomFichier) throws Exception {
-        PrintStream ps = new PrintStream(new FileOutputStream(nomFichier));
+        PrintStream ps = new PrintStream(new FileOutputStream(nomFichier, false));
         ps.println(getNbLignes() + " " + getNbColonnes());
         ps.println(getPremierJoueur().getNum());
         ps.print(getHistorique().pourSauvegarde());

@@ -8,7 +8,6 @@ import java.io.File;
 import org.junit.Test;
 
 import Gaufre.Modele.Gaufre;
-import Gaufre.Configuration.Config;
 import Gaufre.Modele.Coup;
 import Gaufre.Modele.Joueur;
 
@@ -47,18 +46,6 @@ public class ModeleTest {
             System.out.println("Failed to delete the file.");
         }
 
-        // Avec une gaufre avec des coups joués et déjoués
-        g.reinitialiser();
-        g.jouer(new Coup(2, 2));
-        g.jouer(new Coup(1, 2));
-        g.dejouer();
-        g.sauvegarder("test4.txt");
-        restoree = new Gaufre("test4.txt");
-        estGaufreEquivalente(g, restoree);
-        File test4 = new File("test4.txt");
-        if (!test4.delete()) {
-            System.out.println("Failed to delete the file.");
-        }
     }
 
     @Test

@@ -24,17 +24,20 @@ public class EcouteurJeu implements ActionListener {
                 mg.annuler();
                 ig.syncGaufre();
                 ig.majInfo();
+                ig.revertAfficahgeInval();
                 break;
             case "Refaire":
                 Config.debug("Click bouton refaire");
                 mg.refaire();
                 ig.syncGaufre();
                 ig.majInfo();
+                ig.revertAfficahgeInval();
                 break;
             case "Reset":
                 Config.debug("Click bouton reset");
                 mg.reset();
                 ig.setEtat(ig.JEU);
+                ig.revertAfficahgeInval();
                 break;
             case "QuitterJeu":
                 Config.debug("Click bouton quitter jeu");
@@ -58,6 +61,7 @@ public class EcouteurJeu implements ActionListener {
             case "Charger":
                 Config.debug("Click bouton charger");
                 if (mg.charger()){
+                    System.out.println("YOUHOU");
                     ig.setEtat(ig.JEU);
                 }
                 break;
