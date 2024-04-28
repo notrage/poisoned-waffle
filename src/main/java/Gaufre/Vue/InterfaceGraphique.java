@@ -16,6 +16,7 @@ import javax.swing.*;
 
 import Gaufre.Controleur.EcouteurJeu;
 import Gaufre.Controleur.EcouteurMenu;
+import Gaufre.Controleur.EcouteurChoixIA;
 import Gaufre.Controleur.EcouteurSouris;
 import Gaufre.Modele.Coup;
 import Gaufre.Modele.Gaufre;
@@ -26,10 +27,12 @@ import Gaufre.Configuration.Config;
 public class InterfaceGraphique implements Runnable {
     public final int MENU = 0;
     public final int JEU = 1;
+    public final int CHOIX_IA = 2;
     public final int QUIT = -1;
     private BufferedImage gaufreMilieu, poison, miettes1, miettes2, miettes3, miettes4;
     private ModeGraphique modele;
     private EcouteurMenu ecouteurMenu;
+    private EcouteurChoixIA ecouteurChoixIA;
     private Musique bgMusique;
     private int etat;
     private JFrame fenetre;
@@ -41,6 +44,7 @@ public class InterfaceGraphique implements Runnable {
         etat = MENU;
         modele = mg;
         ecouteurMenu = new EcouteurMenu(this);
+        ecouteurChoixIA = new EcouteurChoixIA(this);
         bgMusique = new Musique("sons/SpaceJazz.wav");
         if (!Config.estMuet()) {
             bgMusique.play();
@@ -59,7 +63,6 @@ public class InterfaceGraphique implements Runnable {
         miettes2 = ResourceLoader.lireImage("miettes2");
         miettes3 = ResourceLoader.lireImage("miettes3");
         miettes4 = ResourceLoader.lireImage("miettes4");
-
     }
 
     public static InterfaceGraphique demarrer(ModeGraphique m) {
@@ -93,11 +96,20 @@ public class InterfaceGraphique implements Runnable {
             case MENU:
                 fenetre.getContentPane().removeAll();
                 panel = creerMenu();
+                fenetre.setContentPane(panel);
                 break;
 
             case JEU:
                 fenetre.getContentPane().removeAll();
                 panel = creerJeu();
+                fenetre.setContentPane(panel);
+                majInfo();
+                break;
+
+            case CHOIX_IA:
+                fenetre.getContentPane().removeAll();
+                panel = creerChoixIA();
+                fenetre.setContentPane(panel);
                 break;
 
             case QUIT:
@@ -109,7 +121,6 @@ public class InterfaceGraphique implements Runnable {
         if (Config.showBorders()) {
             showAllBorders(panel);
         }
-        fenetre.setContentPane(panel);
         fenetre.revalidate();
         fenetre.repaint();
     }
@@ -329,6 +340,36 @@ public class InterfaceGraphique implements Runnable {
         return null; // Return null if no button is found
     }
 
+    private Container creerChoixIA() {
+        JPanel pane = new JPanel();
+        pane.setLayout(new GridLayout(1, 3));
+
+        //Creating three buttons - easy ; medium ; hard
+
+        JButton easy = new JButton("Easy");
+        easy.setBackground(new Color(255, 209, 102));
+        easy.setMnemonic(KeyEvent.VK_E);
+        easy.addActionListener(ecouteurChoixIA);
+        easy.setActionCommand("EasyDifficulty");
+        pane.add(easy, null);
+
+        JButton medium = new JButton("Medium");
+        medium.setBackground(new Color(255, 209, 102));
+        medium.setMnemonic(KeyEvent.VK_M);
+        medium.addActionListener(ecouteurChoixIA);
+        medium.setActionCommand("MediumDifficulty");
+        pane.add(medium, null);
+
+        JButton hard = new JButton("Hard");
+        hard.setBackground(new Color(255, 209, 102));
+        hard.setMnemonic(KeyEvent.VK_H);
+        hard.addActionListener(ecouteurChoixIA);
+        hard.setActionCommand("HardDifficulty");
+        pane.add(hard, null);
+
+        return pane;
+    }
+
     private Container creerJeu() {
         JPanel pane = new JPanel();
         int l = modele.getGaufre().getNbLignes(), c = modele.getGaufre().getNbColonnes();
@@ -399,6 +440,15 @@ public class InterfaceGraphique implements Runnable {
         textes.add(scoreJ1);
         textes.add(scoreJ2);
 
+        // Historique
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        JPanel histPanel = new JPanel();
+        histPanel.setLayout(new BoxLayout(histPanel, BoxLayout.Y_AXIS));
+        histPanel.setName("histPanel");
+        scrollPane.setViewportView(histPanel);
+        scrollPane.setPreferredSize(new Dimension(fenetre.getHeight() / 4, fenetre.getHeight() / 3));
+
         JPanel boutons = new JPanel();
         boutons.setLayout(new GridLayout(3, 3));
 
@@ -440,6 +490,7 @@ public class InterfaceGraphique implements Runnable {
 
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         pane.add(textes);
+        pane.add(scrollPane);
         pane.add(boutons);
 
         return pane;
@@ -450,10 +501,15 @@ public class InterfaceGraphique implements Runnable {
         JLabel tour = (JLabel) getComponentByName(fenetre, "texteTour");
         JLabel scoreJ1 = (JLabel) getComponentByName(fenetre, "texteScoreJ1");
         JLabel scoreJ2 = (JLabel) getComponentByName(fenetre, "texteScoreJ2");
+        JPanel histPanel = (JPanel) getComponentByName(fenetre, "histPanel");
 
         tour.setText("Tour : Joueur " + modele.getGaufre().getJoueurCourant().getNum());
         scoreJ1.setText("Joueur 1 : " + modele.getGaufre().getJoueur1().getScore());
         scoreJ2.setText("Joueur 2 : " + modele.getGaufre().getJoueur2().getScore());
+        JLabel hist = new JLabel();
+        hist.setText(modele.getGaufre().getHistorique().pourAffichage());
+        histPanel.removeAll();
+        histPanel.add(hist);
 
         JButton annuler = (JButton) getComponentByName(fenetre, "boutonAnnuler");
         JButton refaire = (JButton) getComponentByName(fenetre, "boutonRefaire");
@@ -478,6 +534,7 @@ public class InterfaceGraphique implements Runnable {
                         cell.setImg(gaufreMilieu);
                     }
                 } else {
+                    // randomiser miettes
                     cell.setImg(miettes1);
                 }
             }
@@ -557,6 +614,7 @@ public class InterfaceGraphique implements Runnable {
         int gagnant = getMG().getGaufre().getJoueurCourant().getNum();
         int nbCoupsJoues = getMG().getGaufre().getHistorique().getNbFaits();
 
+        // Afficher à l'écran
         System.out.println("Joueur " + gagnant + " a gagné !");
         System.out.println("La partie a duré " + nbCoupsJoues + " coups.");
     }

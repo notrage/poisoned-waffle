@@ -40,12 +40,7 @@ public class ModeGraphique {
 
     public boolean jouer(int l, int c) {
         Coup coup = new Coup(l, c);
-        boolean res;
-        if (res = gaufre.jouer(coup)) {
-            if (nbJoueurs == 1) {
-            }
-        }
-        return res;
+        return gaufre.jouer(coup);
     }
 
     public Coup jouerIA() {
