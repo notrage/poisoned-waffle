@@ -259,14 +259,11 @@ public class Gaufre {
 
     public Joueur estFinie() {
         if (!getCase(0, 0)) {
-            getJoueurCourant().incrementScore();
             return getJoueurCourant();
         } else if (!getCase(0, 1) && !getCase(1, 0)) {
             if (getJoueurCourant() == getJoueur1()) {
-                getJoueur2().incrementScore();
                 return getJoueur2();
             } else {
-                getJoueur1().incrementScore();
                 return getJoueur1();
             }
         }
