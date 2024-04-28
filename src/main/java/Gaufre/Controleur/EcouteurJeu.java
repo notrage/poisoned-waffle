@@ -3,7 +3,6 @@ package Gaufre.Controleur;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import Gaufre.Jeu;
 import Gaufre.Configuration.Config;
 import Gaufre.Vue.InterfaceGraphique;
 import Gaufre.Vue.ModeGraphique;

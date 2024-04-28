@@ -21,6 +21,8 @@ import Gaufre.Controleur.EcouteurSouris;
 import Gaufre.Modele.Coup;
 import Gaufre.Modele.Gaufre;
 import Gaufre.Modele.IAaleatoire;
+import Gaufre.Modele.IAcoupGagnant;
+import Gaufre.Modele.IAexploration;
 import Gaufre.Configuration.ResourceLoader;
 import Gaufre.Configuration.Config;
 
@@ -29,12 +31,17 @@ public class InterfaceGraphique implements Runnable {
     public final int JEU = 1;
     public final int CHOIX_IA = 2;
     public final int QUIT = -1;
+    public final int ALEA = 10;
+    public final int GAGNANT = 11;
+    public final int EXPLO = 12;
+
     private BufferedImage gaufreMilieu, poison, miettes1, miettes2, miettes3, miettes4;
     private ModeGraphique modele;
     private EcouteurMenu ecouteurMenu;
     private EcouteurChoixIA ecouteurChoixIA;
     private Musique bgMusique;
     private int etat;
+    private int typeIA;
     private JFrame fenetre;
     private GraphicsEnvironment ge;
     private JPanel plateau;
@@ -344,7 +351,7 @@ public class InterfaceGraphique implements Runnable {
         JPanel pane = new JPanel();
         pane.setLayout(new GridLayout(1, 3));
 
-        //Creating three buttons - easy ; medium ; hard
+        // Creating three buttons - easy ; medium ; hard
 
         JButton easy = new JButton("Easy");
         easy.setBackground(new Color(255, 209, 102));
@@ -398,8 +405,17 @@ public class InterfaceGraphique implements Runnable {
 
         // Faire jouer l'ia tout de suite si mode 1 joueur et J2 commence
         if (modele.getNbJoueurs() == 1) {
-            modele.setIA(new IAaleatoire());
-            Config.debug(modele.getIA());
+            switch (getTypeIA()) {
+                case ALEA:
+                    modele.setIA(new IAaleatoire());
+                    break;
+                case GAGNANT:
+                    modele.setIA(new IAcoupGagnant());
+                    break;
+                case EXPLO:
+                    modele.setIA(new IAexploration());
+                    break;
+            }
             if (modele.getGaufre().getJoueurCourant() == modele.getGaufre().getJoueur2()) {
                 Config.debug("L'IA commence !");
                 Coup coupIA = modele.jouerIA();
@@ -611,7 +627,7 @@ public class InterfaceGraphique implements Runnable {
     }
 
     public void finPartie() {
-        int gagnant = getMG().getGaufre().getJoueurCourant().getNum();
+        int gagnant = getMG().getGaufre().estFinie().getNum();
         int nbCoupsJoues = getMG().getGaufre().getHistorique().getNbFaits();
 
         // Afficher à l'écran
@@ -622,6 +638,10 @@ public class InterfaceGraphique implements Runnable {
     public void setEtat(int newEtat) {
         etat = newEtat;
         metAJourFenetre();
+    }
+
+    public void setTypeIA(int type) {
+        this.typeIA = type;
     }
 
     public int getEtat() {
@@ -662,6 +682,10 @@ public class InterfaceGraphique implements Runnable {
 
     public Graphics2D getGraphics() {
         return (Graphics2D) plateau.getGraphics();
+    }
+
+    public int getTypeIA() {
+        return typeIA;
     }
 }
 
