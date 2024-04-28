@@ -12,6 +12,15 @@ public class Historique {
         this.defaits = new ArrayList<Coup>();
     }
 
+    // Getteurs
+    public ArrayList<Coup> getFaits() {
+        return this.faits:
+    }
+
+    public ArrayList<Coup> getDefaits() {
+        return this.defaits;
+    }
+
     // Autres méthodes
     public int getNbFaits() {
         return this.faits.size();
@@ -64,7 +73,7 @@ public class Historique {
     public String pourSauvegarde() {
         boolean added = false;
         String s = "{";
-        for (Coup c : faits) {
+        for (Coup c : getFaits()) {
             s += c.pourSauvegarde();
             s += " ";
             added = true;
@@ -73,7 +82,7 @@ public class Historique {
             s = s.substring(0, s.length() - 1);
         s += "}\n{";
         added = false;
-        for (Coup c : defaits) {
+        for (Coup c : getDefaits()) {
             s += c.pourSauvegarde();
             s += " ";
             added = true;
@@ -81,6 +90,16 @@ public class Historique {
         if (added)
             s = s.substring(0, s.length() - 1);
         s += "}";
+        return s;
+    }
+
+    public String pourAffichage() {
+        String s = "";
+        for (Coup c: getFaits()) {
+            Joueur joueur = c.getJoueur();
+            Point position = c.getPosition();
+            s += "J" + joueur.getNum() + "à joué en (" + (int) position.getX() + "," + (int) position.getY() + ")\n";
+        }
         return s;
     }
 
