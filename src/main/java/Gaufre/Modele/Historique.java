@@ -1,6 +1,7 @@
 package Gaufre.Modele;
 
 import java.util.ArrayList;
+import java.awt.Point;
 
 public class Historique {
     private ArrayList<Coup> faits;
@@ -14,7 +15,7 @@ public class Historique {
 
     // Getteurs
     public ArrayList<Coup> getFaits() {
-        return this.faits:
+        return this.faits;
     }
 
     public ArrayList<Coup> getDefaits() {
