@@ -31,8 +31,8 @@ public class EcouteurSouris extends MouseAdapter {
                         ex.printStackTrace();
                     }
                     Coup coupIA = ig.getMG().jouerIA();
-                    l = (int) coupIA.getPosition().getY();
-                    c = (int) coupIA.getPosition().getX();
+                    l = (int) coupIA.getPosition().getX();
+                    c = (int) coupIA.getPosition().getY();
                     Config.debug("Coup IA : ", l, c);
                     ig.mangeCellGaufre(l, c);
                 }
