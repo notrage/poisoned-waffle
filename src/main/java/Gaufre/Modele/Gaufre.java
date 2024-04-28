@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class Gaufre {
 
-    private Joueur joueur1, joueur2, joueurCourant;
+    private Joueur joueur1, joueur2, joueurCourant, premierJoueur;
     private int[] plateau;
     private Historique historique;
     private int nbLignes;
@@ -25,10 +25,13 @@ public class Gaufre {
         setNbColonnes(nbC);
         Random rand = new Random();
         int r = rand.nextInt() % 2;
-        if (r == 0)
+        if (r == 0) {
+            setJoueurCourant(joueur1);
+            setPremierJoueur(joueur1);
+        } else {
             setJoueurCourant(joueur2);
-        else
-            setJoueurCourant(joueur2);
+            setPremierJoueur(joueur2);
+        }
 
         setPlateau(new int[nbL]);
         for (int i = 0; i < nbL; i++) {
@@ -52,8 +55,17 @@ public class Gaufre {
             for (int i = 0; i < getNbLignes(); i++) {
                 plateau[i] = getNbColonnes();
             }
-            setHistorique(new Historique());
+            // Lecture du joueur courant
+            line = reader.readLine();
+            if (Integer.parseInt(line) == 1) {
+                setJoueurCourant(joueur1);
+                setPremierJoueur(joueur1);
+            } else {
+                setJoueurCourant(joueur2);
+                setPremierJoueur(joueur2);
+            }
 
+            setHistorique(new Historique());
             // Lecture des coups faits
             if ((line = reader.readLine()) != null) {
                 if (!(line = line.substring(1, line.length() - 1)).isEmpty()) {
@@ -64,20 +76,22 @@ public class Gaufre {
                 }
             }
             // Lecture des coups défaits
+            int i = 0;
             if ((line = reader.readLine()) != null) {
                 if (!(line = line.substring(1, line.length() - 1)).isEmpty()) {
                     String[] defaits = line.split(" ");
                     for (String d : defaits) {
-                        getHistorique().empileDefait(new Coup(d));
+                        if (jouer(new Coup(d))) {
+                            i++;
+                        }
                     }
                 }
             }
-            // Lecture du joueur courant
-            line = reader.readLine();
-            if (Integer.parseInt(line) == 1)
-                setJoueurCourant(joueur1);
-            else
-                setJoueurCourant(joueur2);
+            while (i > 0) {
+                dejouer();
+                i--;
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -95,6 +109,10 @@ public class Gaufre {
 
     public Joueur getJoueurCourant() {
         return joueurCourant;
+    }
+
+    public Joueur getPremierJoueur() {
+        return premierJoueur;
     }
 
     public int[] getPlateau() {
@@ -132,6 +150,10 @@ public class Gaufre {
 
     public void setJoueurCourant(Joueur joueurCourant) {
         this.joueurCourant = joueurCourant;
+    }
+
+    public void setPremierJoueur(Joueur premierJoueur) {
+        this.premierJoueur = premierJoueur;
     }
 
     public void setPlateau(int[] plateau) {
@@ -296,8 +318,8 @@ public class Gaufre {
     public void sauvegarder(String nomFichier) throws Exception {
         PrintStream ps = new PrintStream(new FileOutputStream(nomFichier));
         ps.println(getNbLignes() + " " + getNbColonnes());
-        ps.println(getHistorique().pourSauvegarde());
-        ps.print(getJoueurCourant().getNum());
+        ps.println(getPremierJoueur().getNum());
+        ps.print(getHistorique().pourSauvegarde());
         ps.close();
         return;
     }
@@ -330,7 +352,7 @@ public class Gaufre {
     public void resize(int l, int c) {
         int[] newPlateau = new int[l];
         setNbLignes(l);
-        setNbColonnes(c); 
+        setNbColonnes(c);
         for (int i = 0; i < l; i++) {
             newPlateau[i] = getNbColonnes();
         }

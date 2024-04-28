@@ -18,11 +18,13 @@ import Gaufre.Controleur.EcouteurJeu;
 import Gaufre.Controleur.EcouteurMenu;
 import Gaufre.Controleur.EcouteurChoixIA;
 import Gaufre.Controleur.EcouteurSouris;
+
 import Gaufre.Modele.Coup;
 import Gaufre.Modele.Gaufre;
 import Gaufre.Modele.IAaleatoire;
 import Gaufre.Modele.IAcoupGagnant;
 import Gaufre.Modele.IAexploration;
+
 import Gaufre.Configuration.ResourceLoader;
 import Gaufre.Configuration.Config;
 
@@ -385,12 +387,12 @@ public class InterfaceGraphique implements Runnable {
 
         pane.setLayout(new BorderLayout());
         pane.add(creerInfo(), BorderLayout.EAST);
+        pane.add(creerSauv(), BorderLayout.SOUTH);
         plateau = new JPanel(new GridLayout(l, c));
         EcouteurSouris ecouteurSouris = new EcouteurSouris(this);
         plateau.addMouseListener(ecouteurSouris);
         pane.add(plateau, BorderLayout.CENTER);
 
-        modele.reset();
         Gaufre g = modele.getGaufre();
         int lignes = g.getNbLignes();
         int colonnes = g.getNbColonnes();
@@ -403,6 +405,13 @@ public class InterfaceGraphique implements Runnable {
             }
         }
         gaufreCells[0].setImg(poison);
+        for (int i = 0; i < lignes; i++) {
+            for (int j = 0; j < colonnes; j++) {
+                if (!g.getCase(i, j)) {
+                    mangeCellGaufre(i, j);
+                }
+            }
+        }
 
         // Faire jouer l'ia tout de suite si mode 1 joueur et J2 commence
         if (modele.getNbJoueurs() == 1) {
@@ -428,6 +437,23 @@ public class InterfaceGraphique implements Runnable {
         }
         return pane;
 
+    }
+
+    private Container creerSauv() {
+        JPanel pane = new JPanel();
+        pane.setLayout(new GridLayout(1, 2));
+        JButton sauvegarder = new JButton("Sauvegarder");
+        sauvegarder.setMnemonic(KeyEvent.VK_S);
+        sauvegarder.setActionCommand("Sauvegarder");
+        sauvegarder.addActionListener(new EcouteurJeu(this));
+        JButton charger = new JButton("Charger");
+        charger.setMnemonic(KeyEvent.VK_C);
+        charger.setActionCommand("Charger");
+        charger.addActionListener(new EcouteurJeu(this));
+
+        pane.add(sauvegarder);
+        pane.add(charger);
+        return pane;
     }
 
     private Container creerInfo() {
@@ -526,8 +552,9 @@ public class InterfaceGraphique implements Runnable {
         JLabel hist = new JLabel();
         hist.setText(modele.getGaufre().getHistorique().pourAffichage());
         histPanel.removeAll();
+        histPanel.repaint();
         histPanel.add(hist);
-
+        
         JButton annuler = (JButton) getComponentByName(fenetre, "boutonAnnuler");
         JButton refaire = (JButton) getComponentByName(fenetre, "boutonRefaire");
 

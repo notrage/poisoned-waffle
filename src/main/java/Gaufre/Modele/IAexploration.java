@@ -19,12 +19,7 @@ public class IAexploration implements IA {
 
     public void init(Gaufre g) {
         gaufreInitiale = g;
-        if (exploration(g.clone())) {
-            System.out.println("Victoire trouvée !");
-        } else {
-            System.out.println("Pas de victoire possible");
-        }
-
+        exploration(g.clone());
     }
 
     public Coup coupSuivant() {

@@ -101,7 +101,8 @@ public class Historique {
             Coup c = faits.get(i);
             Joueur joueur = c.getJoueur();
             Point position = c.getPosition();
-            s += "J" + joueur.getNum() + " : (" + (int) position.getX() + ", " + (int) position.getY() + ")<br>";
+            s += "J" + joueur.getNum() + " : (";
+            s+=  (int) position.getX() + ", " + (int) position.getY() + ")<br>";
         }
         s += "</html>";
         return s;

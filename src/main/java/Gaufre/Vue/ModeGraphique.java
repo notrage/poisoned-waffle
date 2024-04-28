@@ -3,6 +3,7 @@ package Gaufre.Vue;
 import Gaufre.Modele.Gaufre;
 import Gaufre.Modele.IA;
 import Gaufre.Modele.Coup;
+import Gaufre.Configuration.Config;
 
 public class ModeGraphique {
     private Gaufre gaufre;
@@ -91,6 +92,25 @@ public class ModeGraphique {
 
     public void resize(int l, int c) {
         gaufre.resize(l, c);
+    }
+
+    public void sauvegarder() {
+        try {
+            gaufre.sauvegarder("save.txt");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean charger() {
+        try {
+            gaufre = new Gaufre("save.txt");
+            Config.debug("Chargement réussi");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

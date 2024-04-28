@@ -38,6 +38,7 @@ public class EcouteurJeu implements ActionListener {
                 break;
             case "QuitterJeu":
                 Config.debug("Click bouton quitter jeu");
+                ig.getMG().reset();
                 ig.setEtat(ig.MENU);
                 break;
             case "Plus":
@@ -49,7 +50,16 @@ public class EcouteurJeu implements ActionListener {
                 Config.debug("Click bouton moins");
                 mg.moins();
                 ig.setEtat(ig.JEU);
-
+                break;
+            case "Sauvegarder":
+                Config.debug("Click bouton sauvegarder");
+                mg.sauvegarder();
+                break;
+            case "Charger":
+                Config.debug("Click bouton charger");
+                if (mg.charger()){
+                    ig.setEtat(ig.JEU);
+                }
                 break;
 
             default:
