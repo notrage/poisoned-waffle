@@ -1,5 +1,7 @@
 package Gaufre.Modele;
 
+import Gaufre.Configuration.Config;
+
 public class Joueur {
     private int num;
     private int score;
@@ -62,8 +64,8 @@ public class Joueur {
         return that.getNum() == getNum();
     }
 
-    @Override 
-    public int hashCode(){
+    @Override
+    public int hashCode() {
         return getNum();
     }
 

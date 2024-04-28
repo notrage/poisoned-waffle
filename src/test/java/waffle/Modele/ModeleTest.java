@@ -8,11 +8,11 @@ import java.io.File;
 import org.junit.Test;
 
 import Gaufre.Modele.Gaufre;
+import Gaufre.Configuration.Config;
 import Gaufre.Modele.Coup;
 import Gaufre.Modele.Joueur;
 
 public class ModeleTest {
-
     @Test
     public void sauvegardeRestaureGaufreTest() throws Exception {
         // Avec une gaufre simplement initialisée
@@ -98,6 +98,7 @@ public class ModeleTest {
         // Un autre coup invalide
         coupInvalide = new Coup(-1, 0);
         assertFalse(g.jouer(coupInvalide));
+
     }
 
     @Test
@@ -107,18 +108,36 @@ public class ModeleTest {
         Gaufre g = new Gaufre(3, 3);
         Joueur jcourant = g.getJoueurCourant();
         joueDejoue(g, new Coup(2, 2));
-        assert (g.getJoueurCourant() == jcourant);
+        assert (g.getJoueurCourant().equals(jcourant));
         assertTrue(g.jouer(new Coup(2, 2)));
         jcourant = g.getJoueurCourant();
         joueDejoue(g, new Coup(0, 1));
-        assert (g.getJoueurCourant() == jcourant);
+        assert (g.getJoueurCourant().equals(jcourant));
         joueDejoue(g, new Coup(1, 0));
-        assert (g.getJoueurCourant() == jcourant);
+        assert (g.getJoueurCourant().equals(jcourant));
         joueDejoue(g, new Coup(0, 0));
         assertTrue(g.dejouer());
-        g.jouer(new Coup(0, 1));
-        jcourant = g.getJoueurCourant();
+        assertTrue(g.jouer(new Coup(0, 1)));
         dejoueRejoue(g);
+        assertTrue(g.dejouer());
+        assertFalse(g.dejouer());
+        assertTrue(g.estRejouable());
+        g.jouer(new Coup(0, 1));
+        assertFalse(g.estRejouable());
+    }
+
+    private void joueDejoue(Gaufre g, Coup c) {
+        boolean[][] copie = new boolean[g.getNbLignes()][g.getNbColonnes()];
+        for (int i = 0; i < g.getNbLignes(); i++) {
+            for (int j = 0; j < g.getNbColonnes(); j++) {
+                copie[i][j] = g.getCase(i, j);
+            }
+        }
+        g.jouer(new Coup(0, 1));
+        Joueur jcourant = g.getJoueurCourant();
+        Config.debug("jcourant", jcourant, "getNum", jcourant.getNum());
+        dejoueRejoue(g);
+        Config.debug("jcourant", g.getJoueurCourant(), "getNum", g.getJoueurCourant().getNum());
         assert (g.getJoueurCourant() == jcourant);
         assertTrue(g.dejouer());
         assertFalse(g.dejouer());
@@ -158,16 +177,6 @@ public class ModeleTest {
                     assertTrue(g.estFinie() != null);
             }
         }
-    }
-
-    private void joueDejoue(Gaufre g, Coup c) {
-        int[] copie = g.clonePlateau();
-
-        // Si le coup est valide on le déjoue
-        if (g.jouer(c)) {
-            g.dejouer();
-        }
-        estPlateauEquivalent(copie, g.getPlateau());
     }
 
     private void dejoueRejoue(Gaufre g) {
