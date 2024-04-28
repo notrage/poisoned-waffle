@@ -46,6 +46,8 @@ public class InterfaceGraphique implements Runnable {
     private GraphicsEnvironment ge;
     private JPanel plateau;
     private cellGaufre[] gaufreCells;
+    private JLabel affichageNorth;
+    public boolean boolCoupInval;
 
     InterfaceGraphique(ModeGraphique mg) {
         etat = MENU;
@@ -70,6 +72,7 @@ public class InterfaceGraphique implements Runnable {
         miettes2 = ResourceLoader.lireImage("miettes2");
         miettes3 = ResourceLoader.lireImage("miettes3");
         miettes4 = ResourceLoader.lireImage("miettes4");
+        boolCoupInval=false;
     }
 
     public static InterfaceGraphique demarrer(ModeGraphique m) {
@@ -395,6 +398,12 @@ public class InterfaceGraphique implements Runnable {
         int lignes = g.getNbLignes();
         int colonnes = g.getNbColonnes();
 
+        affichageNorth=new JLabel("    ");
+        affichageNorth.setForeground(new Color(250,50,50));
+        affichageNorth.setOpaque(false);
+        affichageNorth.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pane.add(affichageNorth,BorderLayout.NORTH);
+
         for (int i = 0; i < lignes; i++) {
             for (int j = 0; j < colonnes; j++) {
                 cellGaufre cell = new cellGaufre(gaufreMilieu);
@@ -428,6 +437,20 @@ public class InterfaceGraphique implements Runnable {
         }
         return pane;
 
+    }
+
+    public void afficheGagnant(){
+        affichageNorth.setText("Joueur gagnant: "+ getMG().getGaufre().estFinie().getNum());
+        affichageNorth.setForeground(new Color(70,200,10));
+    }
+
+    public void revertAfficahgeInval(){
+        affichageNorth.setText("    ");
+        boolCoupInval=false;
+    }
+
+    public void coupInval(){
+        affichageNorth.setText("Coup Invalide");
     }
 
     private Container creerInfo() {
@@ -537,6 +560,8 @@ public class InterfaceGraphique implements Runnable {
 
     public void syncGaufre() {
         Gaufre g = modele.getGaufre();
+        Random random = new Random();
+        int randomMiettes;
 
         int lignes = g.getNbLignes();
         int colonnes = g.getNbColonnes();
@@ -551,8 +576,23 @@ public class InterfaceGraphique implements Runnable {
                         cell.setImg(gaufreMilieu);
                     }
                 } else {
-                    // randomiser miettes
-                    cell.setImg(miettes1);
+                    if(cell.getImg() == gaufreMilieu){
+                        randomMiettes = random.nextInt(4);
+                        switch (randomMiettes) {
+                            case 0:
+                                cell.setImg(miettes1);
+                                break;
+                            case 1:
+                                cell.setImg(miettes2);
+                                break;
+                            case 2:
+                                cell.setImg(miettes3);
+                                break;
+                            default:
+                                cell.setImg(miettes4);
+                                break;
+                        }
+                    }
                 }
             }
         }
