@@ -38,9 +38,22 @@ public class EcouteurJeu implements ActionListener {
                 ig.majInfo();
                 break;
             case "QuitterJeu":
+                Config.debug("Click bouton quitter jeu");
                 ig.setEtat(ig.MENU);
-                ig.
                 break;
+            case "Plus":
+                Config.debug("Click bouton plus");
+                mg.plus();
+                ig.setEtat(ig.JEU);
+                
+                break;
+            case "Moins":
+                Config.debug("Click bouton moins");
+                mg.moins();
+                ig.setEtat(ig.JEU);
+
+                break;
+
             default:
                 throw new UnsupportedOperationException("Bouton du jeu non supporté");
         }

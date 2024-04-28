@@ -228,7 +228,15 @@ public class InterfaceGraphique implements Runnable {
         pane.add(bottomPanel, BorderLayout.PAGE_END);
 
         layeredPane.add(pane, JLayeredPane.PALETTE_LAYER);
-
+        int newTitleFontSize = Math.max(50, fenetre.getHeight() / 4);
+        title.setFont(new Font("DEADLY POISON II", Font.BOLD, newTitleFontSize));
+        versionLabel.setFont(new Font("Arial", Font.PLAIN, (int) (newTitleFontSize / 6)));
+        int buttonFontSize = (int) (newTitleFontSize * 0.2); // Adjust the multiplier as needed
+        Font buttonFont = new Font("Arial", Font.PLAIN, buttonFontSize);
+        button1J.setFont(buttonFont);
+        button2J.setFont(buttonFont);
+        volumeButton.setFont(buttonFont);
+        
         fenetre.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -236,7 +244,7 @@ public class InterfaceGraphique implements Runnable {
                 int newTitleFontSize = Math.max(50, fenetre.getHeight() / 4);
                 title.setFont(new Font("DEADLY POISON II", Font.BOLD, newTitleFontSize));
                 versionLabel.setFont(new Font("Arial", Font.PLAIN, (int) (newTitleFontSize / 6)));
-
+                
                 int buttonFontSize = (int) (newTitleFontSize * 0.2); // Adjust the multiplier as needed
                 Font buttonFont = new Font("Arial", Font.PLAIN, buttonFontSize);
                 button1J.setFont(buttonFont);
@@ -344,7 +352,6 @@ public class InterfaceGraphique implements Runnable {
             }
         }
         gaufreCells[0].setImg(poison);
-
         return pane;
     }
 
@@ -376,18 +383,20 @@ public class InterfaceGraphique implements Runnable {
         textes.add(scoreJ2);
 
         JPanel boutons = new JPanel();
-        boutons.setLayout(new GridLayout(2, 2));
+        boutons.setLayout(new GridLayout(3, 3));
 
         JButton annuler = new JButton("Annuler");
         annuler.setMnemonic(KeyEvent.VK_A);
         annuler.setName("boutonAnnuler");
         annuler.setActionCommand("Annuler");
         annuler.addActionListener(new EcouteurJeu(this));
+        annuler.setEnabled(modele.peutAnnuler());
         JButton refaire = new JButton("Refaire");
         refaire.setMnemonic(KeyEvent.VK_R);
         refaire.setName("boutonRefaire");
         refaire.setActionCommand("Refaire");
         refaire.addActionListener(new EcouteurJeu(this));
+        refaire.setEnabled(modele.peutRefaire());
         JButton reset = new JButton("Reset");
         reset.setMnemonic(KeyEvent.VK_S);
         reset.setActionCommand("Reset");
@@ -396,11 +405,21 @@ public class InterfaceGraphique implements Runnable {
         quitter.setMnemonic(KeyEvent.VK_Q);
         quitter.setActionCommand("QuitterJeu");
         quitter.addActionListener(new EcouteurJeu(this));
+        JButton plus = new JButton("+");
+        plus.setMnemonic(KeyEvent.VK_P);
+        plus.setActionCommand("Plus");
+        plus.addActionListener(new EcouteurJeu(this));
+        JButton moins = new JButton("-");
+        moins.setMnemonic(KeyEvent.VK_M);
+        moins.setActionCommand("Moins");
+        moins.addActionListener(new EcouteurJeu(this));
 
         boutons.add(annuler);
         boutons.add(refaire);
         boutons.add(quitter);
         boutons.add(reset);
+        boutons.add(plus);
+        boutons.add(moins);
 
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         pane.add(textes);
