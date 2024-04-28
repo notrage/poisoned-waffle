@@ -7,10 +7,11 @@ import Gaufre.Vue.InterfaceGraphique;
 
 import Gaufre.Configuration.Config;
 
-public class EcouteurMenu implements ActionListener {
+
+public class EcouteurChoixIA implements ActionListener {
     private InterfaceGraphique vue;
 
-    public EcouteurMenu(InterfaceGraphique vue) {
+    public EcouteurChoixIA(InterfaceGraphique vue) {
         this.vue = vue;
     }
 
@@ -18,23 +19,20 @@ public class EcouteurMenu implements ActionListener {
     public void actionPerformed(ActionEvent evt) {
         Config.debug("Received action : ", evt.getActionCommand());
         switch (evt.getActionCommand()) {
-            case "Jeu1J":
-                vue.getMG().setNbJoueurs(1);
-                vue.setEtat(vue.CHOIX_IA);
-                break;
-            case "Jeu2J":
-                vue.getMG().setNbJoueurs(2);
+            case "EasyDifficulty":
+                vue.setTypeIA(vue.ALEA);
                 vue.setEtat(vue.JEU);
                 break;
-            case "volume":
-                Config.toggleSon();
-                vue.toggleSon();
+            case "MediumDifficulty":
+                vue.setTypeIA(vue.GAGNANT);
+                vue.setEtat(vue.JEU);
                 break;
-            case "Quitter":
-                System.exit(0);
+            case "HardDifficulty":
+                vue.setTypeIA(vue.EXPLO);
+                vue.setEtat(vue.JEU);
                 break;
             default:
-                throw new UnsupportedOperationException("Bouton du menu non supporté");
+                throw new UnsupportedOperationException("Bouton du choix de l'IA non supporté");
         }
     }
 

@@ -24,22 +24,48 @@ public class EcouteurJeu implements ActionListener {
                 mg.annuler();
                 ig.syncGaufre();
                 ig.majInfo();
+                ig.revertAfficahgeInval();
                 break;
             case "Refaire":
                 Config.debug("Click bouton refaire");
                 mg.refaire();
                 ig.syncGaufre();
                 ig.majInfo();
+                ig.revertAfficahgeInval();
                 break;
             case "Reset":
                 Config.debug("Click bouton reset");
                 mg.reset();
-                ig.syncGaufre();
-                ig.majInfo();
+                ig.setEtat(ig.JEU);
+                ig.revertAfficahgeInval();
                 break;
-            case "Quitter":
-                System.exit(0);
+            case "QuitterJeu":
+                Config.debug("Click bouton quitter jeu");
+                ig.getMG().reset();
+                ig.setEtat(ig.MENU);
                 break;
+            case "Plus":
+                Config.debug("Click bouton plus");
+                mg.plus();
+                ig.setEtat(ig.JEU);
+                break;
+            case "Moins":
+                Config.debug("Click bouton moins");
+                mg.moins();
+                ig.setEtat(ig.JEU);
+                break;
+            case "Sauvegarder":
+                Config.debug("Click bouton sauvegarder");
+                mg.sauvegarder();
+                break;
+            case "Charger":
+                Config.debug("Click bouton charger");
+                if (mg.charger()){
+                    System.out.println("YOUHOU");
+                    ig.setEtat(ig.JEU);
+                }
+                break;
+
             default:
                 throw new UnsupportedOperationException("Bouton du jeu non supporté");
         }

@@ -22,23 +22,29 @@ public class EcouteurSouris extends MouseAdapter {
             int l = e.getY() / ig.getTailleCelluleY();
             Config.debug("Click sur case ", l, c);
             if (ig.getMG().jouer(l, c)) {
+                if(ig.boolCoupInval){
+                    ig.revertAfficahgeInval();
+                }
                 ig.mangeCellGaufre(l, c);
+                ig.majInfo();
                 // Peut-être à remplacer par un truc du genre if .contreIA()
                 if (ig.getMG().getNbJoueurs() == 1 && !ig.getMG().estFini()) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
                     Coup coupIA = ig.getMG().jouerIA();
-                    l = (int) coupIA.getPosition().getY();
-                    c = (int) coupIA.getPosition().getX();
+                    c = (int) coupIA.getPosition().getY();
+                    l = (int) coupIA.getPosition().getX();
                     Config.debug("Coup IA : ", l, c);
                     ig.mangeCellGaufre(l, c);
+                    ig.majInfo();
                 }
                 if (ig.getMG().estFini()) {
+                    ig.getMG().getGaufre().estFinie().incrementScore();
+                    ig.afficheGagnant();
                     ig.finPartie();
                 }
+            }
+            else {
+                ig.boolCoupInval=true;
+                ig.coupInval();
             }
         }
     }

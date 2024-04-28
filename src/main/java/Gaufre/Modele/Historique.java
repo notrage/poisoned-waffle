@@ -1,5 +1,6 @@
 package Gaufre.Modele;
 
+import java.awt.Point;
 import java.util.ArrayList;
 
 public class Historique {
@@ -10,6 +11,15 @@ public class Historique {
     public Historique() {
         this.faits = new ArrayList<Coup>();
         this.defaits = new ArrayList<Coup>();
+    }
+
+    // Getteurs
+    public ArrayList<Coup> getFaits() {
+        return this.faits;
+    }
+
+    public ArrayList<Coup> getDefaits() {
+        return this.defaits;
     }
 
     // Autres méthodes
@@ -64,7 +74,7 @@ public class Historique {
     public String pourSauvegarde() {
         boolean added = false;
         String s = "{";
-        for (Coup c : faits) {
+        for (Coup c : getFaits()) {
             s += c.pourSauvegarde();
             s += " ";
             added = true;
@@ -73,7 +83,7 @@ public class Historique {
             s = s.substring(0, s.length() - 1);
         s += "}\n{";
         added = false;
-        for (Coup c : defaits) {
+        for (Coup c : getDefaits()) {
             s += c.pourSauvegarde();
             s += " ";
             added = true;
@@ -81,6 +91,28 @@ public class Historique {
         if (added)
             s = s.substring(0, s.length() - 1);
         s += "}";
+        return s;
+    }
+
+    public String pourAffichage(boolean IA) {
+        String s = "<html>";
+        ArrayList<Coup> faits = getFaits();
+        for (int i = faits.size() - 1; i >= 0; i--) {
+            Coup c = faits.get(i);
+            Joueur joueur = c.getJoueur();
+            Point position = c.getPosition();
+            if (IA) {
+                if (joueur.getNum() == 1) {
+                    s += "Vous" + " : (";
+                } else {
+                    s += "IA" + " : (";
+                }
+            } else {
+                s += "J" + joueur.getNum() + " : (";
+            }
+            s += (int) (position.getX() + 1) + ", " + (int) (position.getY() + 1 )+ ")<br>";
+        }
+        s += "</html>";
         return s;
     }
 
