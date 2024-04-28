@@ -329,4 +329,14 @@ public class Gaufre {
         }
         return Objects.hash(joueurCourant) + s;
     }
+
+    public void resize(int l, int c) {
+        int[] newPlateau = new int[l];
+        setNbLignes(l);
+        setNbColonnes(c); 
+        for (int i = 0; i < l; i++) {
+            newPlateau[i] = getNbColonnes();
+        }
+        setPlateau(newPlateau);
+    }
 }
