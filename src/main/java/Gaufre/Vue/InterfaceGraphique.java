@@ -89,6 +89,7 @@ public class InterfaceGraphique implements Runnable {
 
     public void run() {
         fenetre = new JFrame("Gauffre");
+        fenetre.setIconImage(gaufreMilieu);
         fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fenetre.setLocationRelativeTo(null);
         fenetre.setSize(new Dimension(800, 600));
