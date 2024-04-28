@@ -232,7 +232,7 @@ public class InterfaceGraphique implements Runnable {
             volImg = ResourceLoader.lireImage("volume");
         }
         JButton volumeButton = new JButton();
-        setButtonIcons(volumeButton, volImg);
+        setButtonIcons(volumeButton, volImg, 0.15, 0.15);
         volumeButton.addActionListener(ecouteurMenu);
         volumeButton.setName("volumeButton");
         volumeButton.setActionCommand("volume");
@@ -295,16 +295,16 @@ public class InterfaceGraphique implements Runnable {
                 } else {
                     volImg = ResourceLoader.lireImage("volume");
                 }
-                setButtonIcons(volumeButton, volImg);
+                setButtonIcons(volumeButton, volImg, 0.15, 0.15);
             }
         });
         return layeredPane;
     }
 
-    private void setButtonIcons(JButton b, BufferedImage img) {
+    private void setButtonIcons(JButton b, BufferedImage img, double width, double height) {
         Image scaledImg = img.getScaledInstance(
-                (int) (0.15 * fenetre.getWidth()),
-                (int) (0.15 * fenetre.getHeight()),
+                (int) (width * fenetre.getWidth()),
+                (int) (height * fenetre.getHeight()),
                 Image.SCALE_SMOOTH);
         // Create a new BufferedImage from the scaled image
         BufferedImage scaledBufferedImg = new BufferedImage(
@@ -327,11 +327,11 @@ public class InterfaceGraphique implements Runnable {
         if (Config.estMuet()) {
             bgMusique.stop();
             BufferedImage volImg = ResourceLoader.lireImage("muet");
-            setButtonIcons((JButton) getComponentByName(fenetre, "volumeButton"), volImg);
+            setButtonIcons((JButton) getComponentByName(fenetre, "volumeButton"), volImg, 0.15, 0.15);
         } else {
             bgMusique.play();
             BufferedImage volImg = ResourceLoader.lireImage("volume");
-            setButtonIcons((JButton) getComponentByName(fenetre, "volumeButton"), volImg);
+            setButtonIcons((JButton) getComponentByName(fenetre, "volumeButton"), volImg, 0.15, 0.15);
         }
     }
 
@@ -354,33 +354,78 @@ public class InterfaceGraphique implements Runnable {
     }
 
     private Container creerChoixIA() {
-        JPanel pane = new JPanel();
-        pane.setLayout(new GridLayout(1, 3));
+
+        BufferedImage gaufreEasy = ResourceLoader.lireImage("gaufreEasy");
+        BufferedImage gaufreMedium = ResourceLoader.lireImage("gaufreMedium");
+        BufferedImage gaufreHard = ResourceLoader.lireImage("gaufreHard");
 
         // Creating three buttons - easy ; medium ; hard
 
-        JButton easy = new JButton("Easy");
-        easy.setBackground(new Color(255, 209, 102));
+        JPanel pane = new JPanel();
+        pane.setLayout(new GridLayout(1, 3));
+
+        JPanel easyPane = new ChoixIA(gaufreEasy);
+        easyPane.setLayout(new GridLayout(1,1));
+        JButton easy = new JButton();
         easy.setMnemonic(KeyEvent.VK_E);
         easy.addActionListener(ecouteurChoixIA);
         easy.setActionCommand("EasyDifficulty");
-        pane.add(easy, null);
+        easy.setBorderPainted(false);
+        easy.setFocusPainted(false);
+        easy.setContentAreaFilled(false);
+        easyPane.add(easy, null);
+        pane.add(easyPane, null);
 
-        JButton medium = new JButton("Medium");
-        medium.setBackground(new Color(255, 209, 102));
+        JPanel mediumPane = new ChoixIA(gaufreMedium);
+        mediumPane.setLayout(new GridLayout(1,1));
+        JButton medium = new JButton();
         medium.setMnemonic(KeyEvent.VK_M);
         medium.addActionListener(ecouteurChoixIA);
         medium.setActionCommand("MediumDifficulty");
-        pane.add(medium, null);
-
-        JButton hard = new JButton("Hard");
-        hard.setBackground(new Color(255, 209, 102));
+        medium.setBorderPainted(false);
+        medium.setFocusPainted(false);
+        medium.setContentAreaFilled(false);
+        mediumPane.add(medium, null);
+        pane.add(mediumPane, null);
+        
+        JPanel hardPane = new ChoixIA(gaufreHard);
+        hardPane.setLayout(new GridLayout(1,1));
+        JButton hard = new JButton();
         hard.setMnemonic(KeyEvent.VK_H);
         hard.addActionListener(ecouteurChoixIA);
         hard.setActionCommand("HardDifficulty");
-        pane.add(hard, null);
+        hard.setBorder(null);
+        hard.setBorderPainted(false);
+        hard.setFocusPainted(false);
+        hard.setContentAreaFilled(false);
+        hardPane.add(hard, null);
+        pane.add(hardPane, null);
 
         return pane;
+    }
+
+    private class ChoixIA extends JPanel {
+        Image img;
+
+        public ChoixIA(BufferedImage img) {
+            this.img = img;
+        }
+
+        public void setImg(BufferedImage newImg) {
+            this.img = newImg;
+        }
+
+        public Image getImg() {
+            return this.img;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (img != null) {
+                g.drawImage(img, 0, 0, fenetre.getWidth()/3, fenetre.getHeight(), null);
+            }
+        }
     }
 
     private Container creerJeu() {
