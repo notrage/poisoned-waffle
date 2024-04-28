@@ -32,7 +32,6 @@ public class EcouteurSouris extends MouseAdapter {
                     Config.debug("Coup IA : ", l, c);
                     ig.mangeCellGaufre(l, c);
                     ig.majInfo();
-
                 }
                 if (ig.getMG().estFini()) {
                     ig.getMG().getGaufre().estFinie().incrementScore();
