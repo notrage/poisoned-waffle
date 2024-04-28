@@ -18,6 +18,10 @@ public class ModeGraphique {
         ia.init(gaufre);
     }
 
+    public IA getIA(){
+        return ia;
+    }
+
     public Gaufre getGaufre() {
         return gaufre;
     }

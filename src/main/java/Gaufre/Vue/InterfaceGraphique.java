@@ -17,7 +17,9 @@ import javax.swing.*;
 import Gaufre.Controleur.EcouteurJeu;
 import Gaufre.Controleur.EcouteurMenu;
 import Gaufre.Controleur.EcouteurSouris;
+import Gaufre.Modele.Coup;
 import Gaufre.Modele.Gaufre;
+import Gaufre.Modele.IAaleatoire;
 import Gaufre.Configuration.ResourceLoader;
 import Gaufre.Configuration.Config;
 
@@ -236,7 +238,7 @@ public class InterfaceGraphique implements Runnable {
         button1J.setFont(buttonFont);
         button2J.setFont(buttonFont);
         volumeButton.setFont(buttonFont);
-        
+
         fenetre.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -244,7 +246,7 @@ public class InterfaceGraphique implements Runnable {
                 int newTitleFontSize = Math.max(50, fenetre.getHeight() / 4);
                 title.setFont(new Font("DEADLY POISON II", Font.BOLD, newTitleFontSize));
                 versionLabel.setFont(new Font("Arial", Font.PLAIN, (int) (newTitleFontSize / 6)));
-                
+
                 int buttonFontSize = (int) (newTitleFontSize * 0.2); // Adjust the multiplier as needed
                 Font buttonFont = new Font("Arial", Font.PLAIN, buttonFontSize);
                 button1J.setFont(buttonFont);
@@ -352,7 +354,22 @@ public class InterfaceGraphique implements Runnable {
             }
         }
         gaufreCells[0].setImg(poison);
+
+        // Faire jouer l'ia tout de suite si mode 1 joueur et J2 commence
+        if (modele.getNbJoueurs() == 1) {
+            modele.setIA(new IAaleatoire());
+            Config.debug(modele.getIA());
+            if (modele.getGaufre().getJoueurCourant() == modele.getGaufre().getJoueur2()) {
+                Config.debug("L'IA commence !");
+                Coup coupIA = modele.jouerIA();
+                l = (int) coupIA.getPosition().getX();
+                c = (int) coupIA.getPosition().getY();
+                Config.debug("Coup IA : ", l, c);
+                mangeCellGaufre(l, c);
+            }
+        }
         return pane;
+
     }
 
     private Container creerInfo() {
@@ -510,7 +527,6 @@ public class InterfaceGraphique implements Runnable {
         if (!Config.estMuet()) {
             EffetsSonores.playSound("crunch");
         }
-        majInfo();
     }
 
     private class cellGaufre extends JPanel {

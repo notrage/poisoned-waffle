@@ -45,7 +45,6 @@ public class EcouteurJeu implements ActionListener {
                 Config.debug("Click bouton plus");
                 mg.plus();
                 ig.setEtat(ig.JEU);
-                
                 break;
             case "Moins":
                 Config.debug("Click bouton moins");

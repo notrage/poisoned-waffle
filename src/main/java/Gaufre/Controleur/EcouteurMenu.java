@@ -21,7 +21,6 @@ public class EcouteurMenu implements ActionListener {
         switch (evt.getActionCommand()) {
             case "Jeu1J":
                 vue.getMG().setNbJoueurs(1);
-                vue.getMG().setIA(new IAaleatoire());
                 vue.setEtat(vue.JEU);
                 break;
             case "Jeu2J":
