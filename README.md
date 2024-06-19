@@ -19,3 +19,4 @@ mvn clean package
 ```bash
 java -jar target/gaufre.jar
 ```
+Or double click on the jar file in the target directory.
