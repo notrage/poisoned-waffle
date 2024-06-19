@@ -17,5 +17,5 @@ mvn clean package
 ```
 4. Run the game :
 ```bash
-java -jar target/kube-alpha.jar
+java -jar target/gaufre.jar
 ```
